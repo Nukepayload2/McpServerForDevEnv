@@ -5,8 +5,160 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:McpServiceNetFx"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Visual Studio DTE2 控制器" Height="600" Width="900" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <TabControl x:Name="TabControlMain">
+            <!-- Visual Studio 实例选择选项卡 -->
+            <TabItem Header="Visual Studio 实例">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBox x:Name="TxtSearch" Width="300" Height="25" Margin="0,0,10,0"
+                                 TextChanged="TxtSearch_TextChanged"/>
+                        <Button x:Name="BtnRefresh" Content="刷新" Width="80" Height="25"
+                                Click="BtnRefresh_Click"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
+                              IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                              GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="窗口标题" Binding="{Binding Caption}" Width="*"/>
+                            <DataGridTextColumn Header="解决方案路径" Binding="{Binding SolutionPath}" Width="2*"/>
+                            <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="100"/>
+                            <DataGridTextColumn Header="进程ID" Binding="{Binding ProcessId}" Width="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- MCP 功能授权选项卡 -->
+            <TabItem Header="MCP 功能授权">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button x:Name="BtnAllowAll" Content="全部允许" Width="100" Height="25"
+                                Margin="0,0,10,0" Click="BtnAllowAll_Click"/>
+                        <Button x:Name="BtnAskAll" Content="全部询问" Width="100" Height="25"
+                                Margin="0,0,10,0" Click="BtnAskAll_Click"/>
+                        <Button x:Name="BtnCustom" Content="自定义" Width="100" Height="25"
+                                Click="BtnCustom_Click"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
+                              CanUserAddRows="False" GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}" Width="*"/>
+                            <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="2*"/>
+                            <DataGridComboBoxColumn Header="权限" Width="120" x:Name="PermissionColumn"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button x:Name="BtnSavePermissions" Content="保存配置" Width="100" Height="25"
+                                Margin="0,0,10,0" Click="BtnSavePermissions_Click"/>
+                        <Button x:Name="BtnReloadPermissions" Content="重新加载" Width="100" Height="25"
+                                Click="BtnReloadPermissions_Click"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- MCP 服务配置选项卡 -->
+            <TabItem Header="MCP 服务配置">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Grid.Row="0" Header="服务设置" Margin="0,0,0,10">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Grid.Column="0" Content="端口号:" VerticalAlignment="Center"/>
+                            <TextBox x:Name="TxtPort" Grid.Row="0" Grid.Column="1" Height="25"
+                                     Margin="10,0,10,0" Text="8080"/>
+                            <Button x:Name="BtnStartService" Grid.Row="0" Grid.Column="2"
+                                    Content="启动服务" Width="100" Height="25" Click="BtnStartService_Click"/>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="状态:" VerticalAlignment="Center"
+                                    Margin="0,10,0,0"/>
+                            <TextBlock x:Name="TxtServiceStatus" Grid.Row="1" Grid.Column="1"
+                                       Text="服务未启动" VerticalAlignment="Center" Margin="10,10,0,0"/>
+                            <Button x:Name="BtnStopService" Grid.Row="1" Grid.Column="2"
+                                    Content="停止服务" Width="100" Height="25" Margin="0,10,0,0"
+                                    Click="BtnStopService_Click" IsEnabled="False"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="1" Header="选中的 Visual Studio 实例" Margin="0,0,0,10">
+                        <Grid Margin="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock x:Name="TxtSelectedInstance" Grid.Column="0"
+                                       Text="未选择实例" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnAttachInstance" Grid.Column="1"
+                                    Content="附加到实例" Width="120" Height="25"
+                                    IsEnabled="False" Click="BtnAttachInstance_Click"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="2" Header="服务日志">
+                        <TextBox x:Name="TxtServiceLog" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                                 TextWrapping="Wrap" Height="200"/>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
+            <!-- 日志选项卡 -->
+            <TabItem Header="日志">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                        <Button x:Name="BtnClearLogs" Content="清空日志" Width="100" Height="25"
+                                Margin="0,0,10,0" Click="BtnClearLogs_Click"/>
+                        <Button x:Name="BtnExportLogs" Content="导出日志" Width="100" Height="25"
+                                Click="BtnExportLogs_Click"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="DgLogs" Grid.Row="1" AutoGenerateColumns="False"
+                              IsReadOnly="True" CanUserAddRows="False" GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="时间" Binding="{Binding Timestamp}" Width="150"/>
+                            <DataGridTextColumn Header="操作" Binding="{Binding Operation}" Width="*"/>
+                            <DataGridTextColumn Header="结果" Binding="{Binding Result}" Width="100"/>
+                            <DataGridTextColumn Header="详情" Binding="{Binding Details}" Width="2*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
