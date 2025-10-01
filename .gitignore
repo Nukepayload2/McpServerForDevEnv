@@ -131,3 +131,5 @@ FodyWeavers.xsd
 # Mac
 .DS_Store
 /Research/**/build.log
+
+.claude/

@@ -16,7 +16,7 @@ echo Building project with MSBuild...
 echo.
 
 REM Build the project with warnings level
-msbuild VsLspFindSymbols.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal /flp:verbosity=normal;logfile=build.log
+msbuild VsLspFindSymbols.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal /flp:verbosity=normal;logfile=build.log -t:build -restore
 
 if %errorlevel% equ 0 (
     echo.

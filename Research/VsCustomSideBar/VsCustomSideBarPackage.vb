@@ -1,10 +1,9 @@
 ﻿Imports System
 Imports System.Runtime.InteropServices
 Imports System.Threading
-Imports Microsoft.VisualBasic
+Imports System.Threading.Tasks
 Imports Microsoft.VisualStudio.Shell
-Imports Task = System.Threading.Tasks.Task
-
+Imports Microsoft.VisualStudio.Shell.Interop
 
 ''' <summary>
 ''' This is the class that implements the package exposed by this assembly.
@@ -14,8 +13,8 @@ Imports Task = System.Threading.Tasks.Task
 ''' The minimum requirement for a class to be considered a valid package for Visual Studio
 ''' Is to implement the IVsPackage interface And register itself with the shell.
 ''' This package uses the helper classes defined inside the Managed Package Framework (MPF)
-''' to do it: it derives from the Package Class that provides the implementation Of the 
-''' IVsPackage interface And uses the registration attributes defined in the framework to 
+''' to do it: it derives from the Package Class that provides the implementation Of the
+''' IVsPackage interface And uses the registration attributes defined in the framework to
 ''' register itself And its components with the shell. These attributes tell the pkgdef creation
 ''' utility what data to put into .pkgdef file.
 ''' </para>
@@ -24,6 +23,9 @@ Imports Task = System.Threading.Tasks.Task
 ''' </para>
 ''' </remarks>
 <PackageRegistration(UseManagedResourcesOnly:=True, AllowsBackgroundLoading:=True)>
+<InstalledProductRegistration("#110", "#112", "1.0", IconResourceID:=400)>
+<ProvideMenuResource("Menus.ctmenu", 1)>
+<ProvideToolWindow(GetType(ToolWindows.McpToolWindow), Style:=VsDockStyle.Tabbed, DockedWidth:=350, Window:="DocumentWell", Orientation:=ToolWindowOrientation.Left)>
 <Guid(VsCustomSideBarPackage.PackageGuidString)>
 Public NotInheritable Class VsCustomSideBarPackage
     Inherits AsyncPackage
@@ -45,7 +47,24 @@ Public NotInheritable Class VsCustomSideBarPackage
     Protected Overrides Async Function InitializeAsync(cancellationToken As CancellationToken, progress As IProgress(Of ServiceProgressData)) As Task
         ' When initialized asynchronously, the current thread may be a background thread at this point.
         ' Do any initialization that requires the UI thread after switching to the UI thread.
-        Await Me.JoinableTaskFactory.SwitchToMainThreadAsync()
+        Await JoinableTaskFactory.SwitchToMainThreadAsync()
+
+        ' Initialize our command
+        Await Commands.ShowMcpToolWindowCommand.InitializeAsync(Me)
+    End Function
+
+    Public Overrides Function GetAsyncToolWindowFactory(toolWindowType As Guid) As IVsAsyncToolWindowFactory
+        Return If(toolWindowType.Equals(Guid.Parse(ToolWindows.McpToolWindow.WindowGuidString)), Me, Nothing)
+    End Function
+
+    Protected Overrides Async Function InitializeToolWindowAsync(toolWindowType As Type, id As Integer, cancellationToken As CancellationToken) As Task(Of Object)
+        Await JoinableTaskFactory.SwitchToMainThreadAsync()
+
+        If toolWindowType.Equals(GetType(ToolWindows.McpToolWindow)) Then
+            Return New ToolWindows.McpWindowState()
+        End If
+
+        Return Nothing
     End Function
 
 #End Region

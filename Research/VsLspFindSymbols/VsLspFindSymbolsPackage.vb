@@ -14,8 +14,8 @@ Imports Task = System.Threading.Tasks.Task
 ''' The minimum requirement for a class to be considered a valid package for Visual Studio
 ''' Is to implement the IVsPackage interface And register itself with the shell.
 ''' This package uses the helper classes defined inside the Managed Package Framework (MPF)
-''' to do it: it derives from the Package Class that provides the implementation Of the 
-''' IVsPackage interface And uses the registration attributes defined in the framework to 
+''' to do it: it derives from the Package Class that provides the implementation Of the
+''' IVsPackage interface And uses the registration attributes defined in the framework to
 ''' register itself And its components with the shell. These attributes tell the pkgdef creation
 ''' utility what data to put into .pkgdef file.
 ''' </para>
@@ -24,6 +24,7 @@ Imports Task = System.Threading.Tasks.Task
 ''' </para>
 ''' </remarks>
 <PackageRegistration(UseManagedResourcesOnly:=True, AllowsBackgroundLoading:=True)>
+<ProvideToolWindow(GetType(SymbolSearchToolWindow), Style:=VsDockStyle.Tabbed, DockedWidth:=300, Window:="DocumentWell", Orientation:=ToolWindowOrientation.Left)>
 <Guid(VsLspFindSymbolsPackage.PackageGuidString)>
 Public NotInheritable Class VsLspFindSymbolsPackage
     Inherits AsyncPackage
@@ -46,6 +47,9 @@ Public NotInheritable Class VsLspFindSymbolsPackage
         ' When initialized asynchronously, the current thread may be a background thread at this point.
         ' Do any initialization that requires the UI thread after switching to the UI thread.
         Await Me.JoinableTaskFactory.SwitchToMainThreadAsync()
+
+        ' 初始化命令
+        Await SymbolSearchCommand.InitializeAsync(Me)
     End Function
 
 #End Region

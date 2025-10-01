@@ -1,0 +1,68 @@
+<UserControl x:Class="SymbolSearchControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="400">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 搜索区域 -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,5">
+            <TextBlock Text="搜索符号:" Margin="0,0,0,2"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="SearchTextBox"
+                         Grid.Column="0"
+                         Height="24"
+                         VerticalContentAlignment="Center"
+                         TextChanged="SearchTextBox_TextChanged"/>
+                <Button x:Name="SearchButton"
+                        Grid.Column="1"
+                        Content="搜索"
+                        Width="60"
+                        Height="24"
+                        Margin="5,0,0,0"
+                        Click="SearchButton_Click"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- 结果显示区域 -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 状态栏 -->
+            <TextBlock x:Name="StatusTextBlock"
+                       Grid.Row="0"
+                       Text="准备搜索符号..."
+                       Margin="0,0,0,2"
+                       Foreground="Gray"/>
+
+            <!-- JSON结果显示 -->
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Auto">
+                <TextBox x:Name="ResultTextBox"
+                         IsReadOnly="True"
+                         TextWrapping="NoWrap"
+                         FontFamily="Consolas"
+                         FontSize="12"
+                         Background="#F8F8F8"
+                         VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Auto"
+                         AcceptsReturn="True"
+                         Text="{}"/>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

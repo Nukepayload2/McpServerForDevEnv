@@ -16,7 +16,7 @@ echo Building project with MSBuild...
 echo.
 
 REM Build the project with warnings level
-msbuild VsCompileAndGetErrorList.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal /flp:verbosity=normal;logfile=build.log
+msbuild VsCompileAndGetErrorList.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal /flp:verbosity=normal;logfile=build.log -t:Build -restore
 
 if %errorlevel% equ 0 (
     echo.
