@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.14.40260" />
     <PackageReference Include="Nukepayload2.SourceGenerators.MyWpfExtension" Version="2.0.0" />
   </ItemGroup>
 
