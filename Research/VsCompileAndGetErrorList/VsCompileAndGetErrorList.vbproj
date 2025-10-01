@@ -71,6 +71,7 @@
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="VsCompileAndGetErrorListPackage.vb" />
     <Compile Include="GuidList.vb" />
+    <Compile Include="ErrorListToolWindowState.vb" />
     <Compile Include="ErrorListToolWindow.vb" />
     <Compile Include="ErrorListControl.xaml.vb">
       <DependentUpon>ErrorListControl.xaml</DependentUpon>

@@ -11,7 +11,9 @@ Imports System.Text
 Imports System.Collections.Generic
 Imports System.Linq
 Imports Newtonsoft.Json
-Imports Task = System.Threading.Tasks.Task
+Imports System.Threading.Tasks
+Imports EnvDTE
+Imports EnvDTE80
 
 
 ''' <summary>
@@ -96,6 +98,34 @@ Public NotInheritable Class VsCompileAndGetErrorListPackage
         MyBase.Dispose(disposing)
     End Sub
 
+    ''' <summary>
+    ''' 获取异步工具窗口工厂
+    ''' </summary>
+    Public Overrides Function GetAsyncToolWindowFactory(toolWindowType As Guid) As IVsAsyncToolWindowFactory
+        Return If(toolWindowType.Equals(Guid.Parse(ErrorListToolWindow.WindowGuidString)), Me, Nothing)
+    End Function
+
+    ''' <summary>
+    ''' 获取工具窗口标题
+    ''' </summary>
+    Protected Overrides Function GetToolWindowTitle(toolWindowType As Type, id As Integer) As String
+        Return If(toolWindowType = GetType(ErrorListToolWindow), ErrorListToolWindow.Title, MyBase.GetToolWindowTitle(toolWindowType, id))
+    End Function
+
+    ''' <summary>
+    ''' 在后台线程初始化工具窗口状态
+    ''' </summary>
+    Protected Overrides Async Function InitializeToolWindowAsync(toolWindowType As Type, id As Integer, cancellationToken As CancellationToken) As Task(Of Object)
+        ' 在后台线程执行尽可能多的工作
+        ' 此方法返回的对象将传递到 ErrorListToolWindow 的构造函数中
+        Dim dte = Await GetServiceAsync(GetType(DTE))
+        Dim dte2 = TryCast(dte, DTE2)
+
+        Return New ErrorListToolWindowState With {
+            .DTE = dte2
+        }
+    End Function
+
 #End Region
 
 #Region " Command Callbacks "
@@ -105,16 +135,8 @@ Public NotInheritable Class VsCompileAndGetErrorListPackage
             ' Clear previous errors
             _buildErrors.Clear()
 
-            ' Create a sample error for demonstration
-            _buildErrors.Add(New CompilationError With {
-                .ErrorCode = "DEMO001",
-                .Message = "演示编译错误 - 点击编译按钮触发",
-                .File = "DemoFile.vb",
-                .Line = 10,
-                .Column = 5,
-                .Project = "当前演示项目",
-                .Severity = "Error"
-            })
+            ' Collect real errors from tool window
+            CollectErrorsFromToolWindow()
 
             ' Show error list automatically
             ShowErrorListCallback(Nothing, EventArgs.Empty)
@@ -148,9 +170,7 @@ Public NotInheritable Class VsCompileAndGetErrorListPackage
         _buildInProgress = False
 
         ' Collect errors after build is complete
-        If fSucceeded <> 0 Then
-            CollectBuildErrors()
-        End If
+        CollectErrorsFromToolWindow()
 
         ' Show error list automatically if there are errors
         If _buildErrors.Count > 0 Then
@@ -177,26 +197,31 @@ Public NotInheritable Class VsCompileAndGetErrorListPackage
 
 #Region " Error Collection "
 
-    Private Sub CollectBuildErrors()
+    ''' <summary>
+    ''' 从工具窗口收集错误（使用异步初始化的 DTE 服务）
+    ''' </summary>
+    Private Sub CollectErrorsFromToolWindow()
         Try
-            ' Get the error list service
-            Dim errorList As IVsErrorList = TryCast(GetService(GetType(SVsErrorList)), IVsErrorList)
-            If errorList IsNot Nothing Then
-                ' This is a simplified approach - in a real implementation,
-                ' you would want to use the Task List Provider or Error List Provider
-                ' to get detailed error information
-                _buildErrors.Add(New CompilationError With {
-                    .ErrorCode = "SAMPLE001",
-                    .Message = "编译完成 - 这是示例错误信息",
-                    .File = "Sample.vb",
-                    .Line = 1,
-                    .Column = 1,
-                    .Project = "当前项目",
-                    .Severity = "Error"
-                })
+            ' 获取工具窗口实例
+            Dim toolWindow = FindToolWindow(GetType(ErrorListToolWindow), 0, False)
+            If toolWindow Is Nothing Then
+                System.Diagnostics.Debug.WriteLine("工具窗口未初始化")
+                Return
             End If
+
+            Dim errorToolWindow = TryCast(toolWindow, ErrorListToolWindow)
+            If errorToolWindow Is Nothing Then
+                System.Diagnostics.Debug.WriteLine("无法转换为 ErrorListToolWindow")
+                Return
+            End If
+
+            ' 使用工具窗口的方法收集错误
+            Dim errors = errorToolWindow.CollectErrorsFromToolWindow()
+            _buildErrors.AddRange(errors)
+
+            System.Diagnostics.Debug.WriteLine($"成功收集 {_buildErrors.Count} 个错误")
+
         Catch ex As Exception
-            ' Log error but don't throw
             System.Diagnostics.Debug.WriteLine($"收集错误时出错: {ex.Message}")
         End Try
     End Sub
