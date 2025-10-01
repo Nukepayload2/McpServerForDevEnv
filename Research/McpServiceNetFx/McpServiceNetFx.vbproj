@@ -2,10 +2,15 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <RootNamespace>McpServiceNetFx</RootNamespace>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+  </ItemGroup>
 
   <ItemGroup>
     <Import Include="System.Windows" />
@@ -17,6 +22,10 @@
     <Import Include="System.Windows.Media.Imaging" />
     <Import Include="System.Windows.Navigation" />
     <Import Include="System.Windows.Shapes" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nukepayload2.SourceGenerators.MyWpfExtension" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
