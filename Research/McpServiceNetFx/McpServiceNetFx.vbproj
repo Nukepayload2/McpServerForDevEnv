@@ -29,7 +29,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.14.40260" />
     <PackageReference Include="Nukepayload2.SourceGenerators.MyWpfExtension" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="ModelContextProtocol" Version="0.4.0-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
   </ItemGroup>
 
 </Project>

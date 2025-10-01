@@ -112,11 +112,6 @@ Public Module PersistenceModule
                 .FeatureName = "get_solution_info",
                 .Description = "获取当前解决方案信息",
                 .Permission = PermissionLevel.Allow
-            },
-            New FeaturePermission With {
-                .FeatureName = "clean_solution",
-                .Description = "清理解决方案",
-                .Permission = PermissionLevel.Ask
             }
         }
     End Function

@@ -288,37 +288,4 @@ Public Class VisualStudioTools
         Return info
     End Function
 
-    Public Async Function CleanSolutionAsync() As Task(Of Object)
-        Return Await Task.Run(Function()
-                                  Return CleanSolutionInternal()
-                              End Function)
-    End Function
-
-    Private Function CleanSolutionInternal() As Object
-        Try
-            UtilityModule.SafeInvoke(_dispatcher, Sub()
-                                                      If _dte2.Solution Is Nothing Then
-                                                          Throw New Exception("没有打开的解决方案")
-                                                      End If
-
-                                                      Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
-
-                                                      ' 执行清理
-                                                      solutionBuild.Clean(True)
-
-                                                      ' 清除错误列表 - 由于没有ClearAll方法，我们不需要清除
-                                                  End Sub)
-
-            Return New With {
-                .success = True,
-                .message = "解决方案清理完成"
-            }
-
-        Catch ex As Exception
-            Return New With {
-                .success = False,
-                .message = $"清理解决方案失败: {ex.Message}"
-            }
-        End Try
-    End Function
-End Class
+    End Class

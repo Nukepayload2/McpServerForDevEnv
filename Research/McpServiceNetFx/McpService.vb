@@ -3,9 +3,9 @@ Imports EnvDTE80
 Imports System.Windows.Threading
 Imports Microsoft.Extensions.Hosting
 Imports Microsoft.Extensions.DependencyInjection
-Imports ModelContextProtocol
-Imports ModelContextProtocol.Server
 Imports System.ComponentModel
+Imports System.ServiceModel
+Imports System.ServiceModel.Description
 
 Public Class McpService
     Implements IDisposable
@@ -16,6 +16,8 @@ Public Class McpService
     Private ReadOnly _dispatcher As Dispatcher
     Private ReadOnly _vsTools As VisualStudioTools
     Private _host As IHost
+    Private _serviceHost As ServiceHost
+    Private _visualStudioMcpTools As VisualStudioMcpTools
     Private _isRunning As Boolean = False
 
     Public Sub New(dte2 As DTE2, port As Integer, mainWindow As MainWindow, dispatcher As Dispatcher)
@@ -24,6 +26,7 @@ Public Class McpService
         _mainWindow = mainWindow
         _dispatcher = dispatcher
         _vsTools = New VisualStudioTools(dte2, dispatcher, mainWindow)
+        _visualStudioMcpTools = New VisualStudioMcpTools(dte2, mainWindow, dispatcher, _vsTools)
     End Sub
 
     Public Async Function StartAsync() As Task
@@ -32,21 +35,24 @@ Public Class McpService
         End If
 
         Try
-            Dim builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder()
+            ' 启动 WCF HTTP 服务
+            StartWcfService()
 
-            ' 配置服务
-            builder.Services.AddMcpServer().WithStdioServerTransport().WithTools(GetType(VisualStudioMcpTools))
+            ' 配置 MCP 服务（用于内部处理）
+            Dim builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder()
             builder.Services.AddSingleton(_dte2)
             builder.Services.AddSingleton(_mainWindow)
             builder.Services.AddSingleton(_dispatcher)
             builder.Services.AddSingleton(_vsTools)
+            builder.Services.AddSingleton(_visualStudioMcpTools)
 
             _host = builder.Build()
             _isRunning = True
 
-            _mainWindow?.LogMcpRequest("MCP服务", "启动", $"端口: {_port}")
+            _mainWindow?.LogMcpRequest("MCP服务", "启动", $"HTTP端点: http://localhost:{_port}/mcp")
 
-            Await _host.RunAsync()
+            ' 启动后台任务来处理内部逻辑
+            Task.Run(Function() _host.RunAsync())
 
         Catch ex As Exception
             _isRunning = False
@@ -54,6 +60,36 @@ Public Class McpService
             Throw New Exception($"启动 MCP 服务失败: {ex.Message}", ex)
         End Try
     End Function
+
+    Private Sub StartWcfService()
+        Try
+            Dim baseAddress As New Uri($"http://localhost:{_port}/mcp")
+
+            ' 创建服务实例并传递依赖项
+            Dim serviceInstance As New McpHttpService(_dte2, _mainWindow, _dispatcher, _vsTools)
+            _serviceHost = New ServiceHost(serviceInstance, baseAddress)
+
+            ' 添加服务端点
+            _serviceHost.AddServiceEndpoint(GetType(IMcpHttpService), New WebHttpBinding(), "")
+
+            ' 添加服务行为
+            Dim behavior As New WebHttpBehavior With {
+                .AutomaticFormatSelectionEnabled = True,
+                .DefaultOutgoingRequestFormat = System.ServiceModel.Web.WebMessageFormat.Json,
+                .DefaultOutgoingResponseFormat = System.ServiceModel.Web.WebMessageFormat.Json
+            }
+
+            ' 获取端点并添加行为
+            Dim endpoint = _serviceHost.Description.Endpoints(0)
+            endpoint.Behaviors.Add(behavior)
+
+            ' 打开服务主机
+            _serviceHost.Open()
+
+        Catch ex As Exception
+            Throw New Exception($"启动 WCF 服务失败: {ex.Message}", ex)
+        End Try
+    End Sub
 
     Public Async Function [StopAsync]() As Task
         If Not _isRunning Then
@@ -63,13 +99,20 @@ Public Class McpService
         _isRunning = False
 
         Try
+            ' 停止 WCF 服务
+            If _serviceHost IsNot Nothing Then
+                _serviceHost.Close()
+                _serviceHost = Nothing
+            End If
+
+            ' 停止 MCP 主机
             If _host IsNot Nothing Then
                 Await _host.StopAsync()
                 _host.Dispose()
                 _host = Nothing
             End If
 
-            _mainWindow?.LogMcpRequest("MCP服务", "停止", "服务已正常停止")
+            _mainWindow?.LogMcpRequest("MCP服务", "停止", "HTTP服务已正常停止")
 
         Catch ex As Exception
             _mainWindow?.LogMcpRequest("MCP服务", "停止异常", ex.Message)
@@ -91,8 +134,7 @@ Public Class McpService
     End Sub
 End Class
 
-' MCP工具类，使用ModelContextProtocol框架
-<McpServerToolType>
+' MCP工具类，自定义实现
 Public Class VisualStudioMcpTools
     Private ReadOnly _dte2 As DTE2
     Private ReadOnly _mainWindow As MainWindow
@@ -106,7 +148,9 @@ Public Class VisualStudioMcpTools
         _vsTools = vsTools
     End Sub
 
-    <McpServerTool, Description("构建整个解决方案")>
+    ''' <summary>
+''' 构建整个解决方案
+''' </summary>
     Public Async Function BuildSolution(
         <Description("构建配置 (Debug/Release)")> Optional configuration As String = "Debug"
     ) As Task(Of BuildResult)
@@ -130,7 +174,9 @@ Public Class VisualStudioMcpTools
         End Try
     End Function
 
-    <McpServerTool, Description("构建指定项目")>
+    ''' <summary>
+''' 构建指定项目
+''' </summary>
     Public Async Function BuildProject(
         <Description("项目名称")> projectName As String,
         <Description("构建配置 (Debug/Release)")> Optional configuration As String = "Debug"
@@ -159,7 +205,9 @@ Public Class VisualStudioMcpTools
         End Try
     End Function
 
-    <McpServerTool, Description("获取当前的错误和警告列表")>
+    ''' <summary>
+''' 获取当前的错误和警告列表
+''' </summary>
     Public Function GetErrorList(
         <Description("过滤级别 (Error/Warning/Message/All)")> Optional severity As String = "All"
     ) As Object
@@ -183,7 +231,9 @@ Public Class VisualStudioMcpTools
         End Try
     End Function
 
-    <McpServerTool, Description("获取当前解决方案信息")>
+    ''' <summary>
+''' 获取当前解决方案信息
+''' </summary>
     Public Function GetSolutionInfo() As Object
         Try
             ' 检查权限
@@ -199,28 +249,7 @@ Public Class VisualStudioMcpTools
         End Try
     End Function
 
-    <McpServerTool, Description("清理解决方案")>
-    Public Async Function CleanSolution() As Task(Of Object)
-        Try
-            ' 检查权限
-            If Not CheckPermission("clean_solution", "清理解决方案") Then
-                Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
-            End If
-
-            _mainWindow?.LogMcpRequest("清理解决方案", "开始", "")
-
-            Dim result = Await _vsTools.CleanSolutionAsync()
-
-            _mainWindow?.LogMcpRequest("清理解决方案", If(result.success, "成功", "失败"), result.message)
-
-            Return result
-
-        Catch ex As Exception
-            _mainWindow?.LogMcpRequest("清理解决方案", "失败", ex.Message)
-            Throw New McpException($"清理解决方案失败: {ex.Message}", McpErrorCode.InternalError)
-        End Try
-    End Function
-
+    
     Private Function CheckPermission(featureName As String, operationDescription As String) As Boolean
         Try
             Return _mainWindow.CheckPermission(featureName, operationDescription)
