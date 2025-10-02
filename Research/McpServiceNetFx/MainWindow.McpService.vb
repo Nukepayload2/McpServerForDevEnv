@@ -1,4 +1,5 @@
 Partial Public Class MainWindow
+    Implements IMcpLogger, IMcpPermissionHandler
     Private _mcpService As McpService
     Private _vsMonitor As VisualStudioMonitor
     Private _isServiceRunning As Boolean = False
@@ -59,7 +60,7 @@ Partial Public Class MainWindow
             AddHandler _vsMonitor.VisualStudioShutdown, AddressOf OnVisualStudioShutdown
 
             ' 创建并启动 MCP 服务
-            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Dispatcher)
+            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Me, Dispatcher)
             Await _mcpService.StartAsync()
 
             ' 更新 UI 状态
@@ -170,26 +171,19 @@ Partial Public Class MainWindow
         End If
     End Sub
 
-    Private Sub LogServiceAction(action As String, result As String, details As String)
-        Dim logEntry As New PersistenceModule.LogEntry With {
-            .Timestamp = DateTime.Now,
-            .Operation = action,
-            .Result = result,
-            .Details = details
-        }
+    Public Sub LogServiceAction(action As String, result As String, details As String) Implements IMcpLogger.LogServiceAction
+        ' 使用统一的日志操作方法
+        LogOperation(action, result, details)
 
-        ' 异步保存日志
-        Task.Run(Sub() PersistenceModule.AppendLog(logEntry))
-
-        ' 更新服务日志显示
+        ' 更新服务日志显示（特定于服务日志的UI）
         UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
-                                                      Dim logLine = $"[{logEntry.Timestamp:HH:mm:ss}] {action}: {result} - {details}{Environment.NewLine}"
+                                                      Dim logLine = $"[{DateTime.Now:HH:mm:ss}] {action}: {result} - {details}{Environment.NewLine}"
                                                       TxtServiceLog.AppendText(logLine)
                                                       TxtServiceLog.ScrollToEnd()
                                                   End Sub)
     End Sub
 
-    Public Sub LogMcpRequest(operation As String, result As String, details As String)
+    Public Sub LogMcpRequest(operation As String, result As String, details As String) Implements IMcpLogger.LogMcpRequest
         LogServiceAction($"MCP请求 - {operation}", result, details)
     End Sub
 

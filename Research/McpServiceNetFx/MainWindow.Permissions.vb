@@ -112,7 +112,7 @@ Partial Public Class MainWindow
         End If
     End Function
 
-    Public Function CheckPermission(featureName As String, operationDescription As String) As Boolean
+    Public Function CheckPermission(featureName As String, operationDescription As String) As Boolean Implements IMcpPermissionHandler.CheckPermission
         Dim permission = GetPermission(featureName)
 
         Select Case permission
@@ -138,4 +138,4 @@ Partial Public Class MainWindow
         End Select
     End Function
 
-    End Class
+End Class

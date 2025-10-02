@@ -1,33 +1,19 @@
-Imports System.ComponentModel
+Imports System.Collections.ObjectModel
 
 Partial Public Class MainWindow
-    Private _logs As New List(Of PersistenceModule.LogEntry)()
+    Private _logs As New ObservableCollection(Of PersistenceModule.LogEntry)()
 
     Private Sub LoadLogs()
         Try
-            _logs = PersistenceModule.LoadLogs()
-            DgLogs.ItemsSource = _logs.OrderByDescending(Function(l) l.Timestamp).ToList()
+            Dim loadedLogs = PersistenceModule.LoadLogs()
+            _logs.Clear()
+            For Each log In loadedLogs.OrderByDescending(Function(l) l.Timestamp)
+                _logs.Add(log)
+            Next
+            DgLogs.ItemsSource = _logs
         Catch ex As Exception
             UtilityModule.ShowError(Me, $"加载日志失败: {ex.Message}")
         End Try
-    End Sub
-
-    Private Sub RefreshLogs()
-        LoadLogs()
-    End Sub
-
-    Private Sub AddLogEntry(entry As PersistenceModule.LogEntry)
-        _logs.Insert(0, entry) ' 添加到开头
-
-        ' 保持日志数量在合理范围内（最多1000条）
-        If _logs.Count > 1000 Then
-            _logs = _logs.Take(1000).ToList()
-        End If
-
-        ' 更新显示
-        UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
-                                                      DgLogs.ItemsSource = _logs.ToList()
-                                                  End Sub)
     End Sub
 
     Private Sub BtnClearLogs_Click() Handles BtnClearLogs.Click
@@ -38,7 +24,6 @@ Partial Public Class MainWindow
         Try
             _logs.Clear()
             PersistenceModule.SaveLogs(_logs)
-            DgLogs.ItemsSource = _logs
 
             UtilityModule.ShowInfo(Me, "日志已清空", "操作成功")
         Catch ex As Exception
@@ -58,7 +43,7 @@ Partial Public Class MainWindow
             .Title = "导出日志"
         }
 
-        If saveDialog.ShowDialog() = True Then
+        If saveDialog.ShowDialog() Then
             Try
                 PersistenceModule.ExportLogs(saveDialog.FileName, _logs)
                 UtilityModule.ShowInfo(Me, $"日志已导出到: {saveDialog.FileName}", "导出成功")
@@ -76,27 +61,15 @@ Partial Public Class MainWindow
             .Details = details
         }
 
-        ' 异步保存到持久化存储
-        Task.Run(Sub() PersistenceModule.AppendLog(entry))
-
-        ' 添加到内存中的日志列表
-        AddLogEntry(entry)
+        ' 仅添加到内存中的日志列表，不再立即保存到持久化存储
+        _logs.Add(entry)
     End Sub
 
-    Public Sub LogUserAction(action As String, details As String)
-        LogOperation($"用户操作 - {action}", "成功", details)
-    End Sub
-
-    Public Sub LogSystemEvent(eventType As String, details As String, Optional result As String = "信息")
-        LogOperation($"系统事件 - {eventType}", result, details)
-    End Sub
-
-  
-    Private Sub MainWindow_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+    Private Sub MainWindow_Closing() Handles Me.Closing
         Try
             ' 确保日志被保存
             If _logs.Count > 0 Then
-                PersistenceModule.SaveLogs(_logs)
+                PersistenceModule.SaveLogs(_logs.ToList())
             End If
         Catch ex As Exception
             ' 忽略关闭时保存日志的错误

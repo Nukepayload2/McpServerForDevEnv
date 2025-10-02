@@ -1,6 +1,5 @@
 Imports System.Runtime.InteropServices
 Imports System.Text
-Imports Microsoft.VisualStudio.Interop
 Imports System.Timers
 
 Public Class VisualStudioMonitor
@@ -91,30 +90,13 @@ Public Class VisualStudioMonitor
 
     Private Sub HandleDTEDisconnected()
         ' DTE 连接已断开，可能 Visual Studio 已经退出
-        If _timer IsNot Nothing Then
-            _timer.Stop()
-        End If
+        _timer?.Stop()
         OnVisualStudioExited()
     End Sub
 
     Public ReadOnly Property DTE2 As EnvDTE80.DTE2
         Get
             Return _dte2
-        End Get
-    End Property
-
-    Public ReadOnly Property ProcessId As Integer
-        Get
-            Try
-                ' 尝试从 DTE 获取进程ID
-                Dim dteProcess As EnvDTE.Process = _dte2.Debugger.CurrentProcess
-                If dteProcess IsNot Nothing Then
-                    Return dteProcess.ProcessID
-                End If
-            Catch ex As Exception
-                ' 如果无法获取，返回0
-            End Try
-            Return 0
         End Get
     End Property
 

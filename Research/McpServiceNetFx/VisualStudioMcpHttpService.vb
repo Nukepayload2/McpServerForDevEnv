@@ -1,9 +1,6 @@
 Imports System.ServiceModel
 Imports System.ServiceModel.Web
-Imports System.IO
-Imports System.Text
 Imports Newtonsoft.Json
-Imports EnvDTE80
 Imports System.Windows.Threading
 
 <ServiceContract>
@@ -13,26 +10,13 @@ Public Interface IMcpHttpService
     Function ProcessRequest(request As String) As String
 End Interface
 
-Public Class McpHttpService
+Public Class VisualStudioMcpHttpService
     Implements IMcpHttpService
 
-    Private ReadOnly _dte2 As EnvDTE80.DTE2
-    Private ReadOnly _mainWindow As MainWindow
-    Private ReadOnly _dispatcher As Dispatcher
-    Private ReadOnly _vsTools As VisualStudioTools
     Private ReadOnly _visualStudioMcpTools As VisualStudioMcpTools
 
-    Public Sub New()
-        ' 默认构造函数，需要通过其他方式获取依赖
-        Throw New NotImplementedException("Use parameterized constructor")
-    End Sub
-
-    Public Sub New(dte2 As EnvDTE80.DTE2, mainWindow As MainWindow, dispatcher As Dispatcher, vsTools As VisualStudioTools)
-        _dte2 = dte2
-        _mainWindow = mainWindow
-        _dispatcher = dispatcher
-        _vsTools = vsTools
-        _visualStudioMcpTools = New VisualStudioMcpTools(dte2, mainWindow, dispatcher, vsTools)
+    Sub New(vs As VisualStudioMcpTools)
+        _visualStudioMcpTools = vs
     End Sub
 
     Public Function ProcessRequest(request As String) As String Implements IMcpHttpService.ProcessRequest
@@ -96,7 +80,6 @@ Public Class McpHttpService
                         .Errors = result.Errors?.ToArray(),
                         .Warnings = result.Warnings?.ToArray()
                     }
-
                 Case "build_project"
                     Dim result = Await _visualStudioMcpTools.BuildProject(
                         toolParams.arguments("projectName").ToString(),
@@ -109,89 +92,16 @@ Public Class McpHttpService
                         .Errors = result.Errors?.ToArray(),
                         .Warnings = result.Warnings?.ToArray()
                     }
-
                 Case "get_error_list"
-                    Dim result = _visualStudioMcpTools.GetErrorList(If(toolParams.arguments?.ContainsKey("severity"), toolParams.arguments("severity").ToString(), "All"))
-                    Return New ErrorListResponse With {
-                        .Errors = result.Errors?.ToArray(),
-                        .Warnings = result.Warnings?.ToArray(),
-                        .TotalCount = If(result.Errors?.Count, 0) + If(result.Warnings?.Count, 0)
-                    }
-
+                    Return _visualStudioMcpTools.GetErrorList(If(toolParams.arguments?.ContainsKey("severity"), toolParams.arguments("severity").ToString(), "All"))
                 Case "get_solution_info"
-                    Dim result = _visualStudioMcpTools.GetSolutionInfo()
-                    ' 将动态结果转换为强类型
-                    Return ConvertToSolutionInfoResponse(result)
-
-                
+                    Return _visualStudioMcpTools.GetSolutionInfo()
                 Case Else
                     Throw New ArgumentException($"Unknown tool: {toolParams.name}")
             End Select
 
         Catch ex As Exception
             Throw New Exception($"Tool call failed: {ex.Message}", ex)
-        End Try
-    End Function
-
-    Private Function ConvertToSolutionInfoResponse(dynamicResult As Object) As SolutionInfoResponse
-        Try
-            ' 由于 GetSolutionInfo 返回动态对象，我们需要转换为强类型
-            Dim resultDict = TryCast(dynamicResult, Dictionary(Of String, Object))
-            If resultDict Is Nothing Then
-                Throw New Exception("Invalid solution info format")
-            End If
-
-            Dim response As New SolutionInfoResponse()
-
-            If resultDict.ContainsKey("fullName") Then
-                response.FullName = resultDict("fullName")?.ToString()
-            End If
-
-            If resultDict.ContainsKey("name") Then
-                response.Name = resultDict("name")?.ToString()
-            End If
-
-            If resultDict.ContainsKey("count") AndAlso TypeOf resultDict("count") Is Integer Then
-                response.Count = CInt(resultDict("count"))
-            End If
-
-            ' 处理项目列表
-            If resultDict.ContainsKey("projects") Then
-                Dim projectsObj = resultDict("projects")
-                If TypeOf projectsObj Is IEnumerable(Of Object) Then
-                    Dim projectsList = New List(Of ProjectInfo)
-                    For Each projectObj As Object In CType(projectsObj, IEnumerable(Of Object))
-                        Dim projectDict = TryCast(projectObj, Dictionary(Of String, Object))
-                        If projectDict IsNot Nothing Then
-                            projectsList.Add(New ProjectInfo With {
-                                .Name = projectDict("name")?.ToString(),
-                                .FullName = projectDict("fullName")?.ToString(),
-                                .UniqueName = projectDict("uniqueName")?.ToString(),
-                                .Kind = projectDict("kind")?.ToString()
-                            })
-                        End If
-                    Next
-                    response.Projects = projectsList.ToArray()
-                End If
-            End If
-
-            ' 处理活动配置
-            If resultDict.ContainsKey("activeConfiguration") Then
-                Dim configObj = resultDict("activeConfiguration")
-                Dim configDict = TryCast(configObj, Dictionary(Of String, Object))
-                If configDict IsNot Nothing Then
-                    response.ActiveConfiguration = New ConfigurationInfo With {
-                        .Name = configDict("name")?.ToString(),
-                        .ConfigurationName = configDict("configurationName")?.ToString(),
-                        .PlatformName = configDict("platformName")?.ToString()
-                    }
-                End If
-            End If
-
-            Return response
-
-        Catch ex As Exception
-            Throw New Exception($"Failed to convert solution info: {ex.Message}", ex)
         End Try
     End Function
 
@@ -227,7 +137,7 @@ Public Class McpHttpService
                             .[Default] = "Debug"
                         }}
                     },
-                    .Required = New String() {"projectName"}
+                    .Required = {"projectName"}
                 }
             },
             New ToolDefinition With {
@@ -263,19 +173,6 @@ End Class
 ' MCP 工具定义的显式类型
 Public Class ToolsListResponse
     Public Property Tools As ToolDefinition()
-End Class
-
-' 强类型 MCP 请求和响应
-Public Class ToolCallRequest
-    Public Property Name As String
-    Public Property Arguments As Dictionary(Of String, Object)
-End Class
-
-Public Class McpResponse
-    Public Property jsonrpc As String = "2.0"
-    Public Property id As Object
-    Public Property result As Object
-    Public Property [error] As JsonRpcError
 End Class
 
 ' 构建结果强类型
@@ -316,7 +213,6 @@ Public Class ErrorListResponse
     Public Property Warnings As CompilationError()
     Public Property TotalCount As Integer
 End Class
-
 
 Public Class ToolDefinition
     Public Property Name As String

@@ -1,5 +1,4 @@
 Imports System.Windows.Threading
-Imports System.ComponentModel
 Imports System.IO
 
 Public Module UtilityModule
@@ -28,6 +27,34 @@ Public Module UtilityModule
             dispatcher.BeginInvoke(action)
         End If
     End Sub
+
+    Public Async Function SafeInvokeAsync(dispatcher As Dispatcher, func As Func(Of Task)) As Task
+        If dispatcher Is Nothing Then
+            Throw New ArgumentNullException(NameOf(dispatcher))
+        End If
+
+        If dispatcher.CheckAccess() Then
+            Await func.Invoke()
+        Else
+            Dim tcs As New TaskCompletionSource(Of Boolean)
+            Await dispatcher.BeginInvoke(
+                Sub()
+                    Try
+                        func.Invoke().ContinueWith(
+                        Sub(t)
+                            If t.IsFaulted OrElse t.IsCanceled Then
+                                tcs.SetException(t.Exception)
+                            Else
+                                tcs.SetResult(True)
+                            End If
+                        End Sub)
+                    Catch ex As Exception
+                        tcs.SetException(ex)
+                    End Try
+                End Sub)
+            Await tcs.Task
+        End If
+    End Function
 
     Public Function IsValidPort(port As String) As Boolean
         If String.IsNullOrWhiteSpace(port) Then Return False
@@ -89,104 +116,6 @@ Public Module UtilityModule
         End Try
     End Function
 
-    Public Function FormatFileSize(bytes As Long) As String
-        If bytes < 0 Then Return "0 B"
-
-        Dim units As String() = {"B", "KB", "MB", "GB", "TB"}
-        Dim size As Double = bytes
-        Dim unitIndex As Integer = 0
-
-        While size >= 1024 AndAlso unitIndex < units.Length - 1
-            size /= 1024
-            unitIndex += 1
-        End While
-
-        Return $"{size:F1} {units(unitIndex)}"
-    End Function
-
-    Public Function FormatDuration(start As DateTime, [end] As DateTime) As String
-        Dim duration = [end] - start
-
-        If duration.TotalSeconds < 1 Then
-            Return "< 1 秒"
-        ElseIf duration.TotalMinutes < 1 Then
-            Return $"{CInt(duration.TotalSeconds)} 秒"
-        ElseIf duration.TotalHours < 1 Then
-            Return $"{CInt(duration.TotalMinutes)} 分 {duration.Seconds} 秒"
-        ElseIf duration.TotalDays < 1 Then
-            Return $"{CInt(duration.TotalHours)} 小时 {duration.Minutes} 分"
-        Else
-            Return $"{CInt(duration.TotalDays)} 天 {duration.Hours} 小时"
-        End If
-    End Function
-
-    Public Function GetRelativeTime(dateTime As DateTime) As String
-        Dim now = DateTime.Now
-        Dim span = now - dateTime
-
-        If span.TotalSeconds < 60 Then
-            Return "刚刚"
-        ElseIf span.TotalMinutes < 60 Then
-            Return $"{CInt(span.TotalMinutes)} 分钟前"
-        ElseIf span.TotalHours < 24 Then
-            Return $"{CInt(span.TotalHours)} 小时前"
-        ElseIf span.TotalDays < 7 Then
-            Return $"{CInt(span.TotalDays)} 天前"
-        Else
-            Return dateTime.ToString("yyyy-MM-dd HH:mm")
-        End If
-    End Function
-
-    Public Function IsEmptyOrWhitespace(text As String) As Boolean
-        Return String.IsNullOrWhiteSpace(text)
-    End Function
-
-    Public Function SafeToString(obj As Object, defaultValue As String) As String
-        If obj Is Nothing Then
-            Return defaultValue
-        End If
-
-        Try
-            Return obj.ToString()
-        Catch ex As Exception
-            Return defaultValue
-        End Try
-    End Function
-
-    Public Function SafeParseInt(text As String, defaultValue As Integer) As Integer
-        If String.IsNullOrWhiteSpace(text) Then
-            Return defaultValue
-        End If
-
-        Dim result As Integer
-        Return If(Integer.TryParse(text, result), result, defaultValue)
-    End Function
-
-    Public Function SafeParseBool(text As String, defaultValue As Boolean) As Boolean
-        If String.IsNullOrWhiteSpace(text) Then
-            Return defaultValue
-        End If
-
-        Dim result As Boolean
-        Return If(Boolean.TryParse(text, result), result, defaultValue)
-    End Function
-
-    Public Function GenerateUniqueId() As String
-        Return Guid.NewGuid().ToString("N")
-    End Function
-
-    Public Function GetTimestamp() As String
-        Return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
-    End Function
-
-    Public Function TruncateText(text As String, maxLength As Integer) As String
-        If String.IsNullOrEmpty(text) OrElse text.Length <= maxLength Then
-            Return text
-        End If
-
-        Return text.Substring(0, maxLength - 3) + "..."
-    End Function
-
     Public Function ContainsIgnoreCase(text As String, search As String) As Boolean
         If String.IsNullOrEmpty(text) OrElse String.IsNullOrEmpty(search) Then
             Return False
@@ -231,13 +160,4 @@ Public Module UtilityModule
         Return tcs.Task
     End Function
 
-    Public Function GetApplicationVersion() As String
-        Try
-            Dim assembly = System.Reflection.Assembly.GetExecutingAssembly()
-            Dim version = assembly.GetName().Version
-            Return $"{version.Major}.{version.Minor}.{version.Build}"
-        Catch ex As Exception
-            Return "未知版本"
-        End Try
-    End Function
 End Module

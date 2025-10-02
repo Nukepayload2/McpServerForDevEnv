@@ -1,26 +1,22 @@
-Imports System.Threading.Tasks
-Imports Microsoft.VisualStudio.Interop
 Imports EnvDTE80
 Imports System.Windows.Threading
 
 Public Class VisualStudioTools
     Private ReadOnly _dte2 As DTE2
     Private ReadOnly _dispatcher As Dispatcher
-    Private ReadOnly _mainWindow As MainWindow
+    Private ReadOnly _logger As IMcpLogger
 
-    Public Sub New(dte2 As DTE2, dispatcher As Dispatcher, mainWindow As MainWindow)
+    Public Sub New(dte2 As DTE2, dispatcher As Dispatcher, logger As IMcpLogger)
         _dte2 = dte2
         _dispatcher = dispatcher
-        _mainWindow = mainWindow
+        _logger = logger
     End Sub
 
     Public Async Function BuildSolutionAsync(configuration As String) As Task(Of BuildResult)
-        Return Await Task.Run(Function()
-                                Return BuildSolutionInternal(configuration)
-                            End Function)
+        Return Await BuildSolutionInternal(configuration)
     End Function
 
-    Private Function BuildSolutionInternal(configuration As String) As BuildResult
+    Private Async Function BuildSolutionInternal(configuration As String) As Task(Of BuildResult)
         Dim startTime = DateTime.Now
         Dim result As New BuildResult With {
             .Success = True,
@@ -31,20 +27,26 @@ Public Class VisualStudioTools
 
         Try
             ' 在UI线程上执行DTE操作
-            UtilityModule.SafeInvoke(_dispatcher, Sub()
-                                                      If _dte2.Solution Is Nothing Then
-                                                          Throw New Exception("没有打开的解决方案")
-                                                      End If
+            Await UtilityModule.SafeInvokeAsync(_dispatcher,
+            Async Function()
+                If _dte2.Solution Is Nothing Then
+                    Throw New Exception("没有打开的解决方案")
+                End If
 
-                                                      ' 设置构建配置
-                                                      Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
-                                                      solutionBuild.SolutionConfigurations.Item(configuration).Activate()
+                ' 设置构建配置
+                Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
+                solutionBuild.SolutionConfigurations.Item(configuration).Activate()
 
-                                                      ' 清除之前的错误 - 由于没有ClearAll方法，我们跳过这一步
+                ' 清除之前的错误 - 由于没有ClearAll方法，我们跳过这一步
 
-                                                      ' 执行构建
-                                                      solutionBuild.Build(True)
-                                                  End Sub)
+                ' 执行构建（不等待完成）
+                solutionBuild.Build(False)
+
+                ' 轮询构建状态
+                Do While solutionBuild.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
+                    Await Task.Delay(100)
+                Loop
+            End Function)
 
             ' 收集错误和警告（需要在UI线程上执行）
             Dim allErrors = CollectErrorsFromToolWindow()
@@ -66,12 +68,10 @@ Public Class VisualStudioTools
     End Function
 
     Public Async Function BuildProjectAsync(projectName As String, configuration As String) As Task(Of BuildResult)
-        Return Await Task.Run(Function()
-                                Return BuildProjectInternal(projectName, configuration)
-                            End Function)
+        Return Await BuildProjectInternal(projectName, configuration)
     End Function
 
-    Private Function BuildProjectInternal(projectName As String, configuration As String) As BuildResult
+    Private Async Function BuildProjectInternal(projectName As String, configuration As String) As Task(Of BuildResult)
         Dim startTime = DateTime.Now
         Dim result As New BuildResult With {
             .Success = True,
@@ -83,32 +83,36 @@ Public Class VisualStudioTools
         Try
             Dim targetProject As EnvDTE.Project = Nothing
 
-            ' 在UI线程上查找项目
-            UtilityModule.SafeInvoke(_dispatcher, Sub()
-                                                      If _dte2.Solution Is Nothing Then
-                                                          Throw New Exception("没有打开的解决方案")
-                                                      End If
+            ' 在UI线程上查找项目并启动构建
+            Await UtilityModule.SafeInvokeAsync(_dispatcher,
+            Async Function()
+                If _dte2.Solution Is Nothing Then
+                    Throw New Exception("没有打开的解决方案")
+                End If
 
-                                                      For Each project As EnvDTE.Project In _dte2.Solution.Projects
-                                                          If project.Name = projectName Then
-                                                              targetProject = project
-                                                              Exit For
-                                                          End If
-                                                      Next
+                For Each project As EnvDTE.Project In _dte2.Solution.Projects
+                    If project.Name = projectName Then
+                        targetProject = project
+                        Exit For
+                    End If
+                Next
 
-                                                      If targetProject Is Nothing Then
-                                                          Throw New Exception($"找不到项目: {projectName}")
-                                                      End If
+                If targetProject Is Nothing Then
+                    Throw New Exception($"找不到项目: {projectName}")
+                End If
 
-                                                      ' 设置构建配置
-                                                      Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
-                                                      solutionBuild.SolutionConfigurations.Item(configuration).Activate()
+                ' 设置构建配置
+                Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
+                solutionBuild.SolutionConfigurations.Item(configuration).Activate()
 
-                                                      ' 清除之前的错误 - 由于没有ClearAll方法，我们跳过这一步
+                ' 构建特定项目（不等待完成）
+                solutionBuild.BuildProject(configuration, targetProject.UniqueName, False)
 
-                                                      ' 构建特定项目
-                                                      solutionBuild.BuildProject(configuration, targetProject.UniqueName, True)
-                                                  End Sub)
+                ' 轮询构建状态
+                Do While solutionBuild.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
+                    Await Task.Delay(100)
+                Loop
+            End Function)
 
             ' 收集错误和警告
             Dim allErrors = CollectErrorsFromToolWindow()
@@ -138,7 +142,7 @@ Public Class VisualStudioTools
         Try
             result = CollectErrorsFromToolWindow(severityFilter)
         Catch ex As Exception
-            _mainWindow?.LogMcpRequest("收集错误", "警告", ex.Message)
+            _logger?.LogMcpRequest("收集错误", "警告", ex.Message)
         End Try
 
         Return result
@@ -151,82 +155,81 @@ Public Class VisualStudioTools
         }
 
         ' 需要在UI线程上执行
-        UtilityModule.SafeInvoke(_dispatcher, Sub()
-                                                      Try
-                                                          ' 获取错误列表工具窗口
-                                                          Dim errorList As Object = _dte2.ToolWindows.ErrorList
+        UtilityModule.SafeInvoke(_dispatcher,
+        Sub()
+            Try
+                ' 获取错误列表工具窗口
+                Dim errorList = _dte2.ToolWindows.ErrorList
 
-                                                          If errorList Is Nothing Then
-                                                              Return
-                                                          End If
+                If errorList Is Nothing Then
+                    Return
+                End If
 
-                                                          ' 获取错误项集合
-                                                          Dim errorItems As Object = errorList.ErrorItems
+                ' 获取错误项集合
+                Dim errorItems = errorList.ErrorItems
 
-                                                          If errorItems Is Nothing Then
-                                                              Return
-                                                          End If
+                If errorItems Is Nothing Then
+                    Return
+                End If
 
-                                                          For i As Integer = 1 To CInt(errorItems.GetType().GetProperty("Count").GetValue(errorItems, Nothing))
-                                                              Try
-                                                                  Dim errorItem As Object = errorItems.GetType().GetMethod("Item").Invoke(errorItems, New Object() {i})
+                For i = 1 To errorItems.Count
+                    Try
+                        Dim errorItem = errorItems.Item(i)
 
-                                                                  If errorItem IsNot Nothing Then
-                                                                      Dim description As String = If(errorItem.GetType().GetProperty("Description").GetValue(errorItem, Nothing), "").ToString()
-                                                                      Dim fileName As String = If(errorItem.GetType().GetProperty("FileName").GetValue(errorItem, Nothing), "").ToString()
-                                                                      Dim line As Integer = CInt(errorItem.GetType().GetProperty("Line").GetValue(errorItem, Nothing))
-                                                                      Dim column As Integer = CInt(errorItem.GetType().GetProperty("Column").GetValue(errorItem, Nothing))
-                                                                      Dim errorLevel As Object = errorItem.GetType().GetProperty("ErrorLevel").GetValue(errorItem, Nothing)
-                                                                      Dim projectName As String = If(errorItem.GetType().GetProperty("Project").GetValue(errorItem, Nothing), "").ToString()
+                        If errorItem IsNot Nothing Then
+                            Dim description As String = If(errorItem.Description, "")
+                            Dim fileName As String = If(errorItem.FileName, "")
+                            Dim line As Integer = CInt(errorItem.Line)
+                            Dim column As Integer = CInt(errorItem.Column)
+                            Dim errorLevel = errorItem.ErrorLevel
+                            Dim projectName As String = If(errorItem.Project, "")
 
-                                                                      ' 转换错误级别为字符串
-                                                                      Dim severity As String
-                                                                      ' 使用数值比较而不是枚举
-                                                                      Dim errorLevelValue As Integer = CInt(errorLevel)
-                                                                      Select Case errorLevelValue
-                                                                          Case 1 ' vsBuildErrorLevelHigh
-                                                                              severity = "Error"
-                                                                          Case 2 ' vsBuildErrorLevelMedium
-                                                                              severity = "Warning"
-                                                                          Case 3 ' vsBuildErrorLevelLow
-                                                                              severity = "Message"
-                                                                          Case Else
-                                                                              severity = "Unknown"
-                                                                      End Select
+                            ' 转换错误级别为字符串
+                            Dim severity As String
+                            Select Case errorLevel
+                                Case 1 ' vsBuildErrorLevelLow
+                                    severity = "Message"
+                                Case 2 ' vsBuildErrorLevelMedium
+                                    severity = "Warning"
+                                Case 4 ' vsBuildErrorLevelHigh
+                                    severity = "Error"
+                                Case Else
+                                    severity = "Unknown"
+                            End Select
 
-                                                                      ' 应用过滤器
-                                                                      If severityFilter <> "All" AndAlso severity <> severityFilter Then
-                                                                          Continue For
-                                                                      End If
+                            ' 应用过滤器
+                            If severityFilter <> "All" AndAlso severity <> severityFilter Then
+                                Continue For
+                            End If
 
-                                                                      ' 创建 CompilationError 对象
-                                                                      Dim compilationError As New CompilationError With {
-                                                                          .ErrorCode = ExtractErrorCode(description),
-                                                                          .Message = description,
-                                                                          .File = fileName,
-                                                                          .Line = line,
-                                                                          .Column = column,
-                                                                          .Project = projectName,
-                                                                          .Severity = severity
-                                                                      }
+                            ' 创建 CompilationError 对象
+                            Dim compilationError As New CompilationError With {
+                                .ErrorCode = ExtractErrorCode(description),
+                                .Message = description,
+                                .File = fileName,
+                                .Line = line,
+                                .Column = column,
+                                .Project = projectName,
+                                .Severity = severity
+                            }
 
-                                                                      Select Case severity
-                                                                          Case "Error"
-                                                                              result.Errors.Add(compilationError)
-                                                                          Case "Warning"
-                                                                              result.Warnings.Add(compilationError)
-                                                                      End Select
-                                                                  End If
-                                                              Catch ex As Exception
-                                                                  ' 忽略单个错误项的处理错误
-                                                              End Try
-                                                          Next
+                            Select Case severity
+                                Case "Error"
+                                    result.Errors.Add(compilationError)
+                                Case "Warning"
+                                    result.Warnings.Add(compilationError)
+                            End Select
+                        End If
+                    Catch ex As Exception
+                        ' 忽略单个错误项的处理错误
+                    End Try
+                Next
 
-                                                      Catch ex As Exception
-                                                          ' 记录错误但不抛出异常
-                                                          _mainWindow?.LogMcpRequest("收集错误", "警告", ex.Message)
-                                                      End Try
-                                                  End Sub)
+            Catch ex As Exception
+                ' 记录错误但不抛出异常
+                _logger?.LogMcpRequest("收集错误", "警告", ex.Message)
+            End Try
+        End Sub)
 
         Return result
     End Function
@@ -247,45 +250,46 @@ Public Class VisualStudioTools
         Return "GENERAL"
     End Function
 
-    Public Function GetSolutionInformation() As Object
-        Dim info = New Dictionary(Of String, Object)
+    Public Function GetSolutionInformation() As SolutionInfoResponse
+        Dim response As New SolutionInfoResponse()
 
-        UtilityModule.SafeInvoke(_dispatcher, Sub()
-                                                      If _dte2.Solution IsNot Nothing Then
-                                                          info("fullName") = _dte2.Solution.FullName
-                                                          info("name") = _dte2.Solution.Name
-                                                          info("count") = _dte2.Solution.Count
-                                                      End If
+        UtilityModule.SafeInvoke(_dispatcher,
+        Sub()
+            If _dte2.Solution IsNot Nothing Then
+                response.FullName = _dte2.Solution.FullName
+                response.Name = _dte2.Solution.Name
+                response.Count = _dte2.Solution.Count
+            End If
 
-                                                      Dim projects = New List(Of Object)
-                                                      If _dte2.Solution IsNot Nothing Then
-                                                          For i = 1 To _dte2.Solution.Count
-                                                              Dim project = _dte2.Solution.Item(i)
-                                                              projects.Add(New With {
-                                                                  .name = project.Name,
-                                                                  .fullName = project.FullName,
-                                                                  .uniqueName = project.UniqueName,
-                                                                  .kind = project.Kind
-                                                              })
-                                                          Next
-                                                      End If
+            Dim projectsList = New List(Of ProjectInfo)
+            If _dte2.Solution IsNot Nothing Then
+                For i = 1 To _dte2.Solution.Count
+                    Dim project = _dte2.Solution.Item(i)
+                    projectsList.Add(New ProjectInfo With {
+                        .Name = project.Name,
+                        .FullName = project.FullName,
+                        .UniqueName = project.UniqueName,
+                        .Kind = project.Kind
+                    })
+                Next
+            End If
 
-                                                      info("projects") = projects
+            response.Projects = projectsList.ToArray()
 
-                                                      ' 添加当前构建配置信息
-                                                      If _dte2.Solution IsNot Nothing AndAlso _dte2.Solution.SolutionBuild IsNot Nothing Then
-                                                          Dim activeConfig = _dte2.Solution.SolutionBuild.ActiveConfiguration
-                                                          If activeConfig IsNot Nothing Then
-                                                              info("activeConfiguration") = New With {
-                                                                  .name = activeConfig.Name,
-                                                                  .configurationName = activeConfig.Name,
-                                                                  .platformName = "Any CPU"
-                                                              }
-                                                          End If
-                                                      End If
-                                                  End Sub)
+            ' 添加当前构建配置信息
+            If _dte2.Solution IsNot Nothing AndAlso _dte2.Solution.SolutionBuild IsNot Nothing Then
+                Dim activeConfig = _dte2.Solution.SolutionBuild.ActiveConfiguration
+                If activeConfig IsNot Nothing Then
+                    response.ActiveConfiguration = New ConfigurationInfo With {
+                        .Name = activeConfig.Name,
+                        .ConfigurationName = activeConfig.Name,
+                        .PlatformName = "Any CPU"
+                    }
+                End If
+            End If
+        End Sub)
 
-        Return info
+        Return response
     End Function
 
-    End Class
+End Class

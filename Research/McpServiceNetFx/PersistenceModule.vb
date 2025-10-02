@@ -1,5 +1,4 @@
 Imports System.IO
-Imports System.Xml.Linq
 Imports System.Reflection
 
 Public Module PersistenceModule
@@ -37,17 +36,14 @@ Public Module PersistenceModule
             Dim folder = EnsureAppDataFolder()
             Dim filePath = Path.Combine(folder, "permissions.xml")
 
-            Dim doc As New XDocument(
-                New XDeclaration("1.0", "utf-8", "yes"),
-                New XElement("Permissions",
-                    From p In permissions
-                    Select New XElement("Permission",
-                        New XAttribute("FeatureName", p.FeatureName),
-                        New XAttribute("Description", p.Description),
-                        New XAttribute("Permission", p.Permission.ToString())
-                    )
-                )
-            )
+            Dim doc = <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+                      <Permissions>
+                          <%= From p In permissions
+                              Select <Permission
+                                         FeatureName=<%= p.FeatureName %>
+                                         Description=<%= p.Description %>
+                                         Permission=<%= p.Permission.ToString() %>/> %>
+                      </Permissions>
 
             doc.Save(filePath)
         Catch ex As Exception
@@ -69,11 +65,11 @@ Public Module PersistenceModule
 
             For Each element In doc.Root.Elements("Permission")
                 Dim permission As New FeaturePermission With {
-                    .FeatureName = element.Attribute("FeatureName")?.Value,
-                    .Description = element.Attribute("Description")?.Value
+                    .FeatureName = element.@FeatureName,
+                    .Description = element.@Description
                 }
 
-                Dim permissionValue = element.Attribute("Permission")?.Value
+                Dim permissionValue = element.@Permission
                 Dim parsedPermission As PermissionLevel
                 If [Enum].TryParse(Of PermissionLevel)(permissionValue, parsedPermission) Then
                     permission.Permission = parsedPermission
@@ -121,18 +117,14 @@ Public Module PersistenceModule
             Dim folder = EnsureAppDataFolder()
             Dim filePath = Path.Combine(folder, "logs.xml")
 
-            Dim doc As New XDocument(
-                New XDeclaration("1.0", "utf-8", "yes"),
-                New XElement("Logs",
-                    From log In logs
-                    Select New XElement("Log",
-                        New XAttribute("Timestamp", log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")),
-                        New XAttribute("Operation", log.Operation),
-                        New XAttribute("Result", log.Result),
-                        New XAttribute("Details", log.Details)
-                    )
-                )
-            )
+            Dim doc = <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+                      <Logs>
+                          <%= From log In logs
+                              Select <Log Timestamp=<%= log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") %>
+                                         Operation=<%= log.Operation %>
+                                         Result=<%= log.Result %>
+                                         Details=<%= log.Details %>/> %>
+                      </Logs>
 
             doc.Save(filePath)
         Catch ex As Exception
@@ -154,10 +146,10 @@ Public Module PersistenceModule
 
             For Each element In doc.Root.Elements("Log")
                 Dim log As New LogEntry With {
-                    .Timestamp = DateTime.Parse(element.Attribute("Timestamp").Value),
-                    .Operation = element.Attribute("Operation")?.Value,
-                    .Result = element.Attribute("Result")?.Value,
-                    .Details = element.Attribute("Details")?.Value
+                    .Timestamp = DateTime.Parse(element.@Timestamp),
+                    .Operation = element.@Operation,
+                    .Result = element.@Result,
+                    .Details = element.@Details
                 }
                 logs.Add(log)
             Next
@@ -168,48 +160,17 @@ Public Module PersistenceModule
         End Try
     End Function
 
-    Public Sub AppendLog(entry As LogEntry)
-        Try
-            Dim folder = EnsureAppDataFolder()
-            Dim filePath = Path.Combine(folder, "logs.xml")
-
-            Dim doc As XDocument
-            If File.Exists(filePath) Then
-                doc = XDocument.Load(filePath)
-            Else
-                doc = New XDocument(New XDeclaration("1.0", "utf-8", "yes"), New XElement("Logs"))
-            End If
-
-            Dim logElement As New XElement("Log",
-                New XAttribute("Timestamp", entry.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")),
-                New XAttribute("Operation", entry.Operation),
-                New XAttribute("Result", entry.Result),
-                New XAttribute("Details", entry.Details)
-            )
-
-            doc.Root.Add(logElement)
-            doc.Save(filePath)
-        Catch ex As Exception
-            ' 忽略日志保存失败，不应该影响主要功能
-        End Try
-    End Sub
-
     Public Sub ExportLogs(filePath As String, logs As IEnumerable(Of LogEntry))
         Try
-            Dim doc As New XDocument(
-                New XDeclaration("1.0", "utf-8", "yes"),
-                New XElement("Logs",
-                    New XAttribute("ExportDate", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")),
-                    New XAttribute("Count", logs.Count()),
-                    From log In logs
-                    Select New XElement("Log",
-                        New XAttribute("Timestamp", log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")),
-                        New XAttribute("Operation", log.Operation),
-                        New XAttribute("Result", log.Result),
-                        New XAttribute("Details", log.Details)
-                    )
-                )
-            )
+            Dim doc = <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+                      <Logs ExportDate=<%= DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") %>
+                          Count=<%= logs.Count() %>>
+                          <%= From log In logs
+                              Select <Log Timestamp=<%= log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") %>
+                                         Operation=<%= log.Operation %>
+                                         Result=<%= log.Result %>
+                                         Details=<%= log.Details %>/> %>
+                      </Logs>
 
             doc.Save(filePath)
         Catch ex As Exception
@@ -222,13 +183,11 @@ Public Module PersistenceModule
             Dim folder = EnsureAppDataFolder()
             Dim filePath = Path.Combine(folder, "serviceconfig.xml")
 
-            Dim doc As New XDocument(
-                New XDeclaration("1.0", "utf-8", "yes"),
-                New XElement("ServiceConfig",
-                    New XElement("Port", port),
-                    New XElement("LastSaved", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))
-                )
-            )
+            Dim doc = <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+                      <ServiceConfig>
+                          <Port><%= port %></Port>
+                          <LastSaved><%= DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") %></LastSaved>
+                      </ServiceConfig>
 
             doc.Save(filePath)
         Catch ex As Exception
@@ -246,10 +205,9 @@ Public Module PersistenceModule
             End If
 
             Dim doc = XDocument.Load(filePath)
-            Dim portElement = doc.Root.Element("Port")
 
-            If portElement IsNot Nothing AndAlso Integer.TryParse(portElement.Value, Nothing) Then
-                Return Integer.Parse(portElement.Value)
+            If Integer.TryParse(doc.Root.<Port>.Value, Nothing) Then
+                Return Integer.Parse(doc.Root.<Port>.Value)
             End If
 
             Return 8080 ' 默认端口
