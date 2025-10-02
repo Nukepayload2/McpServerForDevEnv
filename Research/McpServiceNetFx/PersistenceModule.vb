@@ -12,12 +12,12 @@ Public Module PersistenceModule
         Deny
     End Enum
 
-    Public Structure LogEntry
-        Public Timestamp As DateTime
-        Public Operation As String
-        Public Result As String
-        Public Details As String
-    End Structure
+    Public Class LogEntry
+        Public Property Timestamp As DateTime
+        Public Property Operation As String
+        Public Property Result As String
+        Public Property Details As String
+    End Class
 
     Public Structure FeaturePermission
         Public FeatureName As String

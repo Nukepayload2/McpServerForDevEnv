@@ -67,9 +67,6 @@ Partial Public Class MainWindow
 
             ' 记录日志
             LogServiceAction("服务启动", "成功", $"端口: {port}, 实例: {_selectedVsInstance.Caption}")
-
-            UtilityModule.ShowInfo(Me, $"MCP 服务已启动在端口 {port}", "服务启动成功")
-
         Catch ex As Exception
             CleanupService()
             Throw
@@ -97,9 +94,6 @@ Partial Public Class MainWindow
 
             ' 记录日志
             LogServiceAction("服务停止", "成功", "用户手动停止")
-
-            UtilityModule.ShowInfo(Me, "MCP 服务已停止", "服务停止")
-
         Catch ex As Exception
             CleanupService()
             Throw

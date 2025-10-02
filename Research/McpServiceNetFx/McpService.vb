@@ -55,14 +55,12 @@ Public Class McpService
             ' 添加服务端点
             Dim endpoint = _serviceHost.AddServiceEndpoint(GetType(IMcpHttpService), New WebHttpBinding(), "mcp")
 
-            ' 添加服务元数据行为
-            Dim smb As New ServiceMetadataBehavior() With {
-                .HttpGetEnabled = True
-            }
-            _serviceHost.Description.Behaviors.Add(smb)
-
             ' 为端点启用WebHttpBehavior以支持REST
-            Dim webBehavior As New WebHttpBehavior()
+            Dim webBehavior As New WebHttpBehavior With {
+                .DefaultBodyStyle = WebMessageBodyStyle.Bare,
+                .DefaultOutgoingRequestFormat = WebMessageFormat.Json,
+                .DefaultOutgoingResponseFormat = WebMessageFormat.Json
+            }
             endpoint.Behaviors.Add(webBehavior)
 
             ' 打开服务主机

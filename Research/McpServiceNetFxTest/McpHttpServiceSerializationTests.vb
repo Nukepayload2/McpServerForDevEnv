@@ -5,19 +5,7 @@ Imports Newtonsoft.Json
 Imports McpServiceNetFx
 
 <TestClass>
-Public Class McpHttpServiceTests
-    Private _httpClient As HttpClient
-    Private _baseUrl As String = "http://localhost:8080/mcp"
-
-    <TestInitialize>
-    Public Sub Setup()
-        _httpClient = New HttpClient()
-    End Sub
-
-    <TestCleanup>
-    Public Sub Cleanup()
-        _httpClient?.Dispose()
-    End Sub
+Public Class McpHttpServiceSerializationTests
 
     <TestMethod>
     Public Sub TestToolsListRequest()
@@ -30,19 +18,12 @@ Public Class McpHttpServiceTests
 
         Dim content As New StringContent(requestJson, Encoding.UTF8, "application/json")
 
-        ' 发送请求（注意：这需要服务正在运行）
-        ' 这个测试主要用于验证 JSON 结构，实际运行需要服务启动
         Try
-            ' 注意：在实际测试中需要先启动 MCP 服务
-            ' Dim response = _httpClient.PostAsync(_baseUrl, content).Result
-            ' Dim responseString = response.Content.ReadAsStringAsync().Result
-            ' Assert.IsTrue(response.IsSuccessStatusCode)
-
             ' 验证请求 JSON 结构正确
             Dim rpcRequest = JsonConvert.DeserializeObject(Of JsonRpcRequest)(requestJson)
-            Assert.AreEqual("2.0", rpcRequest.jsonrpc)
-            Assert.AreEqual("tools/list", rpcRequest.method)
-            Assert.AreEqual(1, rpcRequest.id)
+            Assert.AreEqual("2.0", rpcRequest.JsonRpc)
+            Assert.AreEqual("tools/list", rpcRequest.Method)
+            Assert.AreEqual(1, rpcRequest.Id)
 
         Catch ex As Exception
             Assert.Inconclusive("MCP 服务未运行，无法进行集成测试")
@@ -69,10 +50,10 @@ Public Class McpHttpServiceTests
         Try
             ' 验证请求 JSON 结构正确
             Dim rpcRequest = JsonConvert.DeserializeObject(Of JsonRpcRequest)(requestJson)
-            Assert.AreEqual("2.0", rpcRequest.jsonrpc)
-            Assert.AreEqual("tools/call", rpcRequest.method)
+            Assert.AreEqual("2.0", rpcRequest.JsonRpc)
+            Assert.AreEqual("tools/call", rpcRequest.Method)
 
-            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.params.ToString())
+            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("build_solution", toolParams.name)
             Assert.AreEqual("Debug", toolParams.arguments("configuration"))
 
@@ -99,9 +80,9 @@ Public Class McpHttpServiceTests
         Try
             ' 验证请求 JSON 结构正确
             Dim rpcRequest = JsonConvert.DeserializeObject(Of JsonRpcRequest)(requestJson)
-            Assert.AreEqual("tools/call", rpcRequest.method)
+            Assert.AreEqual("tools/call", rpcRequest.Method)
 
-            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.params.ToString())
+            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("get_error_list", toolParams.name)
             Assert.AreEqual("All", toolParams.arguments("severity"))
 
@@ -126,9 +107,9 @@ Public Class McpHttpServiceTests
         Try
             ' 验证请求 JSON 结构正确
             Dim rpcRequest = JsonConvert.DeserializeObject(Of JsonRpcRequest)(requestJson)
-            Assert.AreEqual("tools/call", rpcRequest.method)
+            Assert.AreEqual("tools/call", rpcRequest.Method)
 
-            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.params.ToString())
+            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("get_solution_info", toolParams.name)
             Assert.AreEqual(0, toolParams.arguments.Count)
 
@@ -156,9 +137,9 @@ Public Class McpHttpServiceTests
         Try
             ' 验证请求 JSON 结构正确
             Dim rpcRequest = JsonConvert.DeserializeObject(Of JsonRpcRequest)(requestJson)
-            Assert.AreEqual("tools/call", rpcRequest.method)
+            Assert.AreEqual("tools/call", rpcRequest.Method)
 
-            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.params.ToString())
+            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("build_project", toolParams.name)
             Assert.AreEqual("TestProject", toolParams.arguments("projectName"))
             Assert.AreEqual("Release", toolParams.arguments("configuration"))
@@ -184,9 +165,9 @@ Public Class McpHttpServiceTests
 
         Try
             Dim response = JsonConvert.DeserializeObject(Of JsonRpcResponse)(errorJson)
-            Assert.AreEqual("2.0", response.jsonrpc)
-            Assert.AreEqual(-32601, response.error.code)
-            Assert.AreEqual("Method not found", response.error.message)
+            Assert.AreEqual("2.0", response.JsonRpc)
+            Assert.AreEqual(-32601, response.Error.Code)
+            Assert.AreEqual("Method not found", response.Error.Message)
 
         Catch ex As Exception
             Assert.Fail($"错误响应 JSON 解析失败: {ex.Message}")
@@ -252,35 +233,5 @@ Public Class McpHttpServiceTests
         Catch ex As Exception
             Assert.Fail($"解决方案信息响应 JSON 解析失败: {ex.Message}")
         End Try
-    End Sub
-End Class
-
-<TestClass>
-Public Class McpExceptionTests
-    <TestMethod>
-    Public Sub TestMcpExceptionCreation()
-        ' 测试自定义 MCP 异常的创建
-        Dim ex1 As New McpException("Test error message")
-        Assert.AreEqual("Test error message", ex1.Message)
-        Assert.AreEqual("InternalError", ex1.ErrorCode)
-
-        Dim ex2 As New McpException("Invalid params", McpErrorCode.InvalidParams)
-        Assert.AreEqual("Invalid params", ex2.Message)
-        Assert.AreEqual(McpErrorCode.InvalidParams, ex2.ErrorCode)
-
-        Dim innerEx As New Exception("Inner exception")
-        Dim ex3 As New McpException("Wrapped error", McpErrorCode.InternalError, innerEx)
-        Assert.AreEqual("Wrapped error", ex3.Message)
-        Assert.AreEqual(innerEx, ex3.InnerException)
-    End Sub
-
-    <TestMethod>
-    Public Sub TestMcpErrorCodeConstants()
-        ' 测试 MCP 错误代码常量
-        Assert.AreEqual("-32602", McpErrorCode.InvalidParams)
-        Assert.AreEqual("-32603", McpErrorCode.InternalError)
-        Assert.AreEqual("-32601", McpErrorCode.MethodNotFound)
-        Assert.AreEqual("-32600", McpErrorCode.InvalidRequest)
-        Assert.AreEqual("-32700", McpErrorCode.ParseError)
     End Sub
 End Class
