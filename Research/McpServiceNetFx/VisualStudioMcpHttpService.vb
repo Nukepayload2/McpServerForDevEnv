@@ -2,15 +2,60 @@ Imports System.ServiceModel
 Imports System.ServiceModel.Web
 Imports Newtonsoft.Json
 Imports System.Windows.Threading
+Imports System.IO
+Imports System.Runtime.Serialization
+
+' JSON-RPC 2.0 数据契约
+<DataContract>
+Public Class JsonRpcRequest
+    <DataMember(Name:="jsonrpc")>
+    Public Property JsonRpc As String = "2.0"
+
+    <DataMember(Name:="method")>
+    Public Property Method As String
+
+    <DataMember(Name:="params", EmitDefaultValue:=False)>
+    Public Property Params As Object
+
+    <DataMember(Name:="id", EmitDefaultValue:=False)>
+    Public Property Id As Object
+End Class
+
+<DataContract>
+Public Class JsonRpcResponse
+    <DataMember(Name:="jsonrpc", EmitDefaultValue:=False)>
+    Public Property JsonRpc As String = "2.0"
+
+    <DataMember(Name:="result", EmitDefaultValue:=False)>
+    Public Property Result As Object
+
+    <DataMember(Name:="error", EmitDefaultValue:=False)>
+    Public Property [Error] As JsonRpcError
+
+    <DataMember(Name:="id", EmitDefaultValue:=False)>
+    Public Property Id As Object
+End Class
+
+<DataContract>
+Public Class JsonRpcError
+    <DataMember(Name:="code")>
+    Public Property Code As Integer
+
+    <DataMember(Name:="message")>
+    Public Property Message As String
+
+    <DataMember(Name:="data", EmitDefaultValue:=False)>
+    Public Property Data As Object
+End Class
 
 <ServiceContract>
 Public Interface IMcpHttpService
     <OperationContract>
-    <WebInvoke(Method:="POST", RequestFormat:=WebMessageFormat.Json, ResponseFormat:=WebMessageFormat.Json, BodyStyle:=WebMessageBodyStyle.Bare)>
-    Function ProcessRequest(request As String) As String
+    <WebInvoke(Method:="POST", UriTemplate:="", RequestFormat:=WebMessageFormat.Json, ResponseFormat:=WebMessageFormat.Json, BodyStyle:=WebMessageBodyStyle.Bare)>
+    Function ProcessMcpRequest(request As JsonRpcRequest) As JsonRpcResponse
 End Interface
 
-<ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single)>
+<ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single, ConcurrencyMode:=ConcurrencyMode.Multiple)>
 Public Class VisualStudioMcpHttpService
     Implements IMcpHttpService
 
@@ -20,93 +65,44 @@ Public Class VisualStudioMcpHttpService
         _visualStudioMcpTools = vs
     End Sub
 
-    Public Function ProcessRequest(request As String) As String Implements IMcpHttpService.ProcessRequest
-        Try
-            ' 解析 JSON-RPC 请求
-            Dim rpcRequest = JsonConvert.DeserializeObject(Of JsonRpcRequest)(request)
+    Public Function ProcessMcpRequest(request As JsonRpcRequest) As JsonRpcResponse Implements IMcpHttpService.ProcessMcpRequest
+        If request Is Nothing Then
+            Return CreateErrorResponse(-32700, "Parse error", Nothing)
+        End If
 
-            ' 处理 MCP 请求
-            Dim result = ProcessMcpRequest(rpcRequest).GetAwaiter().GetResult()
+        If request.JsonRpc <> "2.0" Then
+            Return CreateErrorResponse(-32600, "Invalid Request", request.Id, "JSON RPC version must be 2.0")
+        End If
 
-            ' 返回 JSON-RPC 响应
-            Dim response = New JsonRpcResponse With {
-                .jsonrpc = "2.0",
-                .id = rpcRequest.id,
-                .result = result
-            }
-
-            Return JsonConvert.SerializeObject(response)
-
-        Catch ex As Exception
-            ' 返回错误响应
-            Dim errorResponse = New JsonRpcResponse With {
-                .jsonrpc = "2.0",
-                .id = Nothing,
-                .[error] = New JsonRpcError With {
-                    .code = -32603,
-                    .message = "Internal error",
-                    .data = ex.Message
-                }
-            }
-
-            Return JsonConvert.SerializeObject(errorResponse)
-        End Try
-    End Function
-
-    Private Async Function ProcessMcpRequest(request As JsonRpcRequest) As Task(Of Object)
-        ' 根据方法名调用相应的 MCP 工具
-        Select Case request.method
-            Case "tools/call"
-                Return Await HandleToolCall(request.params)
+        Select Case request.Method
             Case "tools/list"
-                Return HandleToolsList()
+                Return ProcessToolsList(request.Id)
+            Case "tools/call"
+                Return ProcessToolsCall(request)
             Case Else
-                Throw New ArgumentException($"Unknown method: {request.method}")
+                Return CreateErrorResponse(-32601, "Method not found", request.Id)
         End Select
     End Function
 
-    Private Async Function HandleToolCall(params As Object) As Task(Of Object)
+    Private Function ProcessToolsList(id As Object) As JsonRpcResponse
         Try
-            ' 解析工具调用参数
-            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(params.ToString())
-
-            Select Case toolParams.name
-                Case "build_solution"
-                    Dim result = Await _visualStudioMcpTools.BuildSolution(If(toolParams.arguments?.ContainsKey("configuration"), toolParams.arguments("configuration").ToString(), "Debug"))
-                    Return New BuildResultResponse With {
-                        .Success = result.Success,
-                        .Message = result.Message,
-                        .BuildTime = result.BuildTime,
-                        .Configuration = result.Configuration,
-                        .Errors = result.Errors?.ToArray(),
-                        .Warnings = result.Warnings?.ToArray()
-                    }
-                Case "build_project"
-                    Dim result = Await _visualStudioMcpTools.BuildProject(
-                        toolParams.arguments("projectName").ToString(),
-                        If(toolParams.arguments?.ContainsKey("configuration"), toolParams.arguments("configuration").ToString(), "Debug"))
-                    Return New BuildResultResponse With {
-                        .Success = result.Success,
-                        .Message = result.Message,
-                        .BuildTime = result.BuildTime,
-                        .Configuration = result.Configuration,
-                        .Errors = result.Errors?.ToArray(),
-                        .Warnings = result.Warnings?.ToArray()
-                    }
-                Case "get_error_list"
-                    Return _visualStudioMcpTools.GetErrorList(If(toolParams.arguments?.ContainsKey("severity"), toolParams.arguments("severity").ToString(), "All"))
-                Case "get_solution_info"
-                    Return _visualStudioMcpTools.GetSolutionInfo()
-                Case Else
-                    Throw New ArgumentException($"Unknown tool: {toolParams.name}")
-            End Select
-
+            Dim tools = GetToolsList()
+            Return CreateSuccessResponse(tools, id)
         Catch ex As Exception
-            Throw New Exception($"Tool call failed: {ex.Message}", ex)
+            Return CreateErrorResponse(-32603, "Internal error", id, ex.Message)
         End Try
     End Function
 
-    Private Function HandleToolsList() As ToolsListResponse
+    Private Function ProcessToolsCall(request As JsonRpcRequest) As JsonRpcResponse
+        Try
+            Dim result = HandleToolCall(request.Params).GetAwaiter().GetResult()
+            Return CreateSuccessResponse(result, request.Id)
+        Catch ex As Exception
+            Return CreateErrorResponse(-32603, "Internal error", request.Id, ex.Message)
+        End Try
+    End Function
+
+    Private Function GetToolsList() As ToolsListResponse
         Dim tools As New List(Of ToolDefinition) From {
             New ToolDefinition With {
                 .Name = "build_solution",
@@ -167,6 +163,67 @@ Public Class VisualStudioMcpHttpService
 
         Return New ToolsListResponse With {
             .Tools = tools.ToArray()
+        }
+    End Function
+
+    Private Async Function HandleToolCall(params As Object) As Task(Of Object)
+        Try
+            ' 解析工具调用参数
+            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(params.ToString())
+
+            Select Case toolParams.name
+                Case "build_solution"
+                    Dim result = Await _visualStudioMcpTools.BuildSolution(If(toolParams.arguments?.ContainsKey("configuration"), toolParams.arguments("configuration").ToString(), "Debug"))
+                    Return New BuildResultResponse With {
+                        .Success = result.Success,
+                        .Message = result.Message,
+                        .BuildTime = result.BuildTime,
+                        .Configuration = result.Configuration,
+                        .Errors = result.Errors?.ToArray(),
+                        .Warnings = result.Warnings?.ToArray()
+                    }
+                Case "build_project"
+                    Dim result = Await _visualStudioMcpTools.BuildProject(
+                        toolParams.arguments("projectName").ToString(),
+                        If(toolParams.arguments?.ContainsKey("configuration"), toolParams.arguments("configuration").ToString(), "Debug"))
+                    Return New BuildResultResponse With {
+                        .Success = result.Success,
+                        .Message = result.Message,
+                        .BuildTime = result.BuildTime,
+                        .Configuration = result.Configuration,
+                        .Errors = result.Errors?.ToArray(),
+                        .Warnings = result.Warnings?.ToArray()
+                    }
+                Case "get_error_list"
+                    Return _visualStudioMcpTools.GetErrorList(If(toolParams.arguments?.ContainsKey("severity"), toolParams.arguments("severity").ToString(), "All"))
+                Case "get_solution_info"
+                    Return _visualStudioMcpTools.GetSolutionInfo()
+                Case Else
+                    Throw New ArgumentException($"Unknown tool: {toolParams.name}")
+            End Select
+
+        Catch ex As Exception
+            Throw New Exception($"Tool call failed: {ex.Message}", ex)
+        End Try
+    End Function
+
+    Private Function CreateSuccessResponse(result As Object, id As Object) As JsonRpcResponse
+        Return New JsonRpcResponse With {
+            .JsonRpc = "2.0",
+            .Result = result,
+            .Id = id
+        }
+    End Function
+
+    Private Function CreateErrorResponse(code As Integer, message As String, id As Object, Optional data As Object = Nothing) As JsonRpcResponse
+        Return New JsonRpcResponse With {
+            .JsonRpc = "2.0",
+            .Error = New JsonRpcError With {
+                .Code = code,
+                .Message = message,
+                .Data = data
+            },
+            .Id = id
         }
     End Function
 End Class
@@ -231,27 +288,6 @@ Public Class PropertyDefinition
     Public Property Type As String
     Public Property Description As String
     Public Property [Default] As String
-End Class
-
-' JSON-RPC 请求和响应模型
-Public Class JsonRpcRequest
-    Public Property jsonrpc As String = "2.0"
-    Public Property method As String
-    Public Property params As Object
-    Public Property id As Object
-End Class
-
-Public Class JsonRpcResponse
-    Public Property jsonrpc As String = "2.0"
-    Public Property id As Object
-    Public Property result As Object
-    Public Property [error] As JsonRpcError
-End Class
-
-Public Class JsonRpcError
-    Public Property code As Integer
-    Public Property message As String
-    Public Property data As Object
 End Class
 
 Public Class ToolCallParams

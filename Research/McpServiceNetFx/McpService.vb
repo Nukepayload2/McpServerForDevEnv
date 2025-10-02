@@ -2,6 +2,7 @@ Imports EnvDTE80
 Imports System.Windows.Threading
 Imports System.ServiceModel
 Imports System.ServiceModel.Description
+Imports System.ServiceModel.Web
 
 Public Class McpService
     Implements IDisposable
@@ -33,7 +34,7 @@ Public Class McpService
 
             _isRunning = True
 
-            _logger?.LogMcpRequest("MCP服务", "启动", $"HTTP端点: http://localhost:{_port}/mcp")
+            _logger?.LogMcpRequest("MCP服务", "启动", $"HTTP端点: http://localhost:{_port}/mcp/")
         Catch ex As Exception
             _isRunning = False
             _logger?.LogMcpRequest("MCP服务", "启动失败", ex.Message)
@@ -43,7 +44,7 @@ Public Class McpService
 
     Private Sub StartWcfService()
         Try
-            Dim baseAddress As New Uri($"http://localhost:{_port}/mcp")
+            Dim baseAddress As New Uri($"http://localhost:{_port}/")
 
             ' 创建服务实例并传递依赖项
             Dim vsTools As New VisualStudioTools(_dte2, _dispatcher, _logger)
@@ -52,18 +53,17 @@ Public Class McpService
             _serviceHost = New ServiceHost(vsMcpHttp, baseAddress)
 
             ' 添加服务端点
-            _serviceHost.AddServiceEndpoint(GetType(IMcpHttpService), New WebHttpBinding(), "")
+            Dim endpoint = _serviceHost.AddServiceEndpoint(GetType(IMcpHttpService), New WebHttpBinding(), "mcp")
 
-            ' 添加服务行为
-            Dim behavior As New WebHttpBehavior With {
-                .AutomaticFormatSelectionEnabled = True,
-                .DefaultOutgoingRequestFormat = System.ServiceModel.Web.WebMessageFormat.Json,
-                .DefaultOutgoingResponseFormat = System.ServiceModel.Web.WebMessageFormat.Json
+            ' 添加服务元数据行为
+            Dim smb As New ServiceMetadataBehavior() With {
+                .HttpGetEnabled = True
             }
+            _serviceHost.Description.Behaviors.Add(smb)
 
-            ' 获取端点并添加行为
-            Dim endpoint = _serviceHost.Description.Endpoints(0)
-            endpoint.Behaviors.Add(behavior)
+            ' 为端点启用WebHttpBehavior以支持REST
+            Dim webBehavior As New WebHttpBehavior()
+            endpoint.Behaviors.Add(webBehavior)
 
             ' 打开服务主机
             _serviceHost.Open()
