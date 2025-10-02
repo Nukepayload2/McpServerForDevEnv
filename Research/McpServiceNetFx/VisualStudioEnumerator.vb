@@ -89,20 +89,22 @@ Public Module VisualStudioEnumerator
             CreateBindCtx(0, bindCtx)
 
             Dim displayName As String = GetDisplayName(moniker, bindCtx)
-
+            Debug.WriteLine("ROT lookup " & displayName)
             ' 检查是否是 Visual Studio 实例
+            ' 预期是 !VisualStudio.DTE.18.0:17752 这种格式的
             If Not displayName.StartsWith("!VisualStudio.DTE.") Then
                 Return Nothing
             End If
 
             ' 获取进程ID
-            Dim parts = displayName.Split("."c)
-            If parts.Length < 3 Then
+            Dim colonIndex = displayName.IndexOf(":"c)
+            If colonIndex = -1 Then
                 Return Nothing
             End If
 
+            Dim processIdPart = displayName.Substring(colonIndex + 1)
             Dim processId As Integer
-            If Not Integer.TryParse(parts.Last(), processId) Then
+            If Not Integer.TryParse(processIdPart, processId) Then
                 Return Nothing
             End If
 
@@ -148,15 +150,9 @@ Public Module VisualStudioEnumerator
     End Function
 
     Private Function GetDisplayName(moniker As IMoniker, bindCtx As IBindCtx) As String
-        Dim ppszDisplayName As IntPtr = IntPtr.Zero
-        Try
-            moniker.GetDisplayName(bindCtx, Nothing, ppszDisplayName)
-            Return Marshal.PtrToStringBSTR(ppszDisplayName)
-        Finally
-            If ppszDisplayName <> IntPtr.Zero Then
-                Marshal.FreeBSTR(ppszDisplayName)
-            End If
-        End Try
+        Dim ppszDisplayName As String = Nothing
+        moniker.GetDisplayName(bindCtx, Nothing, ppszDisplayName)
+        Return ppszDisplayName
     End Function
 
     Private Function IsMainWindowValid(dte2 As EnvDTE80.DTE2) As Boolean
@@ -165,8 +161,7 @@ Public Module VisualStudioEnumerator
                 Return False
             End If
 
-            Dim hWndLong As Long = dte2.MainWindow.HWnd
-            Dim hWnd As New IntPtr(hWndLong)
+            Dim hWnd = dte2.MainWindow.HWnd
             If Not IsWindow(hWnd) Then
                 Return False
             End If

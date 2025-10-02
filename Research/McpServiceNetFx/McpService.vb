@@ -23,7 +23,7 @@ Public Class McpService
         _dispatcher = dispatcher
     End Sub
 
-    Public Async Function StartAsync() As Task
+    Public Sub Start()
         If _isRunning Then
             Throw New InvalidOperationException("服务已经在运行中")
         End If
@@ -40,7 +40,7 @@ Public Class McpService
             _logger?.LogMcpRequest("MCP服务", "启动失败", ex.Message)
             Throw New Exception($"启动 MCP 服务失败: {ex.Message}", ex)
         End Try
-    End Function
+    End Sub
 
     Private Sub StartWcfService()
         Try
@@ -74,7 +74,7 @@ Public Class McpService
         End Try
     End Sub
 
-    Public Async Function [StopAsync]() As Task
+    Public Sub [Stop]()
         If Not _isRunning Then
             Return
         End If
@@ -93,7 +93,7 @@ Public Class McpService
         Catch ex As Exception
             _logger?.LogMcpRequest("MCP服务", "停止异常", ex.Message)
         End Try
-    End Function
+    End Sub
 
     Public ReadOnly Property IsRunning As Boolean
         Get
@@ -103,7 +103,7 @@ Public Class McpService
 
     Public Sub Dispose() Implements IDisposable.Dispose
         Try
-            StopAsync().Wait(TimeSpan.FromSeconds(5))
+            [Stop]()
         Catch ex As Exception
             ' 忽略停止时的错误
         End Try

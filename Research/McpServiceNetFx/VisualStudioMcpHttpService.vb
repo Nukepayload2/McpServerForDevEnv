@@ -10,6 +10,7 @@ Public Interface IMcpHttpService
     Function ProcessRequest(request As String) As String
 End Interface
 
+<ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single)>
 Public Class VisualStudioMcpHttpService
     Implements IMcpHttpService
 

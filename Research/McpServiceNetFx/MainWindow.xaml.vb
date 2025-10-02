@@ -1,5 +1,9 @@
 ﻿Partial Public Class MainWindow
+    Private _isLoaded As Boolean = False
+
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        If _isLoaded Then Return
+        _isLoaded = True
         InitializeApplication()
     End Sub
 

@@ -13,7 +13,7 @@ Partial Public Class MainWindow
         End Try
     End Sub
 
-    Private Async Sub BtnStartService_Click() Handles BtnStartService.Click
+    Private Sub BtnStartService_Click() Handles BtnStartService.Click
         If _isServiceRunning Then
             UtilityModule.ShowWarning(Me, "服务已经在运行中", "提示")
             Return
@@ -28,20 +28,20 @@ Partial Public Class MainWindow
         TxtPort.Text = port.ToString()
 
         Try
-            Await StartMcpService(port)
+            StartMcpService(port)
         Catch ex As Exception
             UtilityModule.ShowError(Me, $"启动服务失败: {ex.Message}")
         End Try
     End Sub
 
-    Private Async Sub BtnStopService_Click() Handles BtnStopService.Click
+    Private Sub BtnStopService_Click() Handles BtnStopService.Click
         If Not _isServiceRunning Then
             UtilityModule.ShowWarning(Me, "服务未运行", "提示")
             Return
         End If
 
         Try
-            Await StopMcpService()
+            StopMcpService()
         Catch ex As Exception
             UtilityModule.ShowError(Me, $"停止服务失败: {ex.Message}")
         End Try
@@ -52,7 +52,7 @@ Partial Public Class MainWindow
         UtilityModule.ShowInfo(Me, $"已选择实例: {_selectedVsInstance.Caption}", "实例选择")
     End Sub
 
-    Private Async Function StartMcpService(port As Integer) As Task
+    Private Sub StartMcpService(port As Integer)
         Try
             ' 创建 Visual Studio 监控器
             _vsMonitor = New VisualStudioMonitor(_selectedVsInstance.DTE2)
@@ -61,7 +61,7 @@ Partial Public Class MainWindow
 
             ' 创建并启动 MCP 服务
             _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Me, Dispatcher)
-            Await _mcpService.StartAsync()
+            _mcpService.Start()
 
             ' 更新 UI 状态
             _isServiceRunning = True
@@ -79,12 +79,12 @@ Partial Public Class MainWindow
             CleanupService()
             Throw
         End Try
-    End Function
+    End Sub
 
-    Private Async Function StopMcpService() As Task
+    Private Sub StopMcpService()
         Try
             If _mcpService IsNot Nothing Then
-                Await _mcpService.StopAsync()
+                _mcpService.Stop()
                 _mcpService.Dispose()
                 _mcpService = Nothing
             End If
@@ -109,7 +109,7 @@ Partial Public Class MainWindow
             CleanupService()
             Throw
         End Try
-    End Function
+    End Sub
 
     Private Sub OnVisualStudioExited(sender As Object, e As EventArgs)
         UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
@@ -193,7 +193,7 @@ Partial Public Class MainWindow
         ' 确保服务被正确清理
         If _isServiceRunning Then
             Try
-                StopMcpService().Wait(TimeSpan.FromSeconds(5))
+                StopMcpService()
             Catch ex As Exception
                 ' 忽略关闭时的错误
             End Try

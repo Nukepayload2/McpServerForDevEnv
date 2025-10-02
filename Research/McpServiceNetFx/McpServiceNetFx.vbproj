@@ -6,6 +6,7 @@
     <RootNamespace>McpServiceNetFx</RootNamespace>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
+	<NoWarn></NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
