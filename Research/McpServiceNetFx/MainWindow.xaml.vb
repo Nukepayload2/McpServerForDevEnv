@@ -24,6 +24,7 @@
     End Sub
 
     Private Sub InitializeLogging()
-        LoadLogs()
+        ' 不再加载历史日志，仅初始化内存日志集合
+        DgLogs.ItemsSource = _logs
     End Sub
 End Class

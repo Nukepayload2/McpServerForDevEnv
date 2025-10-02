@@ -2,19 +2,7 @@ Imports System.Collections.ObjectModel
 
 Partial Public Class MainWindow
     Private _logs As New ObservableCollection(Of PersistenceModule.LogEntry)()
-
-    Private Sub LoadLogs()
-        Try
-            Dim loadedLogs = PersistenceModule.LoadLogs()
-            _logs.Clear()
-            For Each log In loadedLogs.OrderByDescending(Function(l) l.Timestamp)
-                _logs.Add(log)
-            Next
-            DgLogs.ItemsSource = _logs
-        Catch ex As Exception
-            UtilityModule.ShowError(Me, $"加载日志失败: {ex.Message}")
-        End Try
-    End Sub
+    Private _appStartTime As DateTime = DateTime.Now
 
     Private Sub BtnClearLogs_Click() Handles BtnClearLogs.Click
         If Not UtilityModule.ShowConfirm(Me, "确定要清空所有日志吗？此操作不可撤销。", "确认清空") Then
@@ -23,7 +11,7 @@ Partial Public Class MainWindow
 
         Try
             _logs.Clear()
-            PersistenceModule.SaveLogs(_logs)
+            ' 不再需要保存空日志，因为每个会话使用不同的文件
 
             UtilityModule.ShowInfo(Me, "日志已清空", "操作成功")
         Catch ex As Exception
@@ -67,9 +55,9 @@ Partial Public Class MainWindow
 
     Private Sub MainWindow_Closing() Handles Me.Closing
         Try
-            ' 确保日志被保存
+            ' 确保日志被保存到以应用启动时间命名的文件
             If _logs.Count > 0 Then
-                PersistenceModule.SaveLogs(_logs.ToList())
+                PersistenceModule.SaveLogsToAppStartupFile(_logs.ToList(), _appStartTime)
             End If
         Catch ex As Exception
             ' 忽略关闭时保存日志的错误

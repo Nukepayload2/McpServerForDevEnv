@@ -4,6 +4,7 @@ Imports System.Reflection
 Public Module PersistenceModule
     Private ReadOnly LocalAppDataPath As String = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
     Private ReadOnly AppDataFolder As String = Path.Combine(LocalAppDataPath, Assembly.GetExecutingAssembly().GetName().Name)
+    Private ReadOnly LogsFolder As String = Path.Combine(AppDataFolder, "logs")
 
     Public Enum PermissionLevel
         Allow
@@ -29,6 +30,13 @@ Public Module PersistenceModule
             Directory.CreateDirectory(AppDataFolder)
         End If
         Return AppDataFolder
+    End Function
+
+    Private Function EnsureLogsFolder() As String
+        If Not Directory.Exists(LogsFolder) Then
+            Directory.CreateDirectory(LogsFolder)
+        End If
+        Return LogsFolder
     End Function
 
     Public Sub SavePermissions(permissions As IEnumerable(Of FeaturePermission))
@@ -112,13 +120,16 @@ Public Module PersistenceModule
         }
     End Function
 
-    Public Sub SaveLogs(logs As IEnumerable(Of LogEntry))
+    Public Sub SaveLogsToAppStartupFile(logs As IEnumerable(Of LogEntry), appStartTime As DateTime)
         Try
-            Dim folder = EnsureAppDataFolder()
-            Dim filePath = Path.Combine(folder, "logs.xml")
+            Dim folder = EnsureLogsFolder()
+            Dim fileName = $"mcp_logs_{appStartTime:yyyyMMdd_HHmmss}.xml"
+            Dim filePath = Path.Combine(folder, fileName)
 
             Dim doc = <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-                      <Logs>
+                      <Logs AppStartTime=<%= appStartTime.ToString("yyyy-MM-dd HH:mm:ss") %>
+                          SessionStart=<%= appStartTime.ToString("yyyy-MM-dd HH:mm:ss") %>
+                          Count=<%= logs.Count() %>>
                           <%= From log In logs
                               Select <Log Timestamp=<%= log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss") %>
                                          Operation=<%= log.Operation %>
@@ -131,34 +142,6 @@ Public Module PersistenceModule
             Throw New Exception("保存日志失败", ex)
         End Try
     End Sub
-
-    Public Function LoadLogs() As List(Of LogEntry)
-        Try
-            Dim folder = EnsureAppDataFolder()
-            Dim filePath = Path.Combine(folder, "logs.xml")
-
-            If Not File.Exists(filePath) Then
-                Return New List(Of LogEntry)()
-            End If
-
-            Dim doc = XDocument.Load(filePath)
-            Dim logs = New List(Of LogEntry)()
-
-            For Each element In doc.Root.Elements("Log")
-                Dim log As New LogEntry With {
-                    .Timestamp = DateTime.Parse(element.@Timestamp),
-                    .Operation = element.@Operation,
-                    .Result = element.@Result,
-                    .Details = element.@Details
-                }
-                logs.Add(log)
-            Next
-
-            Return logs
-        Catch ex As Exception
-            Return New List(Of LogEntry)()
-        End Try
-    End Function
 
     Public Sub ExportLogs(filePath As String, logs As IEnumerable(Of LogEntry))
         Try
