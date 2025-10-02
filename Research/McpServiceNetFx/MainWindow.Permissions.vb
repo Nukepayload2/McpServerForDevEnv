@@ -68,10 +68,6 @@ Partial Public Class MainWindow
         SetAllPermissions(PersistenceModule.PermissionLevel.Ask)
     End Sub
 
-    Private Sub BtnCustom_Click() Handles BtnCustom.Click
-        ' 自定义模式，不需要特殊处理，用户可以手动调整每个权限
-    End Sub
-
     Private Sub SetAllPermissions(permission As PersistenceModule.PermissionLevel)
         For Each item In _permissionItems
             item.Permission = permission
