@@ -22,8 +22,7 @@ Public Class VisualStudioMonitor
 
     Public Sub New(dteInstance As EnvDTE80.DTE2)
         _dte2 = dteInstance
-        Dim hWnd As Long = dteInstance.MainWindow.HWnd
-        _cachedHWnd = New IntPtr(hWnd)
+        _cachedHWnd = dteInstance.MainWindow.HWnd
         _originalCaption = dteInstance.MainWindow.Caption
 
         SetupDTEEvents()
