@@ -184,7 +184,7 @@ Public Module PersistenceModule
             Dim filePath = Path.Combine(folder, "serviceconfig.xml")
 
             If Not File.Exists(filePath) Then
-                Return 8080 ' 默认端口
+                Return 38080 ' 默认端口
             End If
 
             Dim doc = XDocument.Load(filePath)
@@ -193,9 +193,9 @@ Public Module PersistenceModule
                 Return Integer.Parse(doc.Root.<Port>.Value)
             End If
 
-            Return 8080 ' 默认端口
+            Return 38080 ' 默认端口
         Catch ex As Exception
-            Return 8080 ' 默认端口
+            Return 38080 ' 默认端口
         End Try
     End Function
 End Module

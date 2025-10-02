@@ -53,10 +53,8 @@ Partial Public Class MainWindow
     Private Sub UpdateSelectedInstanceDisplay()
         If _selectedVsInstance IsNot Nothing Then
             TxtSelectedInstance.Text = $"{_selectedVsInstance.Caption} - {UtilityModule.GetFileDisplayName(_selectedVsInstance.SolutionPath)}"
-            BtnAttachInstance.IsEnabled = True
         Else
             TxtSelectedInstance.Text = "未选择实例"
-            BtnAttachInstance.IsEnabled = False
         End If
     End Sub
 End Class

@@ -9,7 +9,7 @@ Partial Public Class MainWindow
             Dim port = PersistenceModule.LoadServiceConfig()
             TxtPort.Text = port.ToString()
         Catch ex As Exception
-            TxtPort.Text = "8080"
+            TxtPort.Text = "38080"
         End Try
     End Sub
 
@@ -45,11 +45,6 @@ Partial Public Class MainWindow
         Catch ex As Exception
             UtilityModule.ShowError(Me, $"停止服务失败: {ex.Message}")
         End Try
-    End Sub
-
-    Private Sub BtnAttachInstance_Click() Handles BtnAttachInstance.Click
-        ' 这个按钮现在主要用于视觉反馈，实际的附加在启动服务时进行
-        UtilityModule.ShowInfo(Me, $"已选择实例: {_selectedVsInstance.Caption}", "实例选择")
     End Sub
 
     Private Sub StartMcpService(port As Integer)
@@ -158,7 +153,10 @@ Partial Public Class MainWindow
             DgVsInstances.IsEnabled = False
             BtnRefresh.IsEnabled = False
             TxtSearch.IsEnabled = False
-            BtnAttachInstance.IsEnabled = False
+
+            ' 服务启动时，显示配置选项并生成配置
+            TabClientConfig.Visibility = Visibility.Visible
+            GenerateMcpConfig()
         Else
             TxtServiceStatus.Text = "服务未启动"
             BtnStartService.IsEnabled = _selectedVsInstance IsNot Nothing
@@ -167,25 +165,55 @@ Partial Public Class MainWindow
             DgVsInstances.IsEnabled = True
             BtnRefresh.IsEnabled = True
             TxtSearch.IsEnabled = True
-            BtnAttachInstance.IsEnabled = _selectedVsInstance IsNot Nothing
+
+            ' 服务停止时，刷新选中的实例显示
+            UpdateSelectedInstanceDisplay()
+
+            ' 服务停止时，隐藏配置选项
+            TabClientConfig.Visibility = Visibility.Collapsed
         End If
     End Sub
 
     Public Sub LogServiceAction(action As String, result As String, details As String) Implements IMcpLogger.LogServiceAction
         ' 使用统一的日志操作方法
         LogOperation(action, result, details)
-
-        ' 更新服务日志显示（特定于服务日志的UI）
-        UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
-                                                      Dim logLine = $"[{DateTime.Now:HH:mm:ss}] {action}: {result} - {details}{Environment.NewLine}"
-                                                      TxtServiceLog.AppendText(logLine)
-                                                      TxtServiceLog.ScrollToEnd()
-                                                  End Sub)
     End Sub
 
     Public Sub LogMcpRequest(operation As String, result As String, details As String) Implements IMcpLogger.LogMcpRequest
         LogServiceAction($"MCP请求 - {operation}", result, details)
     End Sub
+
+    Private Sub GenerateMcpConfig()
+        If Not _isServiceRunning OrElse _selectedVsInstance Is Nothing Then
+            Return
+        End If
+
+        Try
+            Dim serverName = $"devenv"
+            Dim port = TxtPort.Text
+
+            ' 生成配置
+            ' 生成 JSON 配置
+            Dim jsonConfig As String = $"{{
+  ""mcpServers"": {{
+    ""{serverName}"": {{
+      ""type"": ""http"",
+      ""url"": ""http://localhost:{port}/mcp/""
+    }}
+  }}
+}}"
+
+            ' 生成 Claude CLI 配置
+            Dim claudeConfig As String = $"claude mcp add --transport http visualstudio ""http://localhost:{port}/mcp/"""
+
+            TxtJsonConfig.Text = jsonConfig
+            TxtClaudeConfig.Text = claudeConfig
+        Catch ex As Exception
+            TxtJsonConfig.Text = $"生成配置失败: {ex.Message}"
+            TxtClaudeConfig.Text = $"生成配置失败: {ex.Message}"
+        End Try
+    End Sub
+
 
     Protected Overrides Sub OnClosed(e As EventArgs)
         MyBase.OnClosed(e)
