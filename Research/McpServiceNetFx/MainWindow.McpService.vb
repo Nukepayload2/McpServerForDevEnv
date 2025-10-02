@@ -167,7 +167,9 @@ Partial Public Class MainWindow
             TxtSearch.IsEnabled = True
 
             ' 服务停止时，刷新选中的实例显示
+            _selectedVsInstance = Nothing
             UpdateSelectedInstanceDisplay()
+            RefreshVsInstances()
 
             ' 服务停止时，隐藏配置选项
             TabClientConfig.Visibility = Visibility.Collapsed
