@@ -2,6 +2,7 @@ Imports System.ServiceModel
 Imports System.ServiceModel.Web
 Imports Newtonsoft.Json
 Imports System.ServiceModel.Activation
+Imports System.Runtime.CompilerServices
 
 ' JSON-RPC 2.0 数据模型 - 使用 Newtonsoft.Json 序列化
 Public Class JsonRpcRequest
@@ -179,16 +180,30 @@ Public Class VisualStudioMcpHttpService
     End Function
 
     Private Async Function ProcessToolsCall(request As JsonRpcRequest) As Task(Of JsonRpcResponse)
+        ' 使用 StrongBox 来跟踪错误状态和错误消息
+        Dim hasError As New StrongBox(Of Boolean)(False)
+        Dim errorMessage As New StrongBox(Of String)("")
+
         Try
             ' 符合 MCP tools/call 规范
             If request.Params Is Nothing Then
-                Return CreateErrorResponse(-32602, "Invalid params", request.Id, "Tool call requires name and arguments")
+                hasError.Value = True
+                errorMessage.Value = "Tool call requires name and arguments"
+                Return CreateErrorResponse(-32602, "Invalid params", request.Id, errorMessage.Value)
             End If
 
-            Dim result = Await HandleToolCall(request.Params)
+            Dim result = Await HandleToolCall(request.Params, hasError, errorMessage)
+
+            ' 检查是否出错
+            If hasError.Value Then
+                Return CreateErrorResponse(-32603, "Tool execution failed", request.Id, errorMessage.Value)
+            End If
+
             Return CreateSuccessResponse(result, request.Id)
         Catch ex As Exception
-            Return CreateErrorResponse(-32603, "Internal error", request.Id, ex.Message)
+            hasError.Value = True
+            errorMessage.Value = ex.Message
+            Return CreateErrorResponse(-32603, "Internal error", request.Id, errorMessage.Value)
         End Try
     End Function
 
@@ -261,7 +276,7 @@ Public Class VisualStudioMcpHttpService
         }
     End Function
 
-    Private Async Function HandleToolCall(params As ToolCallParams) As Task(Of Object)
+    Private Async Function HandleToolCall(params As ToolCallParams, hasError As StrongBox(Of Boolean), errorMessage As StrongBox(Of String)) As Task(Of Object)
         Try
             ' 解析工具调用参数
             Dim result As Object = Nothing
@@ -271,15 +286,45 @@ Public Class VisualStudioMcpHttpService
                     ' 返回原始构建结果对象
                     result = Await _visualStudioMcpTools.BuildSolution(If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
 
+                    ' 检查构建结果是否有错误
+                    If TypeOf result Is BuildResult Then
+                        Dim buildResult = CType(result, BuildResult)
+                        If Not buildResult.Success Then
+                            hasError.Value = True
+                            errorMessage.Value = If(String.IsNullOrEmpty(buildResult.Message),
+                                "Solution build failed",
+                                $"Solution build failed: {buildResult.Message}")
+                        End If
+                    End If
+
                 Case "build_project"
                     ' 返回原始项目构建结果对象
                     result = Await _visualStudioMcpTools.BuildProject(
                         params.Arguments("projectName").ToString(),
                         If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
 
+                    ' 检查构建结果是否有错误
+                    If TypeOf result Is BuildResult Then
+                        Dim buildResult = CType(result, BuildResult)
+                        If Not buildResult.Success Then
+                            hasError.Value = True
+                            errorMessage.Value = If(String.IsNullOrEmpty(buildResult.Message),
+                                $"Project '{params.Arguments("projectName")}' build failed",
+                                $"Project '{params.Arguments("projectName")}' build failed: {buildResult.Message}")
+                        End If
+                    End If
+
                 Case "get_error_list"
                     ' 返回原始错误列表对象
                     result = _visualStudioMcpTools.GetErrorList(If(params.Arguments?.ContainsKey("severity"), params.Arguments("severity").ToString(), "All"))
+
+                    ' 检查错误列表是否有错误
+                    If TypeOf result Is ErrorListResponse Then
+                        Dim errorList = CType(result, ErrorListResponse)
+                        If errorList.Errors IsNot Nothing AndAlso errorList.Errors.Length > 0 Then
+                            hasError.Value = True
+                        End If
+                    End If
 
                 Case "get_solution_info"
                     ' 返回原始解决方案信息对象
@@ -287,17 +332,22 @@ Public Class VisualStudioMcpHttpService
 
                 Case Else
                     ' 对于未知工具，返回错误信息
+                    hasError.Value = True
+                    errorMessage.Value = $"Unknown tool: {params.Name}"
                     result = New Dictionary(Of String, Object) From {
-                        {"error", $"Unknown tool: {params.Name}"}
+                        {"error", errorMessage.Value}
                     }
             End Select
 
             Return result
 
         Catch ex As Exception
+            ' 设置错误状态和错误消息
+            hasError.Value = True
+            errorMessage.Value = $"Tool call failed: {ex.Message}"
             ' 返回错误信息对象
             Return New Dictionary(Of String, Object) From {
-                {"error", $"Tool call failed: {ex.Message}"},
+                {"error", errorMessage.Value},
                 {"success", False}
             }
         End Try
