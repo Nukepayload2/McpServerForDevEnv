@@ -1,76 +1,102 @@
 Imports System.ServiceModel
 Imports System.ServiceModel.Web
+Imports System.ServiceModel.Channels
 Imports Newtonsoft.Json
 Imports System.Windows.Threading
 Imports System.IO
-Imports System.Runtime.Serialization
+Imports System.ServiceModel.Activation
+Imports System.Diagnostics
+Imports System.Text
 
-' JSON-RPC 2.0 数据契约 - 符合 MCP 规范
-<DataContract>
+' JSON-RPC 2.0 数据模型 - 使用 Newtonsoft.Json 序列化
 Public Class JsonRpcRequest
-    <DataMember(Name:="jsonrpc")>
+    <JsonProperty("jsonrpc")>
     Public Property JsonRpc As String = "2.0"
 
-    <DataMember(Name:="method")>
+    <JsonProperty("method")>
     Public Property Method As String
 
-    <DataMember(Name:="params", EmitDefaultValue:=False)>
+    <JsonProperty("params", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Params As Object
 
-    <DataMember(Name:="id", EmitDefaultValue:=False)>
+    <JsonProperty("id", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Id As Object
 End Class
 
-<DataContract>
 Public Class JsonRpcResponse
-    <DataMember(Name:="jsonrpc", EmitDefaultValue:=False)>
+    <JsonProperty("jsonrpc", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property JsonRpc As String = "2.0"
 
-    <DataMember(Name:="result", EmitDefaultValue:=False)>
+    <JsonProperty("result", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Result As Object
 
-    <DataMember(Name:="error", EmitDefaultValue:=False)>
+    <JsonProperty("error", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property [Error] As JsonRpcError
 
-    <DataMember(Name:="id", EmitDefaultValue:=False)>
+    <JsonProperty("id", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Id As Object
 End Class
 
-<DataContract>
 Public Class JsonRpcError
-    <DataMember(Name:="code")>
+    <JsonProperty("code")>
     Public Property Code As Integer
 
-    <DataMember(Name:="message")>
+    <JsonProperty("message")>
     Public Property Message As String
 
-    <DataMember(Name:="data", EmitDefaultValue:=False)>
+    <JsonProperty("data", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Data As Object
 End Class
 
-' MCP HTTP 服务契约 - 符合 MCP 规范的 HTTP 传输要求
+' MCP HTTP 服务契约 - 使用 Stream 自定义数据交互，完全控制 JSON 序列化和反序列化
 <ServiceContract>
-Public Interface IMcpHttpService
-    <OperationContract>
-    <WebInvoke(Method:="POST",
-               UriTemplate:="",
-               RequestFormat:=WebMessageFormat.Json,
-               ResponseFormat:=WebMessageFormat.Json,
-               BodyStyle:=WebMessageBodyStyle.Bare)>
-    Function ProcessMcpRequest(request As JsonRpcRequest) As JsonRpcResponse
-End Interface
-
-<ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single, ConcurrencyMode:=ConcurrencyMode.Multiple)>
+<AspNetCompatibilityRequirements(RequirementsMode:=AspNetCompatibilityRequirementsMode.Allowed)>
+<ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single, ConcurrencyMode:=ConcurrencyMode.Multiple, Namespace:="")>
 Public Class VisualStudioMcpHttpService
-    Implements IMcpHttpService
-
     Private ReadOnly _visualStudioMcpTools As VisualStudioMcpTools
 
     Sub New(vs As VisualStudioMcpTools)
         _visualStudioMcpTools = vs
     End Sub
 
-    Public Function ProcessMcpRequest(request As JsonRpcRequest) As JsonRpcResponse Implements IMcpHttpService.ProcessMcpRequest
+    ' 处理 MCP 请求 - 使用对象参数配合自定义JSON格式化器
+    <WebInvoke(UriTemplate:="", Method:="POST", BodyStyle:=WebMessageBodyStyle.Bare)>
+    Public Function ProcessMcpRequest(request As JsonRpcRequest) As JsonRpcResponse
+        Try
+            ' 直接处理请求，JSON序列化由自定义格式化器处理
+            Dim response As JsonRpcResponse = ProcessRequest(request)
+
+            ' 对于通知（没有id），返回null，格式化器会处理为NoContent响应
+            Return response
+        Catch ex As Exception
+            ' 错误处理
+            Return CreateErrorResponse(-32700, "Parse error", If(request?.Id, Nothing), ex.Message)
+        End Try
+    End Function
+
+    ' 获取服务状态 - 简单的健康检查端点
+    <WebGet(UriTemplate:="status")>
+    Public Function GetStatus() As Dictionary(Of String, Object)
+        Try
+            Dim statusInfo = New Dictionary(Of String, Object) From {
+                {"status", "running"},
+                {"service", "Visual Studio MCP Server"},
+                {"version", "1.0.0"},
+                {"timestamp", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")}
+            }
+
+            ' 直接返回对象，JSON序列化由自定义格式化器处理
+            Return statusInfo
+        Catch ex As Exception
+            ' 返回错误信息
+            Return New Dictionary(Of String, Object) From {
+                {"error", ex.Message}
+            }
+        End Try
+    End Function
+
+    ' 处理 JSON-RPC 请求的核心逻辑
+    Private Function ProcessRequest(request As JsonRpcRequest) As JsonRpcResponse
         If request Is Nothing Then
             Return CreateErrorResponse(-32700, "Parse error", Nothing)
         End If
@@ -434,16 +460,16 @@ End Class
 
 ' MCP 标准内容响应类
 Public Class McpContentItem
-    <DataMember(Name:="type", EmitDefaultValue:=False)>
+    <JsonProperty("type", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Type As String
 
-    <DataMember(Name:="text", EmitDefaultValue:=False)>
+    <JsonProperty("text", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Text As String
 
-    <DataMember(Name:="data", EmitDefaultValue:=False)>
+    <JsonProperty("data", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Data As String
 
-    <DataMember(Name:="mimeType", EmitDefaultValue:=False)>
+    <JsonProperty("mimeType", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property MimeType As String
 
     Public Sub New(type As String, text As String)
@@ -459,10 +485,10 @@ Public Class McpContentItem
 End Class
 
 Public Class McpToolResponse
-    <DataMember(Name:="content", EmitDefaultValue:=False)>
+    <JsonProperty("content", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Content As List(Of McpContentItem)
 
-    <DataMember(Name:="isError", EmitDefaultValue:=False)>
+    <JsonProperty("isError", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property IsError As Boolean
 
     Public Sub New(content As List(Of McpContentItem), Optional isError As Boolean = False)
@@ -473,16 +499,16 @@ End Class
 
 ' MCP 进度通知类
 Public Class McpProgressNotification
-    <DataMember(Name:="progressToken")>
+    <JsonProperty("progressToken")>
     Public Property ProgressToken As String
 
-    <DataMember(Name:="progress", EmitDefaultValue:=False)>
+    <JsonProperty("progress", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Progress As Double
 
-    <DataMember(Name:="total", EmitDefaultValue:=False)>
+    <JsonProperty("total", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Total As Double
 
-    <DataMember(Name:="message", EmitDefaultValue:=False)>
+    <JsonProperty("message", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Message As String
 
     Public Sub New(progressToken As String, Optional progress As Double = 0, Optional total As Double = 0, Optional message As String = "")

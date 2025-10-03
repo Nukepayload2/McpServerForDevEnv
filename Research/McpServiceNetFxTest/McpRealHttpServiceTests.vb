@@ -100,7 +100,7 @@ Public Class McpRealHttpServiceTests
             Dim rpcResponse = JsonConvert.DeserializeObject(Of JsonRpcResponse)(responseString)
             Assert.IsNotNull(rpcResponse, "服务响应不应为空")
             Assert.AreEqual("2.0", rpcResponse.JsonRpc, "响应应为 JSON-RPC 2.0 格式")
-            Assert.AreEqual(CObj(1), rpcResponse.Id, "响应ID应匹配请求ID")
+            Assert.AreEqual(1L, CLng(rpcResponse.Id), "响应ID应匹配请求ID")
             Assert.IsNotNull(rpcResponse.Result, "Ping 响应应有结果")
 
         Catch ex As HttpRequestException
@@ -145,7 +145,7 @@ Public Class McpRealHttpServiceTests
 
             Dim initRpcResponse = JsonConvert.DeserializeObject(Of JsonRpcResponse)(initResponseString)
             Assert.IsNotNull(initRpcResponse.Result, "Initialize 响应应有结果")
-            Assert.AreEqual(CObj(1), initRpcResponse.Id, "响应ID应匹配请求ID")
+            Assert.AreEqual(1L, CLng(initRpcResponse.Id), "响应ID应匹配请求ID")
 
             ' 验证初始化响应内容
             Dim resultDict = JsonConvert.DeserializeObject(Of Dictionary(Of String, Object))(initRpcResponse.Result.ToString())
@@ -186,12 +186,12 @@ Public Class McpRealHttpServiceTests
 
             Dim response = Await _httpClient.PostAsync(_baseUrl, content)
             Dim responseString = Await response.Content.ReadAsStringAsync()
-
+            Debug.WriteLine(responseString)
             Assert.IsTrue(response.IsSuccessStatusCode, $"获取工具列表请求失败，状态码: {response.StatusCode}")
 
             Dim rpcResponse = JsonConvert.DeserializeObject(Of JsonRpcResponse)(responseString)
             Assert.IsNotNull(rpcResponse.Result, "工具列表响应应有结果")
-            Assert.AreEqual(CObj(2), rpcResponse.Id, "响应ID应匹配请求ID")
+            Assert.AreEqual(CLng(2), CLng(rpcResponse.Id), "响应ID应匹配请求ID")
 
             ' 验证返回的工具列表结构
             Dim resultDict = JsonConvert.DeserializeObject(Of Dictionary(Of String, Object))(rpcResponse.Result.ToString())
@@ -230,12 +230,12 @@ Public Class McpRealHttpServiceTests
 
             Dim response = Await _httpClient.PostAsync(_baseUrl, content)
             Dim responseString = Await response.Content.ReadAsStringAsync()
-
+            Debug.WriteLine(responseString)
             Assert.IsTrue(response.IsSuccessStatusCode, $"调用 get_solution_info 工具失败，状态码: {response.StatusCode}")
 
             Dim rpcResponse = JsonConvert.DeserializeObject(Of JsonRpcResponse)(responseString)
             Assert.IsNotNull(rpcResponse.Result, "工具调用响应应有结果")
-            Assert.AreEqual(CObj(3), rpcResponse.Id, "响应ID应匹配请求ID")
+            Assert.AreEqual(CLng(3), CLng(rpcResponse.Id), "响应ID应匹配请求ID")
 
             ' 验证工具响应结构
             Dim toolResponse = JsonConvert.DeserializeObject(Of Dictionary(Of String, Object))(rpcResponse.Result.ToString())
@@ -277,7 +277,7 @@ Public Class McpRealHttpServiceTests
             Assert.IsNotNull(rpcResponse.Error, "应返回错误对象")
             Assert.AreEqual(-32601, rpcResponse.Error.Code, "应为Method not found错误")
             Assert.AreEqual("Method not found", rpcResponse.Error.Message, "错误消息应正确")
-            Assert.AreEqual(CObj(4), rpcResponse.Id, "响应ID应匹配请求ID")
+            Assert.AreEqual(CLng(4), CLng(rpcResponse.Id), "响应ID应匹配请求ID")
 
         Catch ex As HttpRequestException
             Assert.Fail($"错误处理网络请求失败: {GetFullExceptionMessage(ex)}")
