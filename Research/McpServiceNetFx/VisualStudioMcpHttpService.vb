@@ -180,30 +180,24 @@ Public Class VisualStudioMcpHttpService
     End Function
 
     Private Async Function ProcessToolsCall(request As JsonRpcRequest) As Task(Of JsonRpcResponse)
-        ' 使用 StrongBox 来跟踪错误状态和错误消息
-        Dim hasError As New StrongBox(Of Boolean)(False)
-        Dim errorMessage As New StrongBox(Of String)("")
-
         Try
             ' 符合 MCP tools/call 规范
             If request.Params Is Nothing Then
-                hasError.Value = True
-                errorMessage.Value = "Tool call requires name and arguments"
-                Return CreateErrorResponse(-32602, "Invalid params", request.Id, errorMessage.Value)
+                Return CreateErrorResponse(-32602, "Invalid params", request.Id, "Tool call requires name and arguments")
             End If
 
-            Dim result = Await HandleToolCall(request.Params, hasError, errorMessage)
+            Dim toolResult = Await HandleToolCall(request.Params)
 
-            ' 检查是否出错
-            If hasError.Value Then
-                Return CreateErrorResponse(-32603, "Tool execution failed", request.Id, errorMessage.Value)
+            ' 检查工具调用结果类型
+            If TypeOf toolResult Is CallToolErrorResult Then
+                Dim errorResult = CType(toolResult, CallToolErrorResult)
+                Return CreateErrorResponse(-32603, "Tool execution failed", request.Id, errorResult.ErrorMessage)
             End If
 
-            Return CreateSuccessResponse(result, request.Id)
+            ' 返回成功结果
+            Return CreateSuccessResponse(toolResult, request.Id)
         Catch ex As Exception
-            hasError.Value = True
-            errorMessage.Value = ex.Message
-            Return CreateErrorResponse(-32603, "Internal error", request.Id, errorMessage.Value)
+            Return CreateErrorResponse(-32603, "Internal error", request.Id, ex.Message)
         End Try
     End Function
 
@@ -276,80 +270,51 @@ Public Class VisualStudioMcpHttpService
         }
     End Function
 
-    Private Async Function HandleToolCall(params As ToolCallParams, hasError As StrongBox(Of Boolean), errorMessage As StrongBox(Of String)) As Task(Of Object)
+    Private Async Function HandleToolCall(params As ToolCallParams) As Task(Of CallToolResultBase)
         Try
             ' 解析工具调用参数
             Dim result As Object = Nothing
+            Dim structuredContent As Object = Nothing
 
             Select Case params.Name
                 Case "build_solution"
-                    ' 返回原始构建结果对象
+                    ' 获取构建结果
                     result = Await _visualStudioMcpTools.BuildSolution(If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
-
-                    ' 检查构建结果是否有错误
-                    If TypeOf result Is BuildResult Then
-                        Dim buildResult = CType(result, BuildResult)
-                        If Not buildResult.Success Then
-                            hasError.Value = True
-                            errorMessage.Value = If(String.IsNullOrEmpty(buildResult.Message),
-                                "Solution build failed",
-                                $"Solution build failed: {buildResult.Message}")
-                        End If
-                    End If
-
+                    structuredContent = result
                 Case "build_project"
-                    ' 返回原始项目构建结果对象
+                    ' 获取项目构建结果
                     result = Await _visualStudioMcpTools.BuildProject(
                         params.Arguments("projectName").ToString(),
                         If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
-
-                    ' 检查构建结果是否有错误
-                    If TypeOf result Is BuildResult Then
-                        Dim buildResult = CType(result, BuildResult)
-                        If Not buildResult.Success Then
-                            hasError.Value = True
-                            errorMessage.Value = If(String.IsNullOrEmpty(buildResult.Message),
-                                $"Project '{params.Arguments("projectName")}' build failed",
-                                $"Project '{params.Arguments("projectName")}' build failed: {buildResult.Message}")
-                        End If
-                    End If
-
+                    structuredContent = result
                 Case "get_error_list"
-                    ' 返回原始错误列表对象
+                    ' 获取错误列表
                     result = _visualStudioMcpTools.GetErrorList(If(params.Arguments?.ContainsKey("severity"), params.Arguments("severity").ToString(), "All"))
-
-                    ' 检查错误列表是否有错误
-                    If TypeOf result Is ErrorListResponse Then
-                        Dim errorList = CType(result, ErrorListResponse)
-                        If errorList.Errors IsNot Nothing AndAlso errorList.Errors.Length > 0 Then
-                            hasError.Value = True
-                        End If
-                    End If
-
+                    structuredContent = result
                 Case "get_solution_info"
-                    ' 返回原始解决方案信息对象
+                    ' 获取解决方案信息
                     result = _visualStudioMcpTools.GetSolutionInfo()
-
+                    structuredContent = result
                 Case Else
                     ' 对于未知工具，返回错误信息
-                    hasError.Value = True
-                    errorMessage.Value = $"Unknown tool: {params.Name}"
-                    result = New Dictionary(Of String, Object) From {
-                        {"error", errorMessage.Value}
-                    }
+                    Return New CallToolErrorResult($"Unknown tool: {params.Name}")
             End Select
 
-            Return result
-
-        Catch ex As Exception
-            ' 设置错误状态和错误消息
-            hasError.Value = True
-            errorMessage.Value = $"Tool call failed: {ex.Message}"
-            ' 返回错误信息对象
-            Return New Dictionary(Of String, Object) From {
-                {"error", errorMessage.Value},
-                {"success", False}
+            ' 创建成功结果，包含结构化内容
+            Dim successResult = New CallToolSuccessResult With {
+                .StructuredContent = structuredContent
             }
+
+            ' 如果结果可以转换为文本，也添加文本内容
+            If result IsNot Nothing Then
+                Dim jsonResult = JsonConvert.SerializeObject(result, Formatting.Indented)
+                successResult.Content.Add(New TextContentBlock With {.Text = jsonResult})
+            End If
+
+            Return successResult
+        Catch ex As Exception
+            ' 返回错误结果
+            Return New CallToolErrorResult($"Tool call failed: {ex.Message}")
         End Try
     End Function
 
@@ -540,4 +505,282 @@ Public Class McpProgressNotification
         Me.Total = total
         Me.Message = message
     End Sub
+End Class
+
+''' <summary>
+''' 表示 MCP 工具调用成功结果的基类
+''' </summary>
+Public MustInherit Class CallToolResultBase
+    ''' <summary>
+    ''' 获取或设置响应内容列表
+    ''' </summary>
+    <JsonProperty("content")>
+    Public Property Content As IList(Of ContentBlock) = New List(Of ContentBlock)()
+
+    ''' <summary>
+    ''' 获取或设置可选的结构化结果
+    ''' </summary>
+    <JsonProperty("structuredContent")>
+    Public Property StructuredContent As Object
+End Class
+
+''' <summary>
+''' 表示 MCP 工具调用成功结果
+''' </summary>
+''' <remarks>
+''' 工具成功执行后返回的结果，包含工具的输出内容
+''' </remarks>
+Public Class CallToolSuccessResult
+    Inherits CallToolResultBase
+
+    ''' <summary>
+    ''' 初始化 CallToolSuccessResult 的新实例
+    ''' </summary>
+    Public Sub New()
+        MyBase.New()
+    End Sub
+
+    ''' <summary>
+    ''' 使用指定的内容初始化 CallToolSuccessResult 的新实例
+    ''' </summary>
+    ''' <param name="content">工具返回的内容</param>
+    Public Sub New(content As IList(Of ContentBlock))
+        Me.New()
+        Me.Content = content
+    End Sub
+
+    ''' <summary>
+    ''' 使用指定的文本内容初始化 CallToolSuccessResult 的新实例
+    ''' </summary>
+    ''' <param name="text">工具返回的文本内容</param>
+    Public Sub New(text As String)
+        Me.New()
+        If Not String.IsNullOrEmpty(text) Then
+            Content.Add(New TextContentBlock With {.Text = text})
+        End If
+    End Sub
+End Class
+
+''' <summary>
+''' 表示 MCP 工具调用错误结果
+''' </summary>
+''' <remarks>
+''' 工具执行失败时返回的错误结果，包含错误信息和详细信息
+''' </remarks>
+Public Class CallToolErrorResult
+    Inherits CallToolResultBase
+
+    ''' <summary>
+    ''' 获取或设置错误指示器，始终为 true
+    ''' </summary>
+    <JsonProperty("isError")>
+    Public Property IsError As Boolean = True
+
+    ''' <summary>
+    ''' 获取或设置错误消息
+    ''' </summary>
+    <JsonProperty("errorMessage")>
+    Public Property ErrorMessage As String
+
+    ''' <summary>
+    ''' 获取或设置错误代码
+    ''' </summary>
+    <JsonProperty("errorCode")>
+    Public Property ErrorCode As String
+
+    ''' <summary>
+    ''' 获取或设置错误详情
+    ''' </summary>
+    <JsonProperty("errorDetails")>
+    Public Property ErrorDetails As Object
+
+    ''' <summary>
+    ''' 初始化 CallToolErrorResult 的新实例
+    ''' </summary>
+    Public Sub New()
+        MyBase.New()
+    End Sub
+
+    ''' <summary>
+    ''' 使用指定的错误消息初始化 CallToolErrorResult 的新实例
+    ''' </summary>
+    ''' <param name="errorMessage">错误消息</param>
+    Public Sub New(errorMessage As String)
+        Me.New()
+        Me.ErrorMessage = errorMessage
+    End Sub
+
+    ''' <summary>
+    ''' 使用指定的错误消息和错误代码初始化 CallToolErrorResult 的新实例
+    ''' </summary>
+    ''' <param name="errorMessage">错误消息</param>
+    ''' <param name="errorCode">错误代码</param>
+    Public Sub New(errorMessage As String, errorCode As String)
+        Me.New(errorMessage)
+        Me.ErrorCode = errorCode
+    End Sub
+
+    ''' <summary>
+    ''' 使用指定的错误消息、错误代码和错误详情初始化 CallToolErrorResult 的新实例
+    ''' </summary>
+    ''' <param name="errorMessage">错误消息</param>
+    ''' <param name="errorCode">错误代码</param>
+    ''' <param name="errorDetails">错误详情</param>
+    Public Sub New(errorMessage As String, errorCode As String, errorDetails As Object)
+        Me.New(errorMessage, errorCode)
+        Me.ErrorDetails = errorDetails
+    End Sub
+End Class
+
+''' <summary>
+''' 内容块基类
+''' </summary>
+Public MustInherit Class ContentBlock
+    ''' <summary>
+    ''' 获取或设置内容类型
+    ''' </summary>
+    <JsonProperty("type")>
+    Public Property Type As String = String.Empty
+
+    ''' <summary>
+    ''' 获取或设置可选的注释
+    ''' </summary>
+    <JsonProperty("annotations")>
+    Public Property Annotations As Object
+End Class
+
+''' <summary>
+''' 文本内容块
+''' </summary>
+Public Class TextContentBlock
+    Inherits ContentBlock
+
+    ''' <summary>
+    ''' 初始化 TextContentBlock 的新实例
+    ''' </summary>
+    Public Sub New()
+        Type = "text"
+    End Sub
+
+    ''' <summary>
+    ''' 获取或设置文本内容
+    ''' </summary>
+    <JsonProperty("text")>
+    Public Property Text As String
+End Class
+
+''' <summary>
+''' 图片内容块
+''' </summary>
+Public Class ImageContentBlock
+    Inherits ContentBlock
+
+    ''' <summary>
+    ''' 初始化 ImageContentBlock 的新实例
+    ''' </summary>
+    Public Sub New()
+        Type = "image"
+    End Sub
+
+    ''' <summary>
+    ''' 获取或设置 base64 编码的图片数据
+    ''' </summary>
+    <JsonProperty("data")>
+    Public Property Data As String
+
+    ''' <summary>
+    ''' 获取或设置 MIME 类型
+    ''' </summary>
+    <JsonProperty("mimeType")>
+    Public Property MimeType As String
+End Class
+
+''' <summary>
+''' 音频内容块
+''' </summary>
+Public Class AudioContentBlock
+    Inherits ContentBlock
+
+    ''' <summary>
+    ''' 初始化 AudioContentBlock 的新实例
+    ''' </summary>
+    Public Sub New()
+        Type = "audio"
+    End Sub
+
+    ''' <summary>
+    ''' 获取或设置 base64 编码的音频数据
+    ''' </summary>
+    <JsonProperty("data")>
+    Public Property Data As String
+
+    ''' <summary>
+    ''' 获取或设置 MIME 类型
+    ''' </summary>
+    <JsonProperty("mimeType")>
+    Public Property MimeType As String
+End Class
+
+''' <summary>
+''' 嵌入资源内容块
+''' </summary>
+Public Class EmbeddedResourceBlock
+    Inherits ContentBlock
+
+    ''' <summary>
+    ''' 初始化 EmbeddedResourceBlock 的新实例
+    ''' </summary>
+    Public Sub New()
+        Type = "resource"
+    End Sub
+
+    ''' <summary>
+    ''' 获取或设置资源内容
+    ''' </summary>
+    <JsonProperty("resource")>
+    Public Property Resource As Object
+End Class
+
+''' <summary>
+''' 资源链接内容块
+''' </summary>
+Public Class ResourceLinkBlock
+    Inherits ContentBlock
+
+    ''' <summary>
+    ''' 初始化 ResourceLinkBlock 的新实例
+    ''' </summary>
+    Public Sub New()
+        Type = "resource_link"
+    End Sub
+
+    ''' <summary>
+    ''' 获取或设置资源 URI
+    ''' </summary>
+    <JsonProperty("uri")>
+    Public Property Uri As String
+
+    ''' <summary>
+    ''' 获取或设置资源名称
+    ''' </summary>
+    <JsonProperty("name")>
+    Public Property Name As String
+
+    ''' <summary>
+    ''' 获取或设置资源描述
+    ''' </summary>
+    <JsonProperty("description")>
+    Public Property Description As String
+
+    ''' <summary>
+    ''' 获取或设置 MIME 类型
+    ''' </summary>
+    <JsonProperty("mimeType")>
+    Public Property MimeType As String
+
+    ''' <summary>
+    ''' 获取或设置资源大小（字节）
+    ''' </summary>
+    <JsonProperty("size")>
+    Public Property Size As Long?
 End Class
