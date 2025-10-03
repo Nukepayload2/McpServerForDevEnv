@@ -187,11 +187,11 @@ Public Class VisualStudioTools
                             ' 转换错误级别为字符串
                             Dim severity As String
                             Select Case errorLevel
-                                Case 1 ' vsBuildErrorLevelLow
+                                Case vsBuildErrorLevel.vsBuildErrorLevelLow
                                     severity = "Message"
-                                Case 2 ' vsBuildErrorLevelMedium
+                                Case vsBuildErrorLevel.vsBuildErrorLevelMedium
                                     severity = "Warning"
-                                Case 4 ' vsBuildErrorLevelHigh
+                                Case vsBuildErrorLevel.vsBuildErrorLevelHigh
                                     severity = "Error"
                                 Case Else
                                     severity = "Unknown"
@@ -257,7 +257,6 @@ Public Class VisualStudioTools
         Sub()
             If _dte2.Solution IsNot Nothing Then
                 response.FullName = _dte2.Solution.FullName
-                response.Name = _dte2.Solution.Name
                 response.Count = _dte2.Solution.Count
             End If
 

@@ -55,7 +55,7 @@ Public Class McpHttpServiceSerializationTests
 
             Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("build_solution", toolParams.name)
-            Assert.AreEqual("Debug", toolParams.arguments("configuration"))
+            Assert.AreEqual("Debug", toolParams.Arguments("configuration"))
 
         Catch ex As Exception
             Assert.Inconclusive("JSON 结构解析失败")
@@ -84,7 +84,7 @@ Public Class McpHttpServiceSerializationTests
 
             Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("get_error_list", toolParams.name)
-            Assert.AreEqual("All", toolParams.arguments("severity"))
+            Assert.AreEqual("All", toolParams.Arguments("severity"))
 
         Catch ex As Exception
             Assert.Fail($"JSON 解析失败: {ex.Message}")
@@ -111,7 +111,7 @@ Public Class McpHttpServiceSerializationTests
 
             Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(rpcRequest.Params.ToString())
             Assert.AreEqual("get_solution_info", toolParams.name)
-            Assert.AreEqual(0, toolParams.arguments.Count)
+            Assert.AreEqual(0, toolParams.Arguments.Count)
 
         Catch ex As Exception
             Assert.Fail($"JSON 解析失败: {ex.Message}")

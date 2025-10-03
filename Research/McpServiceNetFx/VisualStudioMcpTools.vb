@@ -11,6 +11,10 @@ Public Class VisualStudioMcpTools
         _permissionHandler = permissionHandler
     End Sub
 
+    Public Sub Log(action As String, result As String, details As String)
+        _logger.LogMcpRequest(action, result, details)
+    End Sub
+
     ''' <summary>
     ''' 构建整个解决方案
     ''' </summary>

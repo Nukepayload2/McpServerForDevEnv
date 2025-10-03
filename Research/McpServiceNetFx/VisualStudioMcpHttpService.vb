@@ -1,12 +1,7 @@
 Imports System.ServiceModel
 Imports System.ServiceModel.Web
-Imports System.ServiceModel.Channels
 Imports Newtonsoft.Json
-Imports System.Windows.Threading
-Imports System.IO
 Imports System.ServiceModel.Activation
-Imports System.Diagnostics
-Imports System.Text
 
 ' JSON-RPC 2.0 数据模型 - 使用 Newtonsoft.Json 序列化
 Public Class JsonRpcRequest
@@ -17,7 +12,7 @@ Public Class JsonRpcRequest
     Public Property Method As String
 
     <JsonProperty("params", DefaultValueHandling:=DefaultValueHandling.Ignore)>
-    Public Property Params As Object
+    Public Property Params As ToolCallParams
 
     <JsonProperty("id", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Id As Object
@@ -61,10 +56,10 @@ Public Class VisualStudioMcpHttpService
 
     ' 处理 MCP 请求 - 使用对象参数配合自定义JSON格式化器
     <WebInvoke(UriTemplate:="", Method:="POST", BodyStyle:=WebMessageBodyStyle.Bare)>
-    Public Function ProcessMcpRequest(request As JsonRpcRequest) As JsonRpcResponse
+    Public Async Function ProcessMcpRequest(request As JsonRpcRequest) As Task(Of JsonRpcResponse)
         Try
             ' 直接处理请求，JSON序列化由自定义格式化器处理
-            Dim response As JsonRpcResponse = ProcessRequest(request)
+            Dim response As JsonRpcResponse = Await ProcessRequest(request)
 
             ' 对于通知（没有id），返回null，格式化器会处理为NoContent响应
             Return response
@@ -96,7 +91,7 @@ Public Class VisualStudioMcpHttpService
     End Function
 
     ' 处理 JSON-RPC 请求的核心逻辑
-    Private Function ProcessRequest(request As JsonRpcRequest) As JsonRpcResponse
+    Private Async Function ProcessRequest(request As JsonRpcRequest) As Task(Of JsonRpcResponse)
         If request Is Nothing Then
             Return CreateErrorResponse(-32700, "Parse error", Nothing)
         End If
@@ -110,17 +105,21 @@ Public Class VisualStudioMcpHttpService
         Select Case request.Method
             Case "initialize"
                 response = ProcessInitialize(request)
-            Case "initialized"
+            Case "notifications/initialized"
                 response = ProcessInitialized(request)
             Case "tools/list"
                 response = ProcessToolsList(request.Id)
             Case "tools/call"
-                response = ProcessToolsCall(request)
+                response = Await ProcessToolsCall(request)
             Case "ping"
                 response = ProcessPing(request.Id)
+            Case "notifications/canceled", "prompts/list", "resources/list"
+                ' Reserved
             Case Else
                 response = CreateErrorResponse(-32601, "Method not found", request.Id, $"Method '{request.Method}' is not supported by this MCP server")
         End Select
+
+        _visualStudioMcpTools.Log(request.Method, JsonConvert.SerializeObject(response?.Result), JsonConvert.SerializeObject(request?.Params))
 
         ' 如果是通知（没有id），不应该发送响应
         If request.Id Is Nothing AndAlso response IsNot Nothing Then
@@ -132,21 +131,6 @@ Public Class VisualStudioMcpHttpService
 
     Private Function ProcessInitialize(request As JsonRpcRequest) As JsonRpcResponse
         Try
-            ' 解析客户端初始化参数 - 符合 MCP 初始化规范
-            Dim clientParams As Object = Nothing
-            If request.Params IsNot Nothing AndAlso Not (TypeOf request.Params Is String AndAlso String.IsNullOrEmpty(request.Params.ToString())) Then
-                ' 检查是否是空对象 {}
-                Dim paramStr = request.Params.ToString()
-                If paramStr <> "System.Object" AndAlso paramStr <> "" Then
-                    Try
-                        clientParams = JsonConvert.DeserializeObject(Of Dictionary(Of String, Object))(paramStr)
-                    Catch
-                        ' 如果解析失败，保留原始参数
-                        clientParams = request.Params
-                    End Try
-                End If
-            End If
-
             ' 构建服务器初始化响应 - 符合 MCP 规范
             Dim serverCapabilities = New Dictionary(Of String, Object) From {
                 {"tools", New Dictionary(Of String, Object) From {
@@ -194,14 +178,14 @@ Public Class VisualStudioMcpHttpService
         End Try
     End Function
 
-    Private Function ProcessToolsCall(request As JsonRpcRequest) As JsonRpcResponse
+    Private Async Function ProcessToolsCall(request As JsonRpcRequest) As Task(Of JsonRpcResponse)
         Try
             ' 符合 MCP tools/call 规范
             If request.Params Is Nothing Then
                 Return CreateErrorResponse(-32602, "Invalid params", request.Id, "Tool call requires name and arguments")
             End If
 
-            Dim result = HandleToolCall(request.Params).GetAwaiter().GetResult()
+            Dim result = Await HandleToolCall(request.Params)
             Return CreateSuccessResponse(result, request.Id)
         Catch ex As Exception
             Return CreateErrorResponse(-32603, "Internal error", request.Id, ex.Message)
@@ -277,96 +261,45 @@ Public Class VisualStudioMcpHttpService
         }
     End Function
 
-    Private Async Function HandleToolCall(params As Object) As Task(Of Object)
+    Private Async Function HandleToolCall(params As ToolCallParams) As Task(Of Object)
         Try
             ' 解析工具调用参数
-            Dim toolParams = JsonConvert.DeserializeObject(Of ToolCallParams)(params.ToString())
-            Dim content As New List(Of McpContentItem)
+            Dim result As Object = Nothing
 
-            Select Case toolParams.name
+            Select Case params.Name
                 Case "build_solution"
-                    Dim result = Await _visualStudioMcpTools.BuildSolution(If(toolParams.arguments?.ContainsKey("configuration"), toolParams.arguments("configuration").ToString(), "Debug"))
-
-                    Dim buildText As String = $"Build {(If(result.Success, "succeeded", "failed"))}" & vbCrLf &
-                                          $"Configuration: {result.Configuration}" & vbCrLf &
-                                          $"Build Time: {result.BuildTime.TotalSeconds:F2}s" & vbCrLf &
-                                          $"Message: {result.Message}"
-
-                    If result.Errors?.Any() Then
-                        buildText &= vbCrLf & vbCrLf & "Errors:" & vbCrLf & String.Join(vbCrLf, result.Errors.Select(Function(e) $"  - {e.Message}"))
-                    End If
-
-                    If result.Warnings?.Any() Then
-                        buildText &= vbCrLf & vbCrLf & "Warnings:" & vbCrLf & String.Join(vbCrLf, result.Warnings.Select(Function(w) $"  - {w.Message}"))
-                    End If
-
-                    content.Add(New McpContentItem("text", buildText))
-                    Return New McpToolResponse(content, Not result.Success)
+                    ' 返回原始构建结果对象
+                    result = Await _visualStudioMcpTools.BuildSolution(If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
 
                 Case "build_project"
-                    Dim result = Await _visualStudioMcpTools.BuildProject(
-                        toolParams.arguments("projectName").ToString(),
-                        If(toolParams.arguments?.ContainsKey("configuration"), toolParams.arguments("configuration").ToString(), "Debug"))
-
-                    Dim buildText As String = $"Project Build {(If(result.Success, "succeeded", "failed"))}" & vbCrLf &
-                                          $"Project: {toolParams.arguments("projectName").ToString()}" & vbCrLf &
-                                          $"Configuration: {result.Configuration}" & vbCrLf &
-                                          $"Build Time: {result.BuildTime.TotalSeconds:F2}s" & vbCrLf &
-                                          $"Message: {result.Message}"
-
-                    If result.Errors?.Any() Then
-                        buildText &= vbCrLf & vbCrLf & "Errors:" & vbCrLf & String.Join(vbCrLf, result.Errors.Select(Function(e) $"  - {e.Message}"))
-                    End If
-
-                    If result.Warnings?.Any() Then
-                        buildText &= vbCrLf & vbCrLf & "Warnings:" & vbCrLf & String.Join(vbCrLf, result.Warnings.Select(Function(w) $"  - {w.Message}"))
-                    End If
-
-                    content.Add(New McpContentItem("text", buildText))
-                    Return New McpToolResponse(content, Not result.Success)
+                    ' 返回原始项目构建结果对象
+                    result = Await _visualStudioMcpTools.BuildProject(
+                        params.Arguments("projectName").ToString(),
+                        If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
 
                 Case "get_error_list"
-                    Dim errorList = _visualStudioMcpTools.GetErrorList(If(toolParams.arguments?.ContainsKey("severity"), toolParams.arguments("severity").ToString(), "All"))
-
-                    Dim errorText As String = $"Error List ({errorList.TotalCount} items)" & vbCrLf
-
-                    If errorList.Errors?.Any() Then
-                        errorText &= vbCrLf & "Errors:" & vbCrLf & String.Join(vbCrLf, errorList.Errors.Select(Function(e) $"  - [{e.Severity}] {e.Message} (Line {e.Line})"))
-                    End If
-
-                    If errorList.Warnings?.Any() Then
-                        errorText &= vbCrLf & "Warnings:" & vbCrLf & String.Join(vbCrLf, errorList.Warnings.Select(Function(w) $"  - [{w.Severity}] {w.Message} (Line {w.Line})"))
-                    End If
-
-                    content.Add(New McpContentItem("text", errorText))
-                    Return New McpToolResponse(content)
+                    ' 返回原始错误列表对象
+                    result = _visualStudioMcpTools.GetErrorList(If(params.Arguments?.ContainsKey("severity"), params.Arguments("severity").ToString(), "All"))
 
                 Case "get_solution_info"
-                    Dim solutionInfo = _visualStudioMcpTools.GetSolutionInfo()
-
-                    Dim infoText As String = $"Solution Information:" & vbCrLf &
-                                          $"Name: {solutionInfo.Name}" & vbCrLf &
-                                          $"Full Name: {solutionInfo.FullName}" & vbCrLf &
-                                          $"Projects Count: {solutionInfo.Count}" & vbCrLf &
-                                          $"Active Configuration: {solutionInfo.ActiveConfiguration.ConfigurationName} | {solutionInfo.ActiveConfiguration.PlatformName}"
-
-                    If solutionInfo.Projects?.Any() Then
-                        infoText &= vbCrLf & vbCrLf & "Projects:" & vbCrLf & String.Join(vbCrLf, solutionInfo.Projects.Select(Function(p) $"  - {p.Name} ({p.Kind})"))
-                    End If
-
-                    content.Add(New McpContentItem("text", infoText))
-                    Return New McpToolResponse(content)
+                    ' 返回原始解决方案信息对象
+                    result = _visualStudioMcpTools.GetSolutionInfo()
 
                 Case Else
-                    content.Add(New McpContentItem("text", $"Unknown tool: {toolParams.name}"))
-                    Return New McpToolResponse(content, True)
+                    ' 对于未知工具，返回错误信息
+                    result = New Dictionary(Of String, Object) From {
+                        {"error", $"Unknown tool: {params.Name}"}
+                    }
             End Select
 
+            Return result
+
         Catch ex As Exception
-            Dim content = New List(Of McpContentItem) From {
-                New McpContentItem("text", $"Tool call failed: {ex.Message}")
+            ' 返回错误信息对象
+            Return New Dictionary(Of String, Object) From {
+                {"error", $"Tool call failed: {ex.Message}"},
+                {"success", False}
             }
-            Return New McpToolResponse(content, True)
         End Try
     End Function
 
@@ -393,69 +326,122 @@ End Class
 
 ' MCP 工具定义的显式类型
 Public Class ToolsListResponse
+    <JsonProperty("tools")>
     Public Property Tools As ToolDefinition()
 End Class
 
 ' 构建结果强类型
 Public Class BuildResultResponse
+    <JsonProperty("success")>
     Public Property Success As Boolean
+
+    <JsonProperty("message")>
     Public Property Message As String
+
+    <JsonProperty("buildTime")>
     Public Property BuildTime As TimeSpan
+
+    <JsonProperty("configuration")>
     Public Property Configuration As String
+
+    <JsonProperty("errors", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Errors As CompilationError()
+
+    <JsonProperty("warnings", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Warnings As CompilationError()
 End Class
 
 ' 解决方案信息强类型
 Public Class SolutionInfoResponse
+    <JsonProperty("fullName")>
     Public Property FullName As String
-    Public Property Name As String
+
+    <JsonProperty("count")>
     Public Property Count As Integer
+
+    <JsonProperty("projects")>
     Public Property Projects As ProjectInfo()
+
+    <JsonProperty("activeConfiguration")>
     Public Property ActiveConfiguration As ConfigurationInfo
 End Class
 
 Public Class ProjectInfo
+    <JsonProperty("name")>
     Public Property Name As String
+
+    <JsonProperty("fullName")>
     Public Property FullName As String
+
+    <JsonProperty("uniqueName")>
     Public Property UniqueName As String
+
+    <JsonProperty("kind")>
     Public Property Kind As String
 End Class
 
 Public Class ConfigurationInfo
+    <JsonProperty("name")>
     Public Property Name As String
+
+    <JsonProperty("configurationName")>
     Public Property ConfigurationName As String
+
+    <JsonProperty("platformName")>
     Public Property PlatformName As String
 End Class
 
 ' 错误列表强类型
 Public Class ErrorListResponse
+    <JsonProperty("errors", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Errors As CompilationError()
+
+    <JsonProperty("warnings", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Warnings As CompilationError()
+
+    <JsonProperty("totalCount")>
     Public Property TotalCount As Integer
 End Class
 
 Public Class ToolDefinition
+    <JsonProperty("name")>
     Public Property Name As String
+
+    <JsonProperty("description")>
     Public Property Description As String
+
+    <JsonProperty("inputSchema")>
     Public Property InputSchema As InputSchema
 End Class
 
 Public Class InputSchema
+    <JsonProperty("type")>
     Public Property Type As String
+
+    <JsonProperty("properties")>
     Public Property Properties As Dictionary(Of String, PropertyDefinition)
+
+    <JsonProperty("required", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Required As String()
 End Class
 
 Public Class PropertyDefinition
+    <JsonProperty("type")>
     Public Property Type As String
+
+    <JsonProperty("description")>
     Public Property Description As String
+
+    <JsonProperty("default", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property [Default] As String
 End Class
 
 Public Class ToolCallParams
-    Public Property name As String
-    Public Property arguments As Dictionary(Of String, Object)
+    <JsonProperty("name")>
+    Public Property Name As String
+
+    <JsonProperty("arguments", DefaultValueHandling:=DefaultValueHandling.Ignore)>
+    Public Property Arguments As Dictionary(Of String, Object)
 End Class
 
 ' MCP 标准内容响应类
@@ -481,19 +467,6 @@ Public Class McpContentItem
         Me.Type = type
         Me.Data = data
         Me.MimeType = mimeType
-    End Sub
-End Class
-
-Public Class McpToolResponse
-    <JsonProperty("content", DefaultValueHandling:=DefaultValueHandling.Ignore)>
-    Public Property Content As List(Of McpContentItem)
-
-    <JsonProperty("isError", DefaultValueHandling:=DefaultValueHandling.Ignore)>
-    Public Property IsError As Boolean
-
-    Public Sub New(content As List(Of McpContentItem), Optional isError As Boolean = False)
-        Me.Content = content
-        Me.IsError = isError
     End Sub
 End Class
 
