@@ -208,7 +208,6 @@ Public Class McpHttpServiceSerializationTests
                 ""count"": 2,
                 ""projects"": [
                     {
-                        ""name"": ""Project1"",
                         ""fullName"": ""C:\\Projects\\TestSolution\\Project1\\Project1.vbproj"",
                         ""uniqueName"": ""Project1"",
                         ""kind"": ""{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}""
@@ -223,7 +222,6 @@ Public Class McpHttpServiceSerializationTests
 
         Try
             Dim result = JsonConvert.DeserializeObject(Of SolutionInfoResponse)(solutionInfoJson)
-            Assert.AreEqual("TestSolution", result.Name)
             Assert.AreEqual(2, result.Count)
             Assert.AreEqual(1, result.Projects.Length)
             Assert.AreEqual("Project1", result.Projects(0).Name)

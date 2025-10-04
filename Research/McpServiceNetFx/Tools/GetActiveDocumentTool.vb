@@ -8,22 +8,18 @@ Public Class GetActiveDocumentTool
         MyBase.New(logger, vsTools, permissionHandler)
     End Sub
 
-    Public Overrides ReadOnly Property ToolDefinition As ToolDefinition
-        Get
-            Return New ToolDefinition With {
-                .Name = "get_active_document",
-                .Description = "获取当前活动文档的路径",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition)()
-                }
-            }
-        End Get
-    End Property
+    Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
+        .Name = "get_active_document",
+        .Description = "获取当前活动文档的路径",
+        .InputSchema = New InputSchema With {
+            .Type = "object",
+            .Properties = New Dictionary(Of String, PropertyDefinition)()
+        }
+    }
 
-    Public Overrides ReadOnly Property DefaultPermission As PersistenceModule.PermissionLevel
+    Public Overrides ReadOnly Property DefaultPermission As PermissionLevel
         Get
-            Return PersistenceModule.PermissionLevel.Allow
+            Return PermissionLevel.Allow
         End Get
     End Property
 

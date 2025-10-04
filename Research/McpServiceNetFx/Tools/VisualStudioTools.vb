@@ -204,7 +204,6 @@ Public Class VisualStudioTools
 
                             ' 创建 CompilationError 对象
                             Dim compilationError As New CompilationError With {
-                                .ErrorCode = ExtractErrorCode(description),
                                 .Message = description,
                                 .File = fileName,
                                 .Line = line,
@@ -232,22 +231,6 @@ Public Class VisualStudioTools
         End Sub)
 
         Return result
-    End Function
-
-    Private Function ExtractErrorCode(description As String) As String
-        If String.IsNullOrWhiteSpace(description) Then
-            Return "UNKNOWN"
-        End If
-
-        ' 尝试匹配常见的错误代码格式 (如 BC30002, CS0246 等)
-        Dim regex As New System.Text.RegularExpressions.Regex("([A-Z]{2,4}\d{4,6})")
-        Dim match As System.Text.RegularExpressions.Match = regex.Match(description)
-
-        If match.Success Then
-            Return match.Groups(1).Value
-        End If
-
-        Return "GENERAL"
     End Function
 
     Public Function GetSolutionInformation() As SolutionInfoResponse

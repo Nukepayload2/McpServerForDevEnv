@@ -6,20 +6,20 @@ Public Module ToolRegistry
     ''' <summary>
     ''' 所有已知的工具定义
     ''' </summary>
-    Public ReadOnly Property KnownTools As List(Of (String, String, PersistenceModule.PermissionLevel)) = New List(Of (String, String, PersistenceModule.PermissionLevel)) From {
-        ("build_solution", "构建整个解决方案", PersistenceModule.PermissionLevel.Ask),
-        ("build_project", "构建指定项目", PersistenceModule.PermissionLevel.Ask),
-        ("get_error_list", "获取当前的错误和警告列表", PersistenceModule.PermissionLevel.Allow),
-        ("get_solution_info", "获取当前解决方案信息", PersistenceModule.PermissionLevel.Allow),
-        ("get_active_document", "获取当前活动文档的路径", PersistenceModule.PermissionLevel.Allow)
+    Public ReadOnly Property KnownTools As List(Of (String, String, PermissionLevel)) = New List(Of (String, String, PermissionLevel)) From {
+        ("build_solution", "构建整个解决方案", PermissionLevel.Ask),
+        ("build_project", "构建指定项目", PermissionLevel.Ask),
+        ("get_error_list", "获取当前的错误和警告列表", PermissionLevel.Allow),
+        ("get_solution_info", "获取当前解决方案信息", PermissionLevel.Allow),
+        ("get_active_document", "获取当前活动文档的路径", PermissionLevel.Allow)
     }
 
     ''' <summary>
     ''' 获取所有工具的默认权限配置
     ''' </summary>
     ''' <returns>权限配置列表</returns>
-    Public Function GetDefaultPermissions() As List(Of PersistenceModule.FeaturePermission)
-        Return KnownTools.Select(Function(t) New PersistenceModule.FeaturePermission With {
+    Public Function GetDefaultPermissions() As List(Of FeaturePermission)
+        Return KnownTools.Select(Function(t) New FeaturePermission With {
             .FeatureName = t.Item1,
             .Description = t.Item2,
             .Permission = t.Item3
@@ -40,12 +40,12 @@ Public Module ToolRegistry
     ''' </summary>
     ''' <param name="toolName">工具名称</param>
     ''' <returns>默认权限级别</returns>
-    Public Function GetDefaultPermission(toolName As String) As PersistenceModule.PermissionLevel
+    Public Function GetDefaultPermission(toolName As String) As PermissionLevel
         Dim tool = KnownTools.FirstOrDefault(Function(t) t.Item1 = toolName)
         If tool.Item1 IsNot Nothing Then
             Return tool.Item3
         End If
-        Return PersistenceModule.PermissionLevel.Ask ' 默认为询问
+        Return PermissionLevel.Ask ' 默认为询问
     End Function
 
     ''' <summary>
@@ -67,7 +67,7 @@ Public Module ToolRegistry
     ''' <param name="toolName">工具名称</param>
     ''' <param name="description">工具描述</param>
     ''' <param name="defaultPermission">默认权限</param>
-    Public Sub RegisterTool(toolName As String, description As String, defaultPermission As PersistenceModule.PermissionLevel)
+    Public Sub RegisterTool(toolName As String, description As String, defaultPermission As PermissionLevel)
         ' 检查是否已存在
         Dim existingTool = KnownTools.FirstOrDefault(Function(t) t.Item1 = toolName)
         If existingTool.Item1 Is Nothing Then

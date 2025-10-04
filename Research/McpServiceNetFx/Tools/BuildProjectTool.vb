@@ -8,33 +8,29 @@ Public Class BuildProjectTool
         MyBase.New(logger, vsTools, permissionHandler)
     End Sub
 
-    Public Overrides ReadOnly Property ToolDefinition As ToolDefinition
-        Get
-            Return New ToolDefinition With {
-                .Name = "build_project",
-                .Description = "构建指定项目",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                        {"projectName", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "项目名称"
-                        }},
-                        {"configuration", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "构建配置 (Debug/Release)",
-                            .[Default] = "Debug"
-                        }}
-                    },
-                    .Required = {"projectName"}
-                }
-            }
-        End Get
-    End Property
+    Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
+        .Name = "build_project",
+        .Description = "构建指定项目",
+        .InputSchema = New InputSchema With {
+            .Type = "object",
+            .Properties = New Dictionary(Of String, PropertyDefinition) From {
+                {"projectName", New PropertyDefinition With {
+                    .Type = "string",
+                    .Description = "项目名称"
+                }},
+                {"configuration", New PropertyDefinition With {
+                    .Type = "string",
+                    .Description = "构建配置 (Debug/Release)",
+                    .[Default] = "Debug"
+                }}
+            },
+            .Required = {"projectName"}
+        }
+    }
 
-    Public Overrides ReadOnly Property DefaultPermission As PersistenceModule.PermissionLevel
+    Public Overrides ReadOnly Property DefaultPermission As PermissionLevel
         Get
-            Return PersistenceModule.PermissionLevel.Ask
+            Return PermissionLevel.Ask
         End Get
     End Property
 

@@ -1,7 +1,7 @@
 Imports System.Collections.ObjectModel
 
 Partial Public Class MainWindow
-    Private _logs As New ObservableCollection(Of PersistenceModule.LogEntry)()
+    Private _logs As New ObservableCollection(Of LogEntry)
     Private _appStartTime As DateTime = DateTime.Now
 
     Private Sub BtnClearLogs_Click() Handles BtnClearLogs.Click
@@ -42,7 +42,7 @@ Partial Public Class MainWindow
     End Sub
 
     Public Sub LogOperation(operation As String, result As String, details As String)
-        Dim entry As New PersistenceModule.LogEntry With {
+        Dim entry As New LogEntry With {
             .Timestamp = DateTime.Now,
             .Operation = operation,
             .Result = result,

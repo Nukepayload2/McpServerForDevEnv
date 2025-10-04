@@ -1,29 +1,9 @@
 Imports System.IO
-Imports System.Reflection
 
 Public Module PersistenceModule
     Private ReadOnly LocalAppDataPath As String = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
     Private ReadOnly AppDataFolder As String = Path.Combine(LocalAppDataPath, GetType(PersistenceModule).Assembly.GetName().Name)
     Private ReadOnly LogsFolder As String = Path.Combine(AppDataFolder, "logs")
-
-    Public Enum PermissionLevel
-        Allow
-        Ask
-        Deny
-    End Enum
-
-    Public Class LogEntry
-        Public Property Timestamp As DateTime
-        Public Property Operation As String
-        Public Property Result As String
-        Public Property Details As String
-    End Class
-
-    Public Structure FeaturePermission
-        Public FeatureName As String
-        Public Description As String
-        Public Permission As PermissionLevel
-    End Structure
 
     Private Function EnsureAppDataFolder() As String
         If Not Directory.Exists(AppDataFolder) Then

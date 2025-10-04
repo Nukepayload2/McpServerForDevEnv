@@ -8,28 +8,24 @@ Public Class BuildSolutionTool
         MyBase.New(logger, vsTools, permissionHandler)
     End Sub
 
-    Public Overrides ReadOnly Property ToolDefinition As ToolDefinition
-        Get
-            Return New ToolDefinition With {
-                .Name = "build_solution",
-                .Description = "构建整个解决方案",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                        {"configuration", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "构建配置 (Debug/Release)",
-                            .[Default] = "Debug"
-                        }}
-                    }
-                }
+    Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
+        .Name = "build_solution",
+        .Description = "构建整个解决方案",
+        .InputSchema = New InputSchema With {
+            .Type = "object",
+            .Properties = New Dictionary(Of String, PropertyDefinition) From {
+                {"configuration", New PropertyDefinition With {
+                    .Type = "string",
+                    .Description = "构建配置 (Debug/Release)",
+                    .[Default] = "Debug"
+                }}
             }
-        End Get
-    End Property
+        }
+    }
 
-    Public Overrides ReadOnly Property DefaultPermission As PersistenceModule.PermissionLevel
+    Public Overrides ReadOnly Property DefaultPermission As PermissionLevel
         Get
-            Return PersistenceModule.PermissionLevel.Ask
+            Return PermissionLevel.Ask
         End Get
     End Property
 

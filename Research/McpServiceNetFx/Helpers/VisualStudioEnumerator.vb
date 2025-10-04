@@ -1,6 +1,5 @@
 Imports System.Runtime.InteropServices
 Imports System.Text
-Imports Microsoft.VisualStudio.Interop
 Imports System.Runtime.InteropServices.ComTypes
 Imports EnvDTE80
 

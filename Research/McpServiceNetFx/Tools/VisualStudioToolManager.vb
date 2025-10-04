@@ -77,8 +77,8 @@ Public Class VisualStudioToolManager
     ''' 获取所有默认权限配置
     ''' </summary>
     ''' <returns>权限配置列表</returns>
-    Public Function GetDefaultPermissions() As List(Of PersistenceModule.FeaturePermission)
-        Return _tools.Values.Select(Function(t) New PersistenceModule.FeaturePermission With {
+    Public Function GetDefaultPermissions() As List(Of FeaturePermission)
+        Return _tools.Values.Select(Function(t) New FeaturePermission With {
             .FeatureName = t.FeatureName,
             .Description = t.ToolDescription,
             .Permission = t.DefaultPermission

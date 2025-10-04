@@ -4,14 +4,11 @@ Imports System.ServiceModel
 Imports System.ServiceModel.Description
 Imports System.ServiceModel.Web
 Imports System.ServiceModel.Channels
-Imports System.Diagnostics
-Imports System.ServiceModel.Configuration
 Imports System.ServiceModel.Dispatcher
 Imports Newtonsoft.Json
 Imports System.Xml
 Imports System.IO
 Imports System.Net
-Imports System.Reflection
 
 Public Class McpService
     Implements IDisposable

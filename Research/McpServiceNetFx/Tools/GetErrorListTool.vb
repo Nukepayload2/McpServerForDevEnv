@@ -8,28 +8,24 @@ Public Class GetErrorListTool
         MyBase.New(logger, vsTools, permissionHandler)
     End Sub
 
-    Public Overrides ReadOnly Property ToolDefinition As ToolDefinition
-        Get
-            Return New ToolDefinition With {
-                .Name = "get_error_list",
-                .Description = "获取当前的错误和警告列表",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                        {"severity", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "过滤级别 (Error/Warning/Message/All)",
-                            .[Default] = "All"
-                        }}
-                    }
-                }
+    Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
+        .Name = "get_error_list",
+        .Description = "获取当前的错误和警告列表",
+        .InputSchema = New InputSchema With {
+            .Type = "object",
+            .Properties = New Dictionary(Of String, PropertyDefinition) From {
+                {"severity", New PropertyDefinition With {
+                    .Type = "string",
+                    .Description = "过滤级别 (Error/Warning/Message/All)",
+                    .[Default] = "All"
+                }}
             }
-        End Get
-    End Property
+        }
+    }
 
-    Public Overrides ReadOnly Property DefaultPermission As PersistenceModule.PermissionLevel
+    Public Overrides ReadOnly Property DefaultPermission As PermissionLevel
         Get
-            Return PersistenceModule.PermissionLevel.Allow
+            Return PermissionLevel.Allow
         End Get
     End Property
 

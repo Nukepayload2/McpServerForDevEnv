@@ -1,33 +1,8 @@
 Imports System.Collections.ObjectModel
 Imports System.ComponentModel
-Imports System.Collections.Specialized
 
 Partial Public Class MainWindow
     Private _permissionItems As New ObservableCollection(Of PermissionItem)()
-
-    Private Class PermissionItem
-        Implements INotifyPropertyChanged
-
-        Public Property FeatureName As String
-        Public Property Description As String
-        Private _permission As PersistenceModule.PermissionLevel
-
-        Public Property Permission As PersistenceModule.PermissionLevel
-            Get
-                Return _permission
-            End Get
-            Set
-                _permission = Value
-                OnPropertyChanged(NameOf(Permission))
-            End Set
-        End Property
-
-        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
-
-        Protected Overridable Sub OnPropertyChanged(name As String)
-            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(name))
-        End Sub
-    End Class
 
     Private Sub LoadPermissions()
         Try
@@ -75,27 +50,27 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub SetupPermissionComboBox()
-        Dim permissionValues = New List(Of PersistenceModule.PermissionLevel) From {
-            PersistenceModule.PermissionLevel.Allow,
-            PersistenceModule.PermissionLevel.Ask,
-            PersistenceModule.PermissionLevel.Deny
+        Dim permissionValues = New List(Of PermissionLevel) From {
+            PermissionLevel.Allow,
+            PermissionLevel.Ask,
+            PermissionLevel.Deny
         }
 
         PermissionColumn.ItemsSource = permissionValues
     End Sub
 
     Private Sub BtnAllowAll_Click() Handles BtnAllowAll.Click
-        SetAllPermissions(PersistenceModule.PermissionLevel.Allow)
+        SetAllPermissions(PermissionLevel.Allow)
     End Sub
 
     Private Sub BtnAskAll_Click() Handles BtnAskAll.Click
-        SetAllPermissions(PersistenceModule.PermissionLevel.Ask)
+        SetAllPermissions(PermissionLevel.Ask)
     End Sub
 
     Private Sub SaveCurrentPermissions()
         Try
             ' 直接从 _permissionItems 转换为权限列表并保存
-            Dim updatedPermissions = _permissionItems.Select(Function(item) New PersistenceModule.FeaturePermission With {
+            Dim updatedPermissions = _permissionItems.Select(Function(item) New FeaturePermission With {
                 .FeatureName = item.FeatureName,
                 .Description = item.Description,
                 .Permission = item.Permission
@@ -109,7 +84,7 @@ Partial Public Class MainWindow
         End Try
     End Sub
 
-    Private Sub SetAllPermissions(permission As PersistenceModule.PermissionLevel)
+    Private Sub SetAllPermissions(permission As PermissionLevel)
         ' 更新所有权限项
         For Each item In _permissionItems
             item.Permission = permission
@@ -121,7 +96,7 @@ Partial Public Class MainWindow
     Private Sub BtnSavePermissions_Click() Handles BtnSavePermissions.Click
         Try
             ' 直接从 _permissionItems 转换为权限列表并保存
-            Dim updatedPermissions = _permissionItems.Select(Function(item) New PersistenceModule.FeaturePermission With {
+            Dim updatedPermissions = _permissionItems.Select(Function(item) New FeaturePermission With {
                 .FeatureName = item.FeatureName,
                 .Description = item.Description,
                 .Permission = item.Permission
@@ -138,11 +113,11 @@ Partial Public Class MainWindow
         LoadPermissions()
     End Sub
 
-    Public Function GetPermission(featureName As String) As PersistenceModule.PermissionLevel
+    Public Function GetPermission(featureName As String) As PermissionLevel
         Dim permissionItem = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = featureName)
         If permissionItem Is Nothing Then
             LogOperation("权限检查", "未找到配置", $"功能 '{featureName}' 使用默认权限 Ask")
-            Return PersistenceModule.PermissionLevel.Ask ' 默认为询问
+            Return PermissionLevel.Ask ' 默认为询问
         Else
             LogOperation("权限检查", "找到配置", $"功能 '{featureName}' 权限: {permissionItem.Permission}")
             Return permissionItem.Permission
@@ -154,13 +129,13 @@ Partial Public Class MainWindow
         LogOperation("权限检查", "获取权限", $"功能: {featureName}, 权限值: {permission}")
 
         Select Case permission
-            Case PersistenceModule.PermissionLevel.Allow
+            Case PermissionLevel.Allow
                 LogOperation(featureName, "已允许", operationDescription)
                 Return True
-            Case PersistenceModule.PermissionLevel.Deny
+            Case PermissionLevel.Deny
                 LogOperation(featureName, "已拒绝", operationDescription)
                 Return False
-            Case PersistenceModule.PermissionLevel.Ask
+            Case PermissionLevel.Ask
                 LogOperation(featureName, "询问用户", operationDescription)
                 Dim message = $"是否允许执行以下操作？{Environment.NewLine}{Environment.NewLine}功能: {featureName}{Environment.NewLine}描述: {operationDescription}"
                 Dim result = UtilityModule.ShowConfirmModal(Me, message, "权限确认")

@@ -1,6 +1,3 @@
-Imports System.ComponentModel
-Imports System.Reflection
-
 ''' <summary>
 ''' Visual Studio MCP 工具的抽象基类
 ''' 提供工具定义、权限检查和日志记录的通用功能
@@ -24,7 +21,7 @@ Public MustInherit Class VisualStudioToolBase
     ''' <summary>
     ''' 获取默认权限级别
     ''' </summary>
-    Public MustOverride ReadOnly Property DefaultPermission As PersistenceModule.PermissionLevel
+    Public MustOverride ReadOnly Property DefaultPermission As PermissionLevel
 
     ''' <summary>
     ''' 获取工具名称（从ToolDefinition获取）
