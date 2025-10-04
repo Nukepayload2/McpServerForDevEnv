@@ -152,9 +152,10 @@ Public Class CustomMessageBox
         Return _result
     End Function
 
-    Public Overloads Shared Function Show(owner As Window, message As String, title As String, type As MessageBoxType, Optional showYesNo As Boolean = False) As MessageBoxResult
+    Public Overloads Shared Function Show(owner As Window, message As String, title As String, type As MessageBoxType, Optional showYesNo As Boolean = False, Optional isTopmost As Boolean = False) As MessageBoxResult
         Dim msgBox As New CustomMessageBox(title, message, type, showYesNo)
         msgBox.Owner = owner
+        msgBox.Topmost = isTopmost
         msgBox.PlaySystemSound()
         msgBox.ShowDialog()
         If msgBox.DialogResult = True Then

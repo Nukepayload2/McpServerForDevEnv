@@ -90,7 +90,7 @@ Public Module UtilityModule
     End Function
 
     Public Function ShowConfirmModal(window As Window, message As String, Optional title As String = "确认") As Boolean
-        Return CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Question, True) = CustomMessageBox.MessageBoxResult.OK
+        Return CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Question, True, True) = CustomMessageBox.MessageBoxResult.OK
     End Function
 
     Public Function GetFileDisplayName(filePath As String) As String
