@@ -45,16 +45,16 @@ Partial Public Class CustomMessageBox
         Select Case type
             Case MessageBoxType.Information
                 IconTextBlock.Text = "i"
-                IconTextBlock.Foreground = Brushes.Blue
+                IconBorder.Background = Brushes.Blue
             Case MessageBoxType.Warning
                 IconTextBlock.Text = "!"
-                IconTextBlock.Foreground = Brushes.Orange
+                IconBorder.Background = Brushes.Orange
             Case MessageBoxType.Error
                 IconTextBlock.Text = "X"
-                IconTextBlock.Foreground = Brushes.Red
+                IconBorder.Background = Brushes.Red
             Case MessageBoxType.Question
                 IconTextBlock.Text = "?"
-                IconTextBlock.Foreground = Brushes.Blue
+                IconBorder.Background = Brushes.Blue
         End Select
 
         MessageTextBlock.Text = message
