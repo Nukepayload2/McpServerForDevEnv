@@ -9,9 +9,6 @@ Partial Public Class MainWindow
             Dim loadedPermissions = PersistenceModule.LoadPermissions()
             _permissionItems.Clear()
 
-            ' 从工具注册表获取所有已知的工具权限
-            Dim knownTools = ToolRegistry.KnownTools
-
             ' 添加已加载的权限
             For Each permission In loadedPermissions
                 _permissionItems.Add(New PermissionItem With {
@@ -20,26 +17,6 @@ Partial Public Class MainWindow
                     .Permission = permission.Permission
                 })
             Next
-
-            ' 检查并添加缺失的权限
-            For Each tool In knownTools
-                Dim existingPermission = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = tool.Item1)
-                If existingPermission Is Nothing Then
-                    _permissionItems.Add(New PermissionItem With {
-                        .FeatureName = tool.Item1,
-                        .Description = tool.Item2,
-                        .Permission = tool.Item3
-                    })
-                    LogOperation("权限同步", "添加新权限", $"已为新工具 {tool.Item1} 添加默认权限")
-                End If
-            Next
-
-            ' 如果有新权限被添加，自动保存
-            Dim newPermissionsCount = knownTools.Where(Function(t) Not loadedPermissions.Any(Function(p) p.FeatureName = t.Item1)).Count()
-            If newPermissionsCount > 0 Then
-                PersistenceModule.SavePermissions(_permissionItems)
-                LogOperation("权限同步", "保存更新", $"已保存包含 {newPermissionsCount} 个新权限的配置")
-            End If
 
             DgPermissions.ItemsSource = _permissionItems
             SetupPermissionComboBox()

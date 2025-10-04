@@ -45,7 +45,8 @@ Public Module PersistenceModule
             Dim filePath = Path.Combine(folder, "permissions.xml")
 
             If Not File.Exists(filePath) Then
-                Return GetDefaultPermissions()
+                ' 权限文件不存在时返回空列表，工具权限将在 MCP 服务启动时自动同步
+                Return New List(Of PermissionItem)()
             End If
 
             Dim doc = XDocument.Load(filePath)
@@ -70,14 +71,20 @@ Public Module PersistenceModule
 
             Return permissions
         Catch ex As Exception
-            ' 如果加载失败，返回默认权限
-            Return GetDefaultPermissions()
+            ' 如果加载失败，返回空列表，工具权限将在 MCP 服务启动时自动同步
+            Return New List(Of PermissionItem)()
         End Try
     End Function
 
+    ''' <summary>
+    ''' 获取所有工具的默认权限配置
+    ''' 注意：此方法已废弃，请使用 GetDefaultPermissionsFromToolManager 替代
+    ''' </summary>
+    ''' <returns>权限配置列表</returns>
+    <Obsolete("此方法已废弃，请使用 GetDefaultPermissionsFromToolManager 替代")>
     Private Function GetDefaultPermissions() As List(Of PermissionItem)
-        ' 从工具注册表获取默认权限配置
-        Return ToolRegistry.GetDefaultPermissions()
+        ' 返回空列表，因为 KnownTools 已被废弃
+        Return New List(Of PermissionItem)()
     End Function
 
     ''' <summary>
@@ -87,14 +94,15 @@ Public Module PersistenceModule
     ''' <returns>权限配置列表</returns>
     Public Function GetDefaultPermissionsFromToolManager(toolManager As VisualStudioToolManager) As List(Of PermissionItem)
         If toolManager Is Nothing Then
-            Return GetDefaultPermissions()
+            ' 没有工具管理器时返回空列表
+            Return New List(Of PermissionItem)()
         End If
 
         Try
             Return toolManager.GetDefaultPermissions()
         Catch ex As Exception
-            ' 如果从工具管理器获取权限失败，返回默认权限
-            Return GetDefaultPermissions()
+            ' 如果从工具管理器获取权限失败，返回空列表
+            Return New List(Of PermissionItem)()
         End Try
     End Function
 

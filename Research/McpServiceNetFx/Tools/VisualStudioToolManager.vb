@@ -31,9 +31,6 @@ Public Class VisualStudioToolManager
             RegisterTool(New GetSolutionInfoTool(_logger, _vsTools, _permissionHandler))
             RegisterTool(New GetActiveDocumentTool(_logger, _vsTools, _permissionHandler))
 
-            ' 验证所有注册的工具都在工具注册表中
-            ValidateToolRegistrations()
-
             _logger?.LogMcpRequest("工具管理器", "初始化完成", $"共注册 {_tools.Count} 个工具")
 
         Catch ex As Exception
@@ -42,29 +39,7 @@ Public Class VisualStudioToolManager
         End Try
     End Sub
 
-    ''' <summary>
-    ''' 验证工具注册与工具注册表的一致性
-    ''' </summary>
-    Private Sub ValidateToolRegistrations()
-        For Each tool In _tools.Values
-            If Not ToolRegistry.IsKnownTool(tool.ToolName) Then
-                _logger?.LogMcpRequest("工具验证", "警告", $"工具 {tool.ToolName} 未在工具注册表中定义")
-            End If
-
-            Dim expectedPermission = ToolRegistry.GetDefaultPermission(tool.ToolName)
-            If tool.DefaultPermission <> expectedPermission Then
-                _logger?.LogMcpRequest("工具验证", "警告", $"工具 {tool.ToolName} 的默认权限不匹配")
-            End If
-        Next
-
-        ' 检查工具注册表中是否有未实现的工具
-        For Each knownTool In ToolRegistry.KnownTools
-            If Not _tools.ContainsKey(knownTool.Item1) Then
-                _logger?.LogMcpRequest("工具验证", "警告", $"工具 {knownTool.Item1} 在注册表中定义但未实现")
-            End If
-        Next
-    End Sub
-
+  
     ''' <summary>
     ''' 获取所有工具定义
     ''' </summary>
