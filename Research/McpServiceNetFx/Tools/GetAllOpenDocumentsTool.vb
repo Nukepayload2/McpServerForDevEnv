@@ -4,8 +4,11 @@
 Public Class GetAllOpenDocumentsTool
     Inherits VisualStudioToolBase
 
-    Public Sub New(logger As IMcpLogger, vsTools As VisualStudioTools, permissionHandler As IMcpPermissionHandler)
-        MyBase.New(logger, vsTools, permissionHandler)
+    ''' <summary>
+    ''' 创建工具实例
+    ''' </summary>
+    Public Sub New(logger As IMcpLogger, permissionHandler As IMcpPermissionHandler)
+        MyBase.New(logger, permissionHandler)
     End Sub
 
     Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
@@ -23,7 +26,7 @@ Public Class GetAllOpenDocumentsTool
         End Get
     End Property
 
-    Public Overrides Async Function ExecuteAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
+    Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
             ' 检查权限
             If Not CheckPermission() Then

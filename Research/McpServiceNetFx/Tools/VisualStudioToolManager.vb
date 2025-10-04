@@ -7,40 +7,81 @@ Imports System.Collections.Concurrent
 Public Class VisualStudioToolManager
     Private ReadOnly _tools As ConcurrentDictionary(Of String, VisualStudioToolBase)
     Private ReadOnly _logger As IMcpLogger
-    Private ReadOnly _vsTools As VisualStudioTools
+    Private _vsTools As VisualStudioTools
     Private ReadOnly _permissionHandler As IMcpPermissionHandler
+    Private _isInitialized As Boolean = False
 
-    Public Sub New(logger As IMcpLogger, vsTools As VisualStudioTools, permissionHandler As IMcpPermissionHandler)
+    ''' <summary>
+    ''' 创建工具管理器实例（应用启动时使用）
+    ''' 创建框架并注册所有工具，但数据上下文延迟创建
+    ''' </summary>
+    Public Sub New(logger As IMcpLogger, permissionHandler As IMcpPermissionHandler)
         _logger = logger
-        _vsTools = vsTools
         _permissionHandler = permissionHandler
         _tools = New ConcurrentDictionary(Of String, VisualStudioToolBase)()
+        _vsTools = Nothing ' 数据上下文将在稍后创建
+        _isInitialized = False
 
-        RegisterAllTools()
+        ' 立即注册工具，但不传入数据上下文
+        RegisterAllToolsWithoutContext()
+
+        _logger?.LogMcpRequest("工具管理器", "创建框架", $"工具管理器已创建，已注册 {_tools.Count} 个工具，等待数据上下文")
     End Sub
 
     ''' <summary>
-    ''' 注册所有工具
+    ''' 创建数据上下文并设置给所有已注册的工具
+    ''' 在选择 Visual Studio 实例后调用
     ''' </summary>
-    Private Sub RegisterAllTools()
+    ''' <param name="dte2">Visual Studio DTE2 实例</param>
+    ''' <param name="dispatcher">UI 线程调度器</param>
+    Public Sub CreateVsTools(dte2 As EnvDTE80.DTE2, dispatcher As Threading.Dispatcher)
         Try
-            ' 手动注册所有工具，避免反射的性能开销
-            RegisterTool(New BuildSolutionTool(_logger, _vsTools, _permissionHandler))
-            RegisterTool(New BuildProjectTool(_logger, _vsTools, _permissionHandler))
-            RegisterTool(New GetErrorListTool(_logger, _vsTools, _permissionHandler))
-            RegisterTool(New GetSolutionInfoTool(_logger, _vsTools, _permissionHandler))
-            RegisterTool(New GetActiveDocumentTool(_logger, _vsTools, _permissionHandler))
-            RegisterTool(New GetAllOpenDocumentsTool(_logger, _vsTools, _permissionHandler))
+            If _isInitialized Then
+                _logger?.LogMcpRequest("工具管理器", "数据上下文", "工具管理器已初始化，跳过重复创建")
+                Return
+            End If
 
-            _logger?.LogMcpRequest("工具管理器", "初始化完成", $"共注册 {_tools.Count} 个工具")
+            ' 创建 Visual Studio 工具实例
+            _vsTools = New VisualStudioTools(dte2, dispatcher, _logger)
+
+            ' 为所有已注册的工具设置数据上下文
+            For Each tool In _tools.Values
+                ' 设置工具的数据上下文
+                tool.SetVsTools(_vsTools)
+            Next
+
+            _isInitialized = True
+            _logger?.LogMcpRequest("工具管理器", "数据上下文创建完成", $"Visual Studio 实例: {dte2.Name}, 工具数量: {_tools.Count}")
 
         Catch ex As Exception
-            _logger?.LogMcpRequest("工具管理器", "初始化失败", ex.Message)
+            _logger?.LogMcpRequest("工具管理器", "数据上下文创建失败", ex.Message)
             Throw
         End Try
     End Sub
 
-  
+    ''' <summary>
+    ''' 注册所有工具（无数据上下文版本）
+    ''' 在应用启动时调用，工具将在数据上下文创建后才能执行
+    ''' </summary>
+    Private Sub RegisterAllToolsWithoutContext()
+        Try
+            ' 手动注册所有工具，避免反射的性能开销
+            ' 使用延迟数据上下文构造函数
+            RegisterTool(New BuildSolutionTool(_logger, _permissionHandler))
+            RegisterTool(New BuildProjectTool(_logger, _permissionHandler))
+            RegisterTool(New GetErrorListTool(_logger, _permissionHandler))
+            RegisterTool(New GetSolutionInfoTool(_logger, _permissionHandler))
+            RegisterTool(New GetActiveDocumentTool(_logger, _permissionHandler))
+            RegisterTool(New GetAllOpenDocumentsTool(_logger, _permissionHandler))
+
+            _logger?.LogMcpRequest("工具管理器", "工具预注册完成", $"共预注册 {_tools.Count} 个工具，等待数据上下文")
+
+        Catch ex As Exception
+            _logger?.LogMcpRequest("工具管理器", "工具预注册失败", ex.Message)
+            Throw
+        End Try
+    End Sub
+
     ''' <summary>
     ''' 获取所有工具定义
     ''' </summary>
@@ -54,6 +95,7 @@ Public Class VisualStudioToolManager
     ''' </summary>
     ''' <returns>权限配置列表</returns>
     Public Function GetDefaultPermissions() As List(Of PermissionItem)
+        ' 即使数据上下文未创建，工具也已预注册，可以获取权限配置
         Return _tools.Values.Select(Function(t) New PermissionItem With {
             .FeatureName = t.FeatureName,
             .Description = t.ToolDescription,
@@ -62,12 +104,25 @@ Public Class VisualStudioToolManager
     End Function
 
     ''' <summary>
+    ''' 检查工具管理器是否已初始化
+    ''' </summary>
+    Public ReadOnly Property IsInitialized As Boolean
+        Get
+            Return _isInitialized
+        End Get
+    End Property
+
+    ''' <summary>
     ''' 执行指定工具
     ''' </summary>
     ''' <param name="toolName">工具名称</param>
     ''' <param name="arguments">工具参数</param>
     ''' <returns>执行结果</returns>
     Public Async Function ExecuteToolAsync(toolName As String, arguments As Dictionary(Of String, Object)) As Task(Of Object)
+        If Not _isInitialized Then
+            Throw New McpException("工具管理器未初始化，无法执行工具", McpErrorCode.InternalError)
+        End If
+
         If Not _tools.ContainsKey(toolName) Then
             Throw New McpException($"未找到工具: {toolName}", McpErrorCode.InvalidParams)
         End If

@@ -21,14 +21,26 @@ Public Class McpService
     Private ReadOnly _dispatcher As Dispatcher
     Private _serviceHost As ServiceHost
     Private _isRunning As Boolean = False
+    Private _toolManager As VisualStudioToolManager
 
-    Sub New(dte2 As DTE2, port As Integer, logger As IMcpLogger, permissionHandler As IMcpPermissionHandler, dispatcher As Dispatcher)
+    Sub New(dte2 As DTE2, port As Integer, logger As IMcpLogger, permissionHandler As IMcpPermissionHandler, dispatcher As Dispatcher, toolManager As VisualStudioToolManager)
         _dte2 = dte2
         _port = port
         _logger = logger
         _permissionHandler = permissionHandler
         _dispatcher = dispatcher
+        _toolManager = toolManager
     End Sub
+
+    ''' <summary>
+    ''' 获取工具管理器实例
+    ''' </summary>
+    ''' <returns>工具管理器实例，如果服务未启动则返回 Nothing</returns>
+    Public ReadOnly Property ToolManager As VisualStudioToolManager
+        Get
+            Return _toolManager
+        End Get
+    End Property
 
     Public Sub Start()
         If _isRunning Then
@@ -57,10 +69,14 @@ Public Class McpService
         Try
             Dim baseAddress As New Uri($"http://localhost:{_port}/")
 
-            ' 创建服务实例并传递依赖项
+            ' 验证工具管理器已传入
+            If _toolManager Is Nothing Then
+                Throw New InvalidOperationException("工具管理器未传入，无法启动 MCP 服务")
+            End If
+
+            ' 创建 Visual Studio 工具实例（用于服务内部使用）
             Dim vsTools As New VisualStudioTools(_dte2, _dispatcher, _logger)
-            Dim toolManager As New VisualStudioToolManager(_logger, vsTools, _permissionHandler)
-            Dim vsMcpHttp As New VisualStudioMcpHttpService(toolManager)
+            Dim vsMcpHttp As New VisualStudioMcpHttpService(_toolManager)
             _serviceHost = New ServiceHost(vsMcpHttp, baseAddress)
 
             ' 配置服务调试行为

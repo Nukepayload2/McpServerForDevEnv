@@ -4,14 +4,35 @@
 ''' </summary>
 Public MustInherit Class VisualStudioToolBase
     Protected ReadOnly _logger As IMcpLogger
-    Protected ReadOnly _vsTools As VisualStudioTools
+    Protected _vsTools As VisualStudioTools ' 可以延迟设置
     Protected ReadOnly _permissionHandler As IMcpPermissionHandler
 
-    Protected Sub New(logger As IMcpLogger, vsTools As VisualStudioTools, permissionHandler As IMcpPermissionHandler)
+    ''' <summary>
+    ''' 创建工具实例（延迟数据上下文版本）
+    ''' </summary>
+    Protected Sub New(logger As IMcpLogger, permissionHandler As IMcpPermissionHandler)
         _logger = logger
-        _vsTools = vsTools
+        _vsTools = Nothing ' 数据上下文将稍后设置
         _permissionHandler = permissionHandler
     End Sub
+
+    ''' <summary>
+    ''' 设置数据上下文
+    ''' 在工具管理器创建数据上下文后调用
+    ''' </summary>
+    ''' <param name="vsTools">Visual Studio 工具实例</param>
+    Public Sub SetVsTools(vsTools As VisualStudioTools)
+        _vsTools = vsTools
+    End Sub
+
+    ''' <summary>
+    ''' 检查数据上下文是否已设置
+    ''' </summary>
+    Protected ReadOnly Property HasDataContext As Boolean
+        Get
+            Return _vsTools IsNot Nothing
+        End Get
+    End Property
 
     ''' <summary>
     ''' 获取工具定义
@@ -51,11 +72,36 @@ Public MustInherit Class VisualStudioToolBase
     End Property
 
     ''' <summary>
-    ''' 执行工具
+    ''' 执行工具（包装方法）
     ''' </summary>
     ''' <param name="arguments">工具参数</param>
     ''' <returns>执行结果</returns>
-    Public MustOverride Async Function ExecuteAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
+    Public Async Function ExecuteAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
+        Try
+            ' 检查数据上下文
+            If Not HasDataContext Then
+                Throw New McpException("工具数据上下文未设置，无法执行工具", McpErrorCode.InternalError)
+            End If
+
+            ' 调用具体的执行实现
+            Return Await ExecuteInternalAsync(arguments)
+        Catch ex As Exception
+            If TypeOf ex Is McpException Then
+                Throw
+            Else
+                LogOperation(ToolName, "执行异常", ex.Message)
+                Throw New McpException($"工具执行失败: {ex.Message}", McpErrorCode.InternalError)
+            End If
+        End Try
+    End Function
+
+    ''' <summary>
+    ''' 执行工具的具体实现
+    ''' 子类需要重写此方法
+    ''' </summary>
+    ''' <param name="arguments">工具参数</param>
+    ''' <returns>执行结果</returns>
+    Protected MustOverride Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
 
     ''' <summary>
     ''' 检查权限

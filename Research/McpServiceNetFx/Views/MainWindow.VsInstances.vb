@@ -47,7 +47,43 @@ Partial Public Class MainWindow
 
     Private Sub DgVsInstances_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles DgVsInstances.SelectionChanged
         _selectedVsInstance = TryCast(DgVsInstances.SelectedItem, VisualStudioInstance)
+
+        If _selectedVsInstance IsNot Nothing Then
+            ' 为工具管理器创建数据上下文
+            CreateToolManagerDataContext()
+        Else
+            ' 工具管理器保持存在，只是没有数据上下文
+            LogOperation("工具管理器", "实例取消", "取消选择 Visual Studio 实例")
+        End If
+
         UpdateSelectedInstanceDisplay()
+    End Sub
+
+    ''' <summary>
+    ''' 为工具管理器创建数据上下文
+    ''' </summary>
+    Private Sub CreateToolManagerDataContext()
+        Try
+            If _selectedVsInstance Is Nothing Then
+                Throw New ArgumentException("必须先选择 Visual Studio 实例")
+            End If
+
+            If _toolManager Is Nothing Then
+                Throw New InvalidOperationException("工具管理器框架未创建")
+            End If
+
+            ' 创建数据上下文并注册工具
+            _toolManager.CreateVsTools(_selectedVsInstance.DTE2, Dispatcher)
+
+            LogOperation("工具管理器", "数据上下文创建成功", $"实例: {_selectedVsInstance.Caption}, 工具数量: {_toolManager.GetToolCount()}")
+
+            ' 重新加载权限以包含新工具的权限项
+            LoadPermissions()
+
+        Catch ex As Exception
+            LogOperation("工具管理器", "数据上下文创建失败", ex.Message)
+            UtilityModule.ShowError(Me, $"创建工具管理器数据上下文失败: {ex.Message}")
+        End Try
     End Sub
 
     Private Sub UpdateSelectedInstanceDisplay()

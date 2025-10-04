@@ -58,8 +58,17 @@ Partial Public Class MainWindow
             AddHandler _vsMonitor.VisualStudioExited, AddressOf OnVisualStudioExited
             AddHandler _vsMonitor.VisualStudioShutdown, AddressOf OnVisualStudioShutdown
 
-            ' 创建并启动 MCP 服务
-            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Me, Dispatcher)
+            ' 验证工具管理器已创建并初始化
+            If _toolManager Is Nothing Then
+                Throw New InvalidOperationException("工具管理器未创建，无法启动 MCP 服务")
+            End If
+
+            If Not _toolManager.IsInitialized Then
+                Throw New InvalidOperationException("工具管理器未初始化，请先选择 Visual Studio 实例")
+            End If
+
+            ' 创建并启动 MCP 服务，传入工具管理器
+            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Me, Dispatcher, _toolManager)
             _mcpService.Start()
 
             ' 更新 UI 状态
@@ -70,7 +79,9 @@ Partial Public Class MainWindow
             PersistenceModule.SaveServiceConfig(port)
 
             ' 记录日志
-            LogServiceAction("服务启动", "成功", $"端口: {port}, 实例: {_selectedVsInstance.Caption}")
+            LogServiceAction("服务启动", "成功", $"端口: {port}, 实例: {_selectedVsInstance.Caption}, 工具数量: {_toolManager.GetToolCount()}")
+
+            ' 权限已在选择实例时同步，无需再次同步
         Catch ex As Exception
             CleanupService()
             Throw
@@ -134,6 +145,8 @@ Partial Public Class MainWindow
                 _vsMonitor = Nothing
             End If
 
+            ' 工具管理器不再清理，保持其生命周期与应用程序一致
+
             _isServiceRunning = False
             UpdateServiceUI(False)
 
@@ -164,7 +177,7 @@ Partial Public Class MainWindow
             BtnRefresh.IsEnabled = True
             TxtSearch.IsEnabled = True
 
-            ' 服务停止时，刷新选中的实例显示
+            ' 服务停止时，清理选中实例，但保持工具管理器
             _selectedVsInstance = Nothing
             UpdateSelectedInstanceDisplay()
             RefreshVsInstances()

@@ -2,6 +2,15 @@
     Private _isLoaded As Boolean = False
     Private _toolManager As VisualStudioToolManager
 
+    ''' <summary>
+    ''' 获取当前的工具管理器实例
+    ''' </summary>
+    Public ReadOnly Property ToolManager As VisualStudioToolManager
+        Get
+            Return _toolManager
+        End Get
+    End Property
+
     Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         If _isLoaded Then Return
         _isLoaded = True
@@ -11,6 +20,7 @@
     Private Sub InitializeApplication()
         ' 初始化各个功能模块
         InitializeVsInstances()
+        InitializeToolManager()
         InitializePermissions()
         InitializeMcpService()
         InitializeLogging()
@@ -18,6 +28,17 @@
 
     Private Sub InitializeVsInstances()
         RefreshVsInstances()
+    End Sub
+
+    Private Sub InitializeToolManager()
+        Try
+            ' 在应用启动时创建工具管理器框架
+            _toolManager = New VisualStudioToolManager(Me, Me)
+            LogOperation("工具管理器", "框架创建", "工具管理器框架已创建，等待数据上下文")
+        Catch ex As Exception
+            LogOperation("工具管理器", "框架创建失败", ex.Message)
+            UtilityModule.ShowError(Me, $"创建工具管理器框架失败: {ex.Message}")
+        End Try
     End Sub
 
     Private Sub InitializePermissions()
