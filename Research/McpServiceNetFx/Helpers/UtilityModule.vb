@@ -74,23 +74,23 @@ Public Module UtilityModule
     End Function
 
     Public Sub ShowError(window As Window, message As String, Optional title As String = "错误")
-        MessageBox.Show(window, message, title, MessageBoxButton.OK, MessageBoxImage.Error)
+        CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Error)
     End Sub
 
     Public Sub ShowWarning(window As Window, message As String, Optional title As String = "警告")
-        MessageBox.Show(window, message, title, MessageBoxButton.OK, MessageBoxImage.Warning)
+        CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Warning)
     End Sub
 
     Public Sub ShowInfo(window As Window, message As String, Optional title As String = "信息")
-        MessageBox.Show(window, message, title, MessageBoxButton.OK, MessageBoxImage.Information)
+        CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Information)
     End Sub
 
     Public Function ShowConfirm(window As Window, message As String, Optional title As String = "确认") As Boolean
-        Return MessageBox.Show(window, message, title, MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes
+        Return CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Question, True) = CustomMessageBox.MessageBoxResult.OK
     End Function
 
     Public Function ShowConfirmModal(window As Window, message As String, Optional title As String = "确认") As Boolean
-        Return MsgBox(message, vbYesNo Or vbSystemModal, title) = vbYes
+        Return CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Question, True) = CustomMessageBox.MessageBoxResult.OK
     End Function
 
     Public Function GetFileDisplayName(filePath As String) As String
