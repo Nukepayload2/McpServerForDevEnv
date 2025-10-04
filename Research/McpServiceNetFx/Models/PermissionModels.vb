@@ -1,7 +1,7 @@
 ﻿
 Imports System.ComponentModel
 
-Class PermissionItem
+Public Class PermissionItem
     Implements INotifyPropertyChanged
 
     Public Property FeatureName As String
@@ -36,10 +36,4 @@ Public Class LogEntry
     Public Property Operation As String
     Public Property Result As String
     Public Property Details As String
-End Class
-
-Public Class FeaturePermission
-    Public Property FeatureName As String
-    Public Property Description As String
-    Public Property Permission As PermissionLevel
 End Class

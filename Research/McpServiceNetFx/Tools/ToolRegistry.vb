@@ -6,7 +6,7 @@ Public Module ToolRegistry
     ''' <summary>
     ''' 所有已知的工具定义
     ''' </summary>
-    Public ReadOnly Property KnownTools As List(Of (String, String, PermissionLevel)) = New List(Of (String, String, PermissionLevel)) From {
+    Public ReadOnly Property KnownTools As New List(Of (String, String, PermissionLevel)) From {
         ("build_solution", "构建整个解决方案", PermissionLevel.Ask),
         ("build_project", "构建指定项目", PermissionLevel.Ask),
         ("get_error_list", "获取当前的错误和警告列表", PermissionLevel.Allow),
@@ -18,8 +18,8 @@ Public Module ToolRegistry
     ''' 获取所有工具的默认权限配置
     ''' </summary>
     ''' <returns>权限配置列表</returns>
-    Public Function GetDefaultPermissions() As List(Of FeaturePermission)
-        Return KnownTools.Select(Function(t) New FeaturePermission With {
+    Public Function GetDefaultPermissions() As List(Of PermissionItem)
+        Return KnownTools.Select(Function(t) New PermissionItem With {
             .FeatureName = t.Item1,
             .Description = t.Item2,
             .Permission = t.Item3

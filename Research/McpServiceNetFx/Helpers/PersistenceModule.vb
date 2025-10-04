@@ -19,7 +19,7 @@ Public Module PersistenceModule
         Return LogsFolder
     End Function
 
-    Public Sub SavePermissions(permissions As IEnumerable(Of FeaturePermission))
+    Public Sub SavePermissions(permissions As IEnumerable(Of PermissionItem))
         Try
             Dim folder = EnsureAppDataFolder()
             Dim filePath = Path.Combine(folder, "permissions.xml")
@@ -39,7 +39,7 @@ Public Module PersistenceModule
         End Try
     End Sub
 
-    Public Function LoadPermissions() As List(Of FeaturePermission)
+    Public Function LoadPermissions() As List(Of PermissionItem)
         Try
             Dim folder = EnsureAppDataFolder()
             Dim filePath = Path.Combine(folder, "permissions.xml")
@@ -49,10 +49,10 @@ Public Module PersistenceModule
             End If
 
             Dim doc = XDocument.Load(filePath)
-            Dim permissions = New List(Of FeaturePermission)()
+            Dim permissions = New List(Of PermissionItem)()
 
             For Each element In doc.Root.Elements("Permission")
-                Dim permission As New FeaturePermission With {
+                Dim permission As New PermissionItem With {
                     .FeatureName = element.@FeatureName,
                     .Description = element.@Description
                 }
@@ -75,7 +75,7 @@ Public Module PersistenceModule
         End Try
     End Function
 
-    Private Function GetDefaultPermissions() As List(Of FeaturePermission)
+    Private Function GetDefaultPermissions() As List(Of PermissionItem)
         ' 从工具注册表获取默认权限配置
         Return ToolRegistry.GetDefaultPermissions()
     End Function
@@ -85,7 +85,7 @@ Public Module PersistenceModule
     ''' </summary>
     ''' <param name="toolManager">工具管理器实例</param>
     ''' <returns>权限配置列表</returns>
-    Public Function GetDefaultPermissionsFromToolManager(toolManager As VisualStudioToolManager) As List(Of FeaturePermission)
+    Public Function GetDefaultPermissionsFromToolManager(toolManager As VisualStudioToolManager) As List(Of PermissionItem)
         If toolManager Is Nothing Then
             Return GetDefaultPermissions()
         End If

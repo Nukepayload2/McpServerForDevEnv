@@ -1,3 +1,5 @@
+Imports System.ServiceModel
+
 Partial Public Class MainWindow
     Implements IMcpLogger, IMcpPermissionHandler
     Private _mcpService As McpService
@@ -30,7 +32,9 @@ Partial Public Class MainWindow
         Try
             StartMcpService(port)
         Catch ex As Exception
-            UtilityModule.ShowError(Me, $"启动服务失败: {ex.Message}")
+            If TypeOf ex IsNot AddressAccessDeniedException Then
+                UtilityModule.ShowError(Me, $"启动服务失败: {ex.Message}")
+            End If
         End Try
     End Sub
 

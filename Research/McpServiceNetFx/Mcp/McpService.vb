@@ -1,5 +1,6 @@
 Imports EnvDTE80
 Imports System.Windows.Threading
+Imports System.Windows
 Imports System.ServiceModel
 Imports System.ServiceModel.Description
 Imports System.ServiceModel.Web
@@ -44,7 +45,11 @@ Public Class McpService
         Catch ex As Exception
             _isRunning = False
             _logger?.LogMcpRequest("MCP服务", "启动失败", ex.Message)
-            Throw New Exception($"启动 MCP 服务失败: {ex.Message}", ex)
+            If TypeOf ex IsNot AddressAccessDeniedException Then
+                Throw New Exception($"启动 MCP 服务失败: {ex.Message}", ex)
+            Else
+                Throw
+            End If
         End Try
     End Sub
 
@@ -104,14 +109,17 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
             ' 构建用户提示信息
             Dim userMessage As String
             If clipboardSuccess Then
-                userMessage = $"端口 {_port} 需要管理员权限。已将命令复制到剪贴板，请以管理员身份运行命令提示符并粘贴执行。"
+                userMessage = $"端口 {_port} 需要授权。已将命令复制到剪贴板，请以管理员身份运行命令提示符并粘贴执行："
             Else
-                userMessage = $"端口 {_port} 需要管理员权限。剪贴板操作失败，请手动复制以下命令：{Environment.NewLine}{command}"
+                userMessage = $"端口 {_port} 需要授权。剪贴板操作失败，请手动执行以下命令："
             End If
 
             _logger?.LogMcpRequest("MCP服务", "权限不足", userMessage)
-            Throw New Exception(userMessage, ex)
 
+            ' 在UI线程显示弹出窗口
+            ShowUserMessageWindow("端口授权", userMessage, command)
+
+            Throw
         Catch ex As Exception
             Throw New Exception($"启动 WCF 服务失败: {ex.Message}", ex)
         End Try
@@ -143,6 +151,23 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
             Return _isRunning
         End Get
     End Property
+
+    Private Sub ShowUserMessageWindow(title As String, message As String, command As String)
+        Try
+            SafeInvoke(_dispatcher,
+            Sub()
+                Try
+                    Dim messageWindow As New UserMessageWindow(title, message, command)
+                    My.Computer.Audio.PlaySystemSound(System.Media.SystemSounds.Exclamation)
+                    messageWindow.ShowDialog()
+                Catch ex As Exception
+                    _logger?.LogMcpRequest("MCP服务", "显示消息窗口失败", ex.Message)
+                End Try
+            End Sub)
+        Catch ex As Exception
+            _logger?.LogMcpRequest("MCP服务", "调用UI线程失败", ex.Message)
+        End Try
+    End Sub
 
     Private Function TryCopyToClipboard(command As String, operation As String) As Boolean
         Try

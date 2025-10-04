@@ -37,7 +37,7 @@ Partial Public Class MainWindow
             ' 如果有新权限被添加，自动保存
             Dim newPermissionsCount = knownTools.Where(Function(t) Not loadedPermissions.Any(Function(p) p.FeatureName = t.Item1)).Count()
             If newPermissionsCount > 0 Then
-                SaveCurrentPermissions()
+                PersistenceModule.SavePermissions(_permissionItems)
                 LogOperation("权限同步", "保存更新", $"已保存包含 {newPermissionsCount} 个新权限的配置")
             End If
 
@@ -69,14 +69,7 @@ Partial Public Class MainWindow
 
     Private Sub SaveCurrentPermissions()
         Try
-            ' 直接从 _permissionItems 转换为权限列表并保存
-            Dim updatedPermissions = _permissionItems.Select(Function(item) New FeaturePermission With {
-                .FeatureName = item.FeatureName,
-                .Description = item.Description,
-                .Permission = item.Permission
-            }).ToList()
-
-            PersistenceModule.SavePermissions(updatedPermissions)
+            PersistenceModule.SavePermissions(_permissionItems)
             LogOperation("权限保存", "成功", $"权限配置已保存到文件")
         Catch ex As Exception
             LogOperation("权限保存", "失败", ex.Message)
@@ -95,14 +88,7 @@ Partial Public Class MainWindow
 
     Private Sub BtnSavePermissions_Click() Handles BtnSavePermissions.Click
         Try
-            ' 直接从 _permissionItems 转换为权限列表并保存
-            Dim updatedPermissions = _permissionItems.Select(Function(item) New FeaturePermission With {
-                .FeatureName = item.FeatureName,
-                .Description = item.Description,
-                .Permission = item.Permission
-            }).ToList()
-
-            PersistenceModule.SavePermissions(updatedPermissions)
+            PersistenceModule.SavePermissions(_permissionItems)
             UtilityModule.ShowInfo(Me, "权限配置已保存", "保存成功")
         Catch ex As Exception
             UtilityModule.ShowError(Me, $"保存权限配置失败: {ex.Message}")
