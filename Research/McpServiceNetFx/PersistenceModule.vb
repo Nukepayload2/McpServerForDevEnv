@@ -3,7 +3,7 @@ Imports System.Reflection
 
 Public Module PersistenceModule
     Private ReadOnly LocalAppDataPath As String = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-    Private ReadOnly AppDataFolder As String = Path.Combine(LocalAppDataPath, Assembly.GetExecutingAssembly().GetName().Name)
+    Private ReadOnly AppDataFolder As String = Path.Combine(LocalAppDataPath, GetType(PersistenceModule).Assembly.GetName().Name)
     Private ReadOnly LogsFolder As String = Path.Combine(AppDataFolder, "logs")
 
     Public Enum PermissionLevel
