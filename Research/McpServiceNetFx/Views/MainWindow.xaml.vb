@@ -27,7 +27,7 @@
     End Sub
 
     Private Sub InitializeVsInstances()
-        RefreshVsInstances()
+        Dispatcher.BeginInvoke(Sub() RefreshVsInstances())
     End Sub
 
     Private Sub InitializeToolManager()
