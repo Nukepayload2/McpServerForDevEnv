@@ -1,0 +1,60 @@
+<Window x:Class="CustomMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="CustomMessageBox"
+        Height="200"
+        Width="400"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Message Panel -->
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center">
+            <TextBlock x:Name="IconTextBlock"
+                       FontSize="32"
+                       Margin="0,0,16,0"
+                       VerticalAlignment="Center"/>
+            <TextBlock x:Name="MessageTextBlock"
+                       TextWrapping="Wrap"
+                       MaxWidth="300"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Button Panel -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button x:Name="YesButton"
+                    Content="是"
+                    MinWidth="80"
+                    Margin="0,0,8,0"
+                    IsDefault="True"
+                    Visibility="Collapsed"
+                    Click="YesButton_Click"/>
+            <Button x:Name="NoButton"
+                    Content="否"
+                    MinWidth="80"
+                    IsCancel="True"
+                    Visibility="Collapsed"
+                    Click="NoButton_Click"/>
+            <Button x:Name="OKButton"
+                    Content="确定"
+                    MinWidth="80"
+                    IsDefault="True"
+                    IsCancel="True"
+                    Visibility="Collapsed"
+                    Click="OKButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
