@@ -122,3 +122,30 @@ Public Class ActiveDocumentResponse
     <JsonProperty("hasActiveDocument")>
     Public Property HasActiveDocument As Boolean
 End Class
+
+' 打开文档响应强类型
+Public Class OpenDocumentsResponse
+    <JsonProperty("documents")>
+    Public Property Documents As DocumentInfo()
+
+    <JsonProperty("totalCount")>
+    Public Property TotalCount As Integer
+End Class
+
+' 文档信息强类型
+Public Class DocumentInfo
+    <JsonProperty("path")>
+    Public Property Path As String
+
+    <JsonProperty("name")>
+    Public Property Name As String
+
+    <JsonProperty("isSaved")>
+    Public Property IsSaved As Boolean
+
+    <JsonProperty("language")>
+    Public Property Language As String
+
+    <JsonProperty("projectName")>
+    Public Property ProjectName As String
+End Class

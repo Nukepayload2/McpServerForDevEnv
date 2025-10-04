@@ -30,6 +30,7 @@ Public Class VisualStudioToolManager
             RegisterTool(New GetErrorListTool(_logger, _vsTools, _permissionHandler))
             RegisterTool(New GetSolutionInfoTool(_logger, _vsTools, _permissionHandler))
             RegisterTool(New GetActiveDocumentTool(_logger, _vsTools, _permissionHandler))
+            RegisterTool(New GetAllOpenDocumentsTool(_logger, _vsTools, _permissionHandler))
 
             _logger?.LogMcpRequest("工具管理器", "初始化完成", $"共注册 {_tools.Count} 个工具")
 

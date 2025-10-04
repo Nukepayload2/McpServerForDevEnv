@@ -305,4 +305,51 @@ Public Class VisualStudioTools
         Return response
     End Function
 
+    ''' <summary>
+    ''' 获取所有打开文档的信息
+    ''' </summary>
+    ''' <returns>包含所有打开文档信息的 OpenDocumentsResponse 对象</returns>
+    Public Function GetAllOpenDocuments() As OpenDocumentsResponse
+        Dim documentsList As New List(Of DocumentInfo)
+
+        UtilityModule.SafeInvoke(_dispatcher,
+        Sub()
+            Try
+                ' 遍历所有打开的文档
+                For Each document As EnvDTE.Document In _dte2.Documents
+                    If document IsNot Nothing Then
+                        Dim docInfo As New DocumentInfo With {
+                            .Path = If(document.FullName, ""),
+                            .Name = If(document.Name, ""),
+                            .IsSaved = document.Saved,
+                            .Language = If(document.Language, ""),
+                            .ProjectName = ""
+                        }
+
+                        ' 尝试获取文档所属的项目名称
+                        Try
+                            If document.ProjectItem IsNot Nothing AndAlso document.ProjectItem.ContainingProject IsNot Nothing Then
+                                docInfo.ProjectName = document.ProjectItem.ContainingProject.Name
+                            End If
+                        Catch ex As Exception
+                            ' 忽略获取项目名称时的错误
+                        End Try
+
+                        documentsList.Add(docInfo)
+                    End If
+                Next
+            Catch ex As Exception
+                _logger?.LogMcpRequest("获取所有打开文档", "警告", ex.Message)
+            End Try
+        End Sub)
+
+        ' 创建响应对象
+        Dim response As New OpenDocumentsResponse With {
+            .Documents = documentsList.ToArray(),
+            .TotalCount = documentsList.Count
+        }
+
+        Return response
+    End Function
+
 End Class

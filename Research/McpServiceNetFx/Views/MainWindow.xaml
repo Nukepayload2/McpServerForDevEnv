@@ -26,10 +26,10 @@
                               IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
                               GridLinesVisibility="Horizontal" HeadersVisibility="Column">
                         <ui:DataGrid.Columns>
-                            <DataGridTextColumn Header="窗口标题" Binding="{Binding Caption}" Width="*"/>
-                            <DataGridTextColumn Header="解决方案路径" Binding="{Binding SolutionPath}" Width="2*"/>
-                            <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="100"/>
-                            <DataGridTextColumn Header="进程ID" Binding="{Binding ProcessId}" Width="80"/>
+                            <DataGridTextColumn Header="窗口标题" Binding="{Binding Caption}" Width="*" FontSize="12"/>
+                            <DataGridTextColumn Header="解决方案路径" Binding="{Binding SolutionPath}" Width="2*" FontSize="12"/>
+                            <DataGridTextColumn Header="版本" Binding="{Binding Version}"/>
+                            <DataGridTextColumn Header="进程ID" Binding="{Binding ProcessId}"/>
                         </ui:DataGrid.Columns>
                     </ui:DataGrid>
       
