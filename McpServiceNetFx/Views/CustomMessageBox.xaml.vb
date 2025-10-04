@@ -71,19 +71,19 @@ Partial Public Class CustomMessageBox
         End If
     End Sub
 
-    Private Sub YesButton_Click(sender As Object, e As RoutedEventArgs)
+    Private Sub YesButton_Click() Handles YesButton.Click
         Me.DialogResult = True
         _result = MessageBoxResult.Yes
         Me.Close()
     End Sub
 
-    Private Sub NoButton_Click(sender As Object, e As RoutedEventArgs)
+    Private Sub NoButton_Click() Handles NoButton.Click
         Me.DialogResult = False
         _result = MessageBoxResult.No
         Me.Close()
     End Sub
 
-    Private Sub OKButton_Click(sender As Object, e As RoutedEventArgs)
+    Private Sub OKButton_Click() Handles OKButton.Click
         Me.DialogResult = True
         _result = MessageBoxResult.OK
         Me.Close()

@@ -41,20 +41,20 @@
                     Margin="0,0,8,0"
                     IsDefault="True"
                     Visibility="Collapsed"
-                    Click="YesButton_Click"/>
+                    />
             <Button x:Name="NoButton"
                     Content="否"
                     MinWidth="80"
                     IsCancel="True"
                     Visibility="Collapsed"
-                    Click="NoButton_Click"/>
+                    />
             <Button x:Name="OKButton"
                     Content="确定"
                     MinWidth="80"
                     IsDefault="True"
                     IsCancel="True"
                     Visibility="Collapsed"
-                    Click="OKButton_Click"/>
+                    />
         </StackPanel>
     </Grid>
 </Window>
