@@ -16,9 +16,9 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                        <TextBox x:Name="TxtSearch" Width="300" Height="25" Margin="0,0,10,0"/>
-                        <Button x:Name="BtnRefresh" Content="刷新" Width="80" Height="25"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
+                        <TextBox x:Name="TxtSearch" Width="300" Margin="0,0,10,0"/>
+                        <Button x:Name="BtnRefresh" Content="刷新" Width="80"/>
                     </StackPanel>
 
                     <DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
@@ -53,17 +53,17 @@
 
                             <Label Grid.Row="1" Grid.Column="0" Content="端口号:" VerticalAlignment="Center"
                                     Margin="0,10,0,0"/>
-                            <TextBox x:Name="TxtPort" Grid.Row="1" Grid.Column="1" Height="25"
+                            <TextBox x:Name="TxtPort" Grid.Row="1" Grid.Column="1"
                                      Margin="10,10,10,0" Text="38080"/>
                             <Button x:Name="BtnStartService" Grid.Row="1" Grid.Column="2"
-                                    Content="启动服务" Width="100" Height="25" Margin="0,10,0,0"/>
+                                    Content="启动服务" Width="100" Margin="0,10,0,0"/>
 
                             <Label Grid.Row="2" Grid.Column="0" Content="状态:" VerticalAlignment="Center"
                                     Margin="0,10,0,0"/>
                             <TextBlock x:Name="TxtServiceStatus" Grid.Row="2" Grid.Column="1"
                                        Text="服务未启动" VerticalAlignment="Center" Margin="10,10,0,0"/>
                             <Button x:Name="BtnStopService" Grid.Row="2" Grid.Column="2"
-                                    Content="停止服务" Width="100" Height="25" Margin="0,10,0,0"
+                                    Content="停止服务" Width="100" Margin="0,10,0,0"
                                     IsEnabled="False"/>
 
                             <Label Grid.Row="3" Grid.Column="0" Content="客户端配置:" VerticalAlignment="Center"
@@ -100,10 +100,10 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                        <Button x:Name="BtnAllowAll" Content="全部允许" Width="100" Height="25"
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
+                        <Button x:Name="BtnAllowAll" Content="全部允许" Width="100"
                                 Margin="0,0,10,0"/>
-                        <Button x:Name="BtnAskAll" Content="全部询问" Width="100" Height="25"
+                        <Button x:Name="BtnAskAll" Content="全部询问" Width="100"
                                 Margin="0,0,10,0"/>
                     </StackPanel>
 
@@ -119,9 +119,9 @@
                     </DataGrid>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
-                        <Button x:Name="BtnSavePermissions" Content="保存配置" Width="100" Height="25"
+                        <Button x:Name="BtnSavePermissions" Content="保存配置" Width="100"
                                 Margin="0,0,10,0"/>
-                        <Button x:Name="BtnReloadPermissions" Content="重新加载" Width="100" Height="25"/>
+                        <Button x:Name="BtnReloadPermissions" Content="重新加载" Width="100"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -135,10 +135,10 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                        <Button x:Name="BtnClearLogs" Content="清空日志" Width="100" Height="25"
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
+                        <Button x:Name="BtnClearLogs" Content="清空日志" Width="100"
                                 Margin="0,0,10,0"/>
-                        <Button x:Name="BtnExportLogs" Content="导出日志" Width="100" Height="25"/>
+                        <Button x:Name="BtnExportLogs" Content="导出日志" Width="100"/>
                     </StackPanel>
 
                     <DataGrid x:Name="DgLogs" Grid.Row="1" AutoGenerateColumns="False"

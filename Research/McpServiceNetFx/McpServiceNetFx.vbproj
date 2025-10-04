@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.14.40260" />
     <PackageReference Include="Nukepayload2.SourceGenerators.MyWpfExtension" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	<PackageReference Include="WPF-UI" Version="4.0.3" />
   </ItemGroup>
 
   <ItemGroup>
