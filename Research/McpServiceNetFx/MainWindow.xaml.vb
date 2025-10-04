@@ -28,6 +28,10 @@
         LoadServiceConfig()
     End Sub
 
+    Private Sub MainWindow_Activated() Handles Me.Activated
+        WpfVBHost.Instance.CurrentWindow = Me
+    End Sub
+
     Private Sub InitializeLogging()
         ' 不再加载历史日志，仅初始化内存日志集合
         DgLogs.ItemsSource = _logs
