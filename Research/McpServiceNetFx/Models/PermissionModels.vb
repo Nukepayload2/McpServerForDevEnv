@@ -31,6 +31,14 @@ Public Enum PermissionLevel
     Deny
 End Enum
 
+Public Class PermissionLevels
+    Public Shared ReadOnly Property Value As PermissionLevel() = {
+        PermissionLevel.Allow,
+        PermissionLevel.Ask,
+        PermissionLevel.Deny
+    }
+End Class
+
 Public Class LogEntry
     Public Property Timestamp As DateTime
     Public Property Operation As String

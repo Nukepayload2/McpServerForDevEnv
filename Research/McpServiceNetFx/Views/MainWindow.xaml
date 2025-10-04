@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:McpServiceNetFx"
         mc:Ignorable="d"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         Title="Visual Studio MCP 服务器" Height="600" Width="900" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <TabControl x:Name="TabControlMain">
@@ -21,16 +22,16 @@
                         <Button x:Name="BtnRefresh" Content="刷新" Width="80"/>
                     </StackPanel>
 
-                    <DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
+                    <ui:DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
                               IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
                               GridLinesVisibility="Horizontal" HeadersVisibility="Column">
-                        <DataGrid.Columns>
+                        <ui:DataGrid.Columns>
                             <DataGridTextColumn Header="窗口标题" Binding="{Binding Caption}" Width="*"/>
                             <DataGridTextColumn Header="解决方案路径" Binding="{Binding SolutionPath}" Width="2*"/>
                             <DataGridTextColumn Header="版本" Binding="{Binding Version}" Width="100"/>
                             <DataGridTextColumn Header="进程ID" Binding="{Binding ProcessId}" Width="80"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                        </ui:DataGrid.Columns>
+                    </ui:DataGrid>
       
                     <GroupBox Grid.Row="2" Header="服务设置" Margin="0,0,0,0">
                         <Grid Margin="10">
@@ -107,16 +108,25 @@
                                 Margin="0,0,10,0"/>
                     </StackPanel>
 
-                    <DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
+                    <ui:DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
                               CanUserAddRows="False" GridLinesVisibility="Horizontal"
                               HeadersVisibility="Column">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}" Width="*"/>
-                            <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="2*"/>
-                            <DataGridComboBoxColumn Header="权限" Width="120" x:Name="PermissionColumn"
-                                                    SelectedValueBinding="{Binding Permission}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                        <ui:DataGrid.Columns>
+                            <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}"/>
+                            <DataGridTextColumn Header="描述" Binding="{Binding Description}"/>
+                            <DataGridTemplateColumn Header="权限" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox ItemsSource="{x:Static local:PermissionLevels.Value}"
+                                          SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEditable="False"
+                                          Background="Transparent"
+                                          BorderThickness="0"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </ui:DataGrid.Columns>
+                    </ui:DataGrid>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
                         <Button x:Name="BtnSavePermissions" Content="保存配置" Width="100"

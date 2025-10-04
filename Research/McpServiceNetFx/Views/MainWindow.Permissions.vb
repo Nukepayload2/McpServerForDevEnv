@@ -19,21 +19,10 @@ Partial Public Class MainWindow
             Next
 
             DgPermissions.ItemsSource = _permissionItems
-            SetupPermissionComboBox()
             LogOperation("权限加载", "完成", $"共加载 {_permissionItems.Count} 个权限配置")
         Catch ex As Exception
             UtilityModule.ShowError(Me, $"加载权限配置失败: {ex.Message}")
         End Try
-    End Sub
-
-    Private Sub SetupPermissionComboBox()
-        Dim permissionValues = New List(Of PermissionLevel) From {
-            PermissionLevel.Allow,
-            PermissionLevel.Ask,
-            PermissionLevel.Deny
-        }
-
-        PermissionColumn.ItemsSource = permissionValues
     End Sub
 
     Private Sub BtnAllowAll_Click() Handles BtnAllowAll.Click
