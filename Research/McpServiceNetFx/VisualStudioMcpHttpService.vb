@@ -49,10 +49,10 @@ End Class
 <AspNetCompatibilityRequirements(RequirementsMode:=AspNetCompatibilityRequirementsMode.Allowed)>
 <ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single, ConcurrencyMode:=ConcurrencyMode.Multiple, Namespace:="")>
 Public Class VisualStudioMcpHttpService
-    Private ReadOnly _visualStudioMcpTools As VisualStudioMcpTools
+    Private ReadOnly _toolManager As VisualStudioToolManager
 
-    Sub New(vs As VisualStudioMcpTools)
-        _visualStudioMcpTools = vs
+    Sub New(toolManager As VisualStudioToolManager)
+        _toolManager = toolManager
     End Sub
 
     ' 处理 MCP 请求 - 使用对象参数配合自定义JSON格式化器
@@ -120,7 +120,7 @@ Public Class VisualStudioMcpHttpService
                 response = CreateErrorResponse(-32601, "Method not found", request.Id, $"Method '{request.Method}' is not supported by this MCP server")
         End Select
 
-        _visualStudioMcpTools.Log(request.Method, JsonConvert.SerializeObject(response?.Result), JsonConvert.SerializeObject(request?.Params))
+        ' 记录工具调用日志（通过工具管理器内部处理）
 
         ' 如果是通知（没有id），不应该发送响应
         If request.Id Is Nothing AndAlso response IsNot Nothing Then
@@ -207,102 +207,32 @@ Public Class VisualStudioMcpHttpService
     End Function
 
     Private Function GetToolsList() As ToolsListResponse
-        Dim tools As New List(Of ToolDefinition) From {
-            New ToolDefinition With {
-                .Name = "build_solution",
-                .Description = "构建整个解决方案",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                        {"configuration", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "构建配置 (Debug/Release)",
-                            .[Default] = "Debug"
-                        }}
-                    }
-                }
-            },
-            New ToolDefinition With {
-                .Name = "build_project",
-                .Description = "构建指定项目",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                        {"projectName", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "项目名称"
-                        }},
-                        {"configuration", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "构建配置 (Debug/Release)",
-                            .[Default] = "Debug"
-                        }}
-                    },
-                    .Required = {"projectName"}
-                }
-            },
-            New ToolDefinition With {
-                .Name = "get_error_list",
-                .Description = "获取当前的错误和警告列表",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                        {"severity", New PropertyDefinition With {
-                            .Type = "string",
-                            .Description = "过滤级别 (Error/Warning/Message/All)",
-                            .[Default] = "All"
-                        }}
-                    }
-                }
-            },
-            New ToolDefinition With {
-                .Name = "get_solution_info",
-                .Description = "获取当前解决方案信息",
-                .InputSchema = New InputSchema With {
-                    .Type = "object",
-                    .Properties = New Dictionary(Of String, PropertyDefinition)()
-                }
+        Try
+            Dim tools = _toolManager.GetToolDefinitions()
+            Return New ToolsListResponse With {
+                .Tools = tools
             }
-        }
-
-        Return New ToolsListResponse With {
-            .Tools = tools.ToArray()
-        }
+        Catch ex As Exception
+            ' 如果获取工具列表失败，返回空列表
+            Return New ToolsListResponse With {
+                .Tools = New ToolDefinition() {}
+            }
+        End Try
     End Function
 
     Private Async Function HandleToolCall(params As ToolCallParams) As Task(Of CallToolResultBase)
         Try
-            ' 解析工具调用参数
-            Dim result As Object = Nothing
-            Dim structuredContent As Object = Nothing
+            ' 检查工具是否存在
+            If Not _toolManager.HasTool(params.Name) Then
+                Return New CallToolErrorResult($"Unknown tool: {params.Name}")
+            End If
 
-            Select Case params.Name
-                Case "build_solution"
-                    ' 获取构建结果
-                    result = Await _visualStudioMcpTools.BuildSolution(If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
-                    structuredContent = result
-                Case "build_project"
-                    ' 获取项目构建结果
-                    result = Await _visualStudioMcpTools.BuildProject(
-                        params.Arguments("projectName").ToString(),
-                        If(params.Arguments?.ContainsKey("configuration"), params.Arguments("configuration").ToString(), "Debug"))
-                    structuredContent = result
-                Case "get_error_list"
-                    ' 获取错误列表
-                    result = _visualStudioMcpTools.GetErrorList(If(params.Arguments?.ContainsKey("severity"), params.Arguments("severity").ToString(), "All"))
-                    structuredContent = result
-                Case "get_solution_info"
-                    ' 获取解决方案信息
-                    result = _visualStudioMcpTools.GetSolutionInfo()
-                    structuredContent = result
-                Case Else
-                    ' 对于未知工具，返回错误信息
-                    Return New CallToolErrorResult($"Unknown tool: {params.Name}")
-            End Select
+            ' 执行工具
+            Dim result = Await _toolManager.ExecuteToolAsync(params.Name, If(params.Arguments, New Dictionary(Of String, Object)()))
 
             ' 创建成功结果，包含结构化内容
             Dim successResult = New CallToolSuccessResult With {
-                .StructuredContent = structuredContent
+                .StructuredContent = result
             }
 
             ' 如果结果可以转换为文本，也添加文本内容
@@ -416,6 +346,15 @@ Public Class ErrorListResponse
 
     <JsonProperty("totalCount")>
     Public Property TotalCount As Integer
+End Class
+
+' 活动文档响应强类型
+Public Class ActiveDocumentResponse
+    <JsonProperty("path", DefaultValueHandling:=DefaultValueHandling.Ignore)>
+    Public Property Path As String
+
+    <JsonProperty("hasActiveDocument")>
+    Public Property HasActiveDocument As Boolean
 End Class
 
 Public Class ToolDefinition

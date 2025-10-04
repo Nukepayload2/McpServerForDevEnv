@@ -34,6 +34,10 @@ Partial Public Class MainWindow
             Dim loadedPermissions = PersistenceModule.LoadPermissions()
             _permissionItems.Clear()
 
+            ' 从工具注册表获取所有已知的工具权限
+            Dim knownTools = ToolRegistry.KnownTools
+
+            ' 添加已加载的权限
             For Each permission In loadedPermissions
                 _permissionItems.Add(New PermissionItem With {
                     .FeatureName = permission.FeatureName,
@@ -41,6 +45,26 @@ Partial Public Class MainWindow
                     .Permission = permission.Permission
                 })
             Next
+
+            ' 检查并添加缺失的权限
+            For Each tool In knownTools
+                Dim existingPermission = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = tool.Item1)
+                If existingPermission Is Nothing Then
+                    _permissionItems.Add(New PermissionItem With {
+                        .FeatureName = tool.Item1,
+                        .Description = tool.Item2,
+                        .Permission = tool.Item3
+                    })
+                    LogOperation("权限同步", "添加新权限", $"已为新工具 {tool.Item1} 添加默认权限")
+                End If
+            Next
+
+            ' 如果有新权限被添加，自动保存
+            Dim newPermissionsCount = knownTools.Where(Function(t) Not loadedPermissions.Any(Function(p) p.FeatureName = t.Item1)).Count()
+            If newPermissionsCount > 0 Then
+                SaveCurrentPermissions()
+                LogOperation("权限同步", "保存更新", $"已保存包含 {newPermissionsCount} 个新权限的配置")
+            End If
 
             DgPermissions.ItemsSource = _permissionItems
             SetupPermissionComboBox()
@@ -139,7 +163,7 @@ Partial Public Class MainWindow
             Case PersistenceModule.PermissionLevel.Ask
                 LogOperation(featureName, "询问用户", operationDescription)
                 Dim message = $"是否允许执行以下操作？{Environment.NewLine}{Environment.NewLine}功能: {featureName}{Environment.NewLine}描述: {operationDescription}"
-                Dim result = UtilityModule.ShowConfirm(Me, message, "权限确认")
+                Dim result = UtilityModule.ShowConfirmModal(Me, message, "权限确认")
 
                 If result Then
                     LogOperation(featureName, "用户允许", operationDescription)

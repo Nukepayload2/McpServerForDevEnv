@@ -89,6 +89,10 @@ Public Module UtilityModule
         Return MessageBox.Show(window, message, title, MessageBoxButton.YesNo, MessageBoxImage.Question) = MessageBoxResult.Yes
     End Function
 
+    Public Function ShowConfirmModal(window As Window, message As String, Optional title As String = "确认") As Boolean
+        Return MsgBox(message, vbYesNo Or vbSystemModal, title) = vbYes
+    End Function
+
     Public Function GetFileDisplayName(filePath As String) As String
         If String.IsNullOrEmpty(filePath) Then
             Return "无文件"

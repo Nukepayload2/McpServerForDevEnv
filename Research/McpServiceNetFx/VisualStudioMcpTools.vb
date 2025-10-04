@@ -116,6 +116,24 @@ Public Class VisualStudioMcpTools
         End Try
     End Function
 
+    ''' <summary>
+    ''' 获取当前活动文档的信息
+    ''' </summary>
+    Public Function GetActiveDocument() As ActiveDocumentResponse
+        Try
+            ' 检查权限
+            If Not CheckPermission("get_active_document", "获取活动文档") Then
+                Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
+            End If
+
+            Return _vsTools.GetActiveDocument()
+
+        Catch ex As Exception
+            _logger?.LogMcpRequest("获取活动文档", "失败", ex.Message)
+            Throw New McpException($"获取活动文档失败: {ex.Message}", McpErrorCode.InternalError)
+        End Try
+    End Function
+
     Private Function CheckPermission(featureName As String, operationDescription As String) As Boolean
         Try
             Return _permissionHandler.CheckPermission(featureName, operationDescription)

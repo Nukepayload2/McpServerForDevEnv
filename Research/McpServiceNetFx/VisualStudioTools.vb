@@ -291,4 +291,35 @@ Public Class VisualStudioTools
         Return response
     End Function
 
+    ''' <summary>
+    ''' 获取当前活动文档的信息
+    ''' </summary>
+    ''' <returns>包含活动文档信息的 ActiveDocumentResponse 对象</returns>
+    Public Function GetActiveDocument() As ActiveDocumentResponse
+        Dim documentPath As String = Nothing
+
+        UtilityModule.SafeInvoke(_dispatcher,
+        Sub()
+            Try
+                ' 检查是否有活动文档
+                If _dte2.ActiveDocument IsNot Nothing Then
+                    documentPath = _dte2.ActiveDocument.FullName
+                End If
+            Catch ex As Exception
+                _logger?.LogMcpRequest("获取活动文档", "警告", ex.Message)
+            End Try
+        End Sub)
+
+        ' 创建响应对象
+        Dim response As New ActiveDocumentResponse With {
+            .HasActiveDocument = Not String.IsNullOrEmpty(documentPath)
+        }
+
+        If response.HasActiveDocument Then
+            response.Path = documentPath
+        End If
+
+        Return response
+    End Function
+
 End Class

@@ -57,8 +57,8 @@ Public Class McpService
 
             ' 创建服务实例并传递依赖项
             Dim vsTools As New VisualStudioTools(_dte2, _dispatcher, _logger)
-            Dim vsMcpTools As New VisualStudioMcpTools(_logger, vsTools, _permissionHandler)
-            Dim vsMcpHttp As New VisualStudioMcpHttpService(vsMcpTools)
+            Dim toolManager As New VisualStudioToolManager(_logger, vsTools, _permissionHandler)
+            Dim vsMcpHttp As New VisualStudioMcpHttpService(toolManager)
             _serviceHost = New ServiceHost(vsMcpHttp, baseAddress)
 
             ' 配置服务调试行为

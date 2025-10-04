@@ -96,28 +96,26 @@ Public Module PersistenceModule
     End Function
 
     Private Function GetDefaultPermissions() As List(Of FeaturePermission)
-        Return New List(Of FeaturePermission) From {
-            New FeaturePermission With {
-                .FeatureName = "build_solution",
-                .Description = "构建整个解决方案",
-                .Permission = PermissionLevel.Ask
-            },
-            New FeaturePermission With {
-                .FeatureName = "build_project",
-                .Description = "构建指定项目",
-                .Permission = PermissionLevel.Ask
-            },
-            New FeaturePermission With {
-                .FeatureName = "get_error_list",
-                .Description = "获取当前的错误和警告列表",
-                .Permission = PermissionLevel.Allow
-            },
-            New FeaturePermission With {
-                .FeatureName = "get_solution_info",
-                .Description = "获取当前解决方案信息",
-                .Permission = PermissionLevel.Allow
-            }
-        }
+        ' 从工具注册表获取默认权限配置
+        Return ToolRegistry.GetDefaultPermissions()
+    End Function
+
+    ''' <summary>
+    ''' 从工具管理器获取默认权限配置
+    ''' </summary>
+    ''' <param name="toolManager">工具管理器实例</param>
+    ''' <returns>权限配置列表</returns>
+    Public Function GetDefaultPermissionsFromToolManager(toolManager As VisualStudioToolManager) As List(Of FeaturePermission)
+        If toolManager Is Nothing Then
+            Return GetDefaultPermissions()
+        End If
+
+        Try
+            Return toolManager.GetDefaultPermissions()
+        Catch ex As Exception
+            ' 如果从工具管理器获取权限失败，返回默认权限
+            Return GetDefaultPermissions()
+        End Try
     End Function
 
     Public Sub SaveLogsToAppStartupFile(logs As IEnumerable(Of LogEntry), appStartTime As DateTime)
