@@ -185,7 +185,7 @@ Partial Public Class MainWindow
         End If
 
         Try
-            Dim serverName = $"devenv"
+            Dim serverName = $"@nukepayload2/devenv.wrapper"
             Dim port = TxtPort.Text
 
             ' 生成配置
