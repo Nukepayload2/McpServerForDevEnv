@@ -15,6 +15,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Research", "Research", "{A1
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "McpServiceNetFx", "McpServiceNetFx\McpServiceNetFx.vbproj", "{2D12DEEF-1BF1-15E4-FE64-D4B2B25FAE2C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{615C23AB-FE06-43F4-99B7-0BCBE2B261DC}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
