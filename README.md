@@ -6,6 +6,9 @@ Visual Studio MCP 服务器 GUI，为 AI 助手提供与 Visual Studio 集成的
 项目处于 Beta 阶段
 
 - [x] 外挂式服务管理器
+    - [x] 基本功能
+    - [ ] 多实例附加到不同端口
+    - [ ] 英文文本资源
 - [ ] VSIX 内嵌式服务管理器
 
 ## 功能特性
