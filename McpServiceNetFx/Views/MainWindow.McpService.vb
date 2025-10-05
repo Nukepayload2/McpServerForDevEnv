@@ -217,7 +217,7 @@ Partial Public Class MainWindow
 }}"
 
             ' 生成 Claude CLI 配置
-            Dim claudeConfig As String = $"claude mcp add --transport http visualstudio ""http://localhost:{port}/mcp/"""
+            Dim claudeConfig As String = $"claude mcp add --transport http {serverName} ""http://localhost:{port}/mcp/"""
 
             TxtJsonConfig.Text = jsonConfig
             TxtClaudeConfig.Text = claudeConfig
