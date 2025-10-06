@@ -1,71 +1,80 @@
 # McpServerForDevEnv
 
-Visual Studio MCP 服务器 GUI，为 AI 助手提供与 Visual Studio 集成的开发环境能力。
+**[简体中文](README.zh-CN.md)** | English
 
-## 进度
-项目处于 Beta 阶段
+Visual Studio MCP Server GUI, providing development environment capabilities integrated with Visual Studio for AI assistants.
 
-- [x] 外挂式服务管理器
-    - [x] 基本功能
-    - [x] 英文文本资源
-    - [ ] 多实例附加到不同端口，第一版做不做？
-- [ ] VSIX 内嵌式服务管理器
+## Progress
+The project is in Beta stage
 
-## 功能特性
+- [x] Standalone Service Manager
+  - [x] Basic functionality
+  - [x] English text resources
+  - [ ] Multiple instances attached to different ports, should this be done in the first version?
+- [ ] VSIX Embedded Service Manager
 
-在本地将选定的 Visual Studio 实例通过基于 HTTP 的 MCP 协议暴露给 AI 编程工具
+## Features
 
-### 核心功能
-- **构建**：支持构建整个解决方案或指定项目，可选择 Debug/Release 配置
-- **错误管理**：获取当前解决方案中的错误列表
-- **文档管理**：获取当前活动文档信息和所有打开文档列表
-- **触发资源和模板生成**：执行指定项目的所有自定义工具
-- **解决方案信息**：获取当前解决方案的位置和结构
+Expose selected Visual Studio instances to AI programming tools through HTTP-based MCP protocol locally
 
-### Visual Studio 集成
-- **自动列出**：自动检测多个 Visual Studio 实例
-- **单个控制**：从列出的 Visual Studio 实例选择想要控制的，作为 MCP 服务公开
-- **实时监控**：监控 Visual Studio 运行状态，退出后自动断开
-- **版本兼容**：支持 Visual Studio 从 2015 到最新版
+### Core Features
+- **Build**: Support building entire solution or specified projects with Debug/Release configuration options
+- **Error Management**: Get current error list in the solution
+- **Document Management**: Get current active document information and list of all open documents
+- **Trigger Resources and Template Generation**: Execute all custom tools for specified projects
+- **Solution Information**: Get current solution location and structure
 
-### 权限控制
-- **细粒度权限**：为每个 MCP 功能配置独立的权限级别
-- **三种权限模式**：允许、询问、拒绝
-- **安全管控**：确保 AI 助手只能执行授权的操作
+### Visual Studio Integration
+- **Auto Detection**: Automatically detect multiple Visual Studio instances
+- **Single Control**: Select desired Visual Studio instance from the list to expose as MCP service
+- **Real-time Monitoring**: Monitor Visual Studio runtime status, automatically disconnect on exit
+- **Version Compatibility**: Support Visual Studio from 2015 to latest version
 
-### 用户界面
-- **现代化界面**：基于 WPF-UI 框架的 Windows 11 风格界面
-- **多标签页设计**：服务管理、权限配置、日志查看分离管理
-- **实时状态显示**：动态更新服务状态和连接信息
+### Permission Control
+- **Fine-grained Permissions**: Configure independent permission levels for each MCP feature
+- **Three Permission Modes**: Allow, Ask, Deny
+- **Security Control**: Ensure AI assistants can only perform authorized operations
 
-## 运行环境
-- Windows 11: 无依赖
-- 早期版本的 Windows: .NET Framework 版本 >= 4.7.2
+### User Interface
+- **Modern Interface**: Windows 11 style interface based on WPF-UI framework
+- **Multi-tab Design**: Separate management for service management, permission configuration, and log viewing
+- **Real-time Status Display**: Dynamic updates of service status and connection information
 
-## 项目结构
+## Requirements
+- Windows 11: No dependencies
+- Earlier Windows versions: .NET Framework version >= 4.7.2
 
-正式项目
+## Project Structure
+
+Main project
 ```
 McpServiceNetFx/
-├── Helpers/           # 辅助工具类
-├── Mcp/              # MCP 服务核心实现
-├── Models/           # 数据模型
-├── Tools/            # Visual Studio 工具集成
-└── Views/            # WPF 界面组件
+├── Helpers/           # Utility classes
+├── Mcp/              # MCP service core implementation
+├── Models/           # Data models
+├── Tools/            # Visual Studio tool integration
+└── Views/            # WPF interface components
 ```
 
-研究项目在 Research 里面
+Research projects are in the Research folder
 
-## 使用方式
+## Usage
 
-1. 启动应用程序并选择目标 Visual Studio 实例
-2. 配置服务端口并启动 MCP 服务器
-3. 将生成的配置添加到 Claude Desktop 或其他 MCP 客户端
-4. 根据需要配置各功能的权限级别
-5. 通过日志监控服务运行状态
+1. Launch the application and select target Visual Studio instance
+2. Configure service port and start MCP server
+3. Add generated configuration to Claude Desktop or other MCP clients
+4. Configure permission levels for each feature as needed
+5. Monitor service runtime status through logs
 
-## 安全性
+## Security
 
-- 权限控制确保 AI 助手只能执行授权操作
-- 本地服务仅在用户授权后与 Visual Studio 交互
-- 详细的操作日志提供完整审计跟踪
+- Permission control ensures AI assistants can only perform authorized operations
+- Service binds to local network loopback only, preventing external access
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
