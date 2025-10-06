@@ -364,4 +364,236 @@
   <data name="FileNoFile" xml:space="preserve">
     <value>无文件</value>
   </data>
+
+  <!-- Log operation common strings -->
+  <data name="LogToolManager" xml:space="preserve">
+    <value>工具管理器</value>
+  </data>
+  <data name="LogPermissions" xml:space="preserve">
+    <value>权限管理</value>
+  </data>
+  <data name="LogPermissionCheck" xml:space="preserve">
+    <value>权限检查</value>
+  </data>
+  <data name="LogGetToolManager" xml:space="preserve">
+    <value>获取工具管理器</value>
+  </data>
+  <data name="LogBuildSolution" xml:space="preserve">
+    <value>构建解决方案</value>
+  </data>
+  <data name="LogBuildProject" xml:space="preserve">
+    <value>构建项目</value>
+  </data>
+  <data name="LogGetAllOpenDocuments" xml:space="preserve">
+    <value>获取所有打开文档</value>
+  </data>
+  <data name="LogGetActiveDocument" xml:space="preserve">
+    <value>获取活动文档</value>
+  </data>
+  <data name="LogGetSolutionInfo" xml:space="preserve">
+    <value>获取解决方案信息</value>
+  </data>
+  <data name="LogGetErrorList" xml:space="preserve">
+    <value>获取错误列表</value>
+  </data>
+  <data name="LogRunProjectCustomTools" xml:space="preserve">
+    <value>运行项目自定义工具</value>
+  </data>
+
+  <!-- Log operation results -->
+  <data name="LogSuccess" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="LogFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="LogCompleted" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="LogSkipped" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="LogStarted" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="LogAllowed" xml:space="preserve">
+    <value>已允许</value>
+  </data>
+  <data name="LogDenied" xml:space="preserve">
+    <value>已拒绝</value>
+  </data>
+  <data name="LogAskUser" xml:space="preserve">
+    <value>询问用户</value>
+  </data>
+  <data name="LogUserAllowed" xml:space="preserve">
+    <value>用户允许</value>
+  </data>
+  <data name="LogUserDenied" xml:space="preserve">
+    <value>用户拒绝</value>
+  </data>
+  <data name="LogUnknownPermission" xml:space="preserve">
+    <value>未知权限</value>
+  </data>
+
+  <!-- Log operation details -->
+  <data name="LogFrameworkCreated" xml:space="preserve">
+    <value>工具管理器框架已创建，等待数据上下文</value>
+  </data>
+  <data name="LogFrameworkCreateFailed" xml:space="preserve">
+    <value>工具管理器框架创建失败</value>
+  </data>
+  <data name="LogInstanceCanceled" xml:space="preserve">
+    <value>取消选择 Visual Studio 实例</value>
+  </data>
+  <data name="LogDataContextCreated" xml:space="preserve">
+    <value>数据上下文创建成功</value>
+  </data>
+  <data name="LogDataContextCreateFailed" xml:space="preserve">
+    <value>数据上下文创建失败</value>
+  </data>
+  <data name="LogPermissionsLoaded" xml:space="preserve">
+    <value>权限配置加载完成</value>
+  </data>
+  <data name="LogPermissionSync" xml:space="preserve">
+    <value>权限同步</value>
+  </data>
+  <data name="LogPermissionSet" xml:space="preserve">
+    <value>权限批量设置</value>
+  </data>
+  <data name="LogPermissionConfigNotFound" xml:space="preserve">
+    <value>未找到权限配置，使用默认权限: 询问</value>
+  </data>
+  <data name="LogPermissionConfigFound" xml:space="preserve">
+    <value>找到权限配置</value>
+  </data>
+  <data name="LogGetPermission" xml:space="preserve">
+    <value>获取权限</value>
+  </data>
+  <data name="LogToolManagerNotInitialized" xml:space="preserve">
+    <value>工具管理器尚未初始化</value>
+  </data>
+  <data name="LogNoPermissionConfig" xml:space="preserve">
+    <value>工具管理器中没有权限配置</value>
+  </data>
+  <data name="LogBatchSetCompleted" xml:space="preserve">
+    <value>所有权限已设置为: {0}</value>
+  </data>
+  <data name="LogAddedNewToolPermissions" xml:space="preserve">
+    <value>添加了 {0} 个新工具权限项</value>
+  </data>
+  <data name="LogMcpRequest" xml:space="preserve">
+    <value>MCP请求 - {0}</value>
+  </data>
+  <data name="LogServiceStarted" xml:space="preserve">
+    <value>服务启动</value>
+  </data>
+  <data name="LogServiceStopped" xml:space="preserve">
+    <value>服务停止</value>
+  </data>
+  <data name="LogVsExited" xml:space="preserve">
+    <value>Visual Studio 退出</value>
+  </data>
+  <data name="LogVsShutdown" xml:space="preserve">
+    <value>Visual Studio 关闭</value>
+  </data>
+  <data name="LogExecutionException" xml:space="preserve">
+    <value>执行异常</value>
+  </data>
+  <data name="LogParameterConversionFailed" xml:space="preserve">
+    <value>参数转换失败</value>
+  </data>
+
+  <!-- Tool log details -->
+  <data name="LogBuildStart" xml:space="preserve">
+    <value>开始构建</value>
+  </data>
+  <data name="LogWithConfiguration" xml:space="preserve">
+    <value>配置: {0}</value>
+  </data>
+  <data name="LogProjectAndConfig" xml:space="preserve">
+    <value>项目: {0}, 配置: {1}</value>
+  </data>
+  <data name="LogGetAllOpenDocsStart" xml:space="preserve">
+    <value>获取所有打开文档信息</value>
+  </data>
+  <data name="LogFoundOpenDocs" xml:space="preserve">
+    <value>共找到 {0} 个打开的文档</value>
+  </data>
+  <data name="LogNoOpenDocs" xml:space="preserve">
+    <value>没有找到打开的文档</value>
+  </data>
+  <data name="LogGetActiveDocStart" xml:space="preserve">
+    <value>获取当前活动文档信息</value>
+  </data>
+  <data name="LogActiveDocPath" xml:space="preserve">
+    <value>文档路径: {0}</value>
+  </data>
+  <data name="LogNoActiveDoc" xml:space="preserve">
+    <value>没有活动文档</value>
+  </data>
+  <data name="LogGetSolutionInfoStart" xml:space="preserve">
+    <value>获取解决方案详细信息</value>
+  </data>
+  <data name="LogProjectCount" xml:space="preserve">
+    <value>项目数: {0}</value>
+  </data>
+  <data name="LogGetErrorListStart" xml:space="preserve">
+    <value>获取错误列表，过滤级别: {0}</value>
+  </data>
+  <data name="LogErrorListCounts" xml:space="preserve">
+    <value>错误数: {0}, 警告数: {1}</value>
+  </data>
+  <data name="LogRunCustomToolsStart" xml:space="preserve">
+    <value>运行项目自定义工具，项目: {0}</value>
+  </data>
+  <data name="LogParameterConversionFailure" xml:space="preserve">
+    <value>参数 {0} 转换失败: {1}</value>
+  </data>
+  <data name="LogInstanceAndToolCount" xml:space="preserve">
+    <value>实例: {0}, 工具数量: {1}</value>
+  </data>
+  <data name="LogServiceStartedWithDetails" xml:space="preserve">
+    <value>端口: {0}, 实例: {1}, 工具数量: {2}</value>
+  </data>
+  <data name="LogUserStopped" xml:space="preserve">
+    <value>用户手动停止</value>
+  </data>
+  <data name="LogVsInstanceServiceStop" xml:space="preserve">
+    <value>关联的 Visual Studio 实例已退出，服务将自动停止</value>
+  </data>
+  <data name="LogVsInstanceServiceStopClosing" xml:space="preserve">
+    <value>关联的 Visual Studio 实例正在关闭，服务将自动停止</value>
+  </data>
+  <data name="LogFeaturePermission" xml:space="preserve">
+    <value>功能: {0}, 权限: {1}</value>
+  </data>
+  <data name="LogFeaturePermissionValue" xml:space="preserve">
+    <value>功能: {0}, 权限值: {1}</value>
+  </data>
+  <data name="LogPermissionRequestDetails" xml:space="preserve">
+    <value>功能: {0}, 描述: {1}</value>
+  </data>
+  <data name="LogPermissionValueDetails" xml:space="preserve">
+    <value>权限值: {0}</value>
+  </data>
+
+  <!-- Additional log strings for missing patterns -->
+  <data name="LogToolExecutionFailed" xml:space="preserve">
+    <value>工具执行失败: {0}</value>
+  </data>
+  <data name="LogParameterCannotBeNull" xml:space="preserve">
+    <value>参数不能为空</value>
+  </data>
+  <data name="LogMissingRequiredParameter" xml:space="preserve">
+    <value>缺少必需参数: {0}</value>
+  </data>
+  <data name="LogToolDataContextNotSet" xml:space="preserve">
+    <value>工具数据上下文未设置，无法执行工具</value>
+  </data>
+  <data name="LogPermissionCheckException" xml:space="preserve">
+    <value>权限检查</value>
+  </data>
+  <data name="LogException" xml:space="preserve">
+    <value>异常</value>
+  </data>
 </root>

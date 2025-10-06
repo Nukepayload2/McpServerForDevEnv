@@ -53,7 +53,7 @@ Partial Public Class MainWindow
             CreateToolManagerDataContext()
         Else
             ' 工具管理器保持存在，只是没有数据上下文
-            LogOperation("工具管理器", "实例取消", "取消选择 Visual Studio 实例")
+            LogOperation(My.Resources.LogToolManager, My.Resources.LogSkipped, My.Resources.LogInstanceCanceled)
         End If
 
         UpdateSelectedInstanceDisplay()
@@ -75,13 +75,13 @@ Partial Public Class MainWindow
             ' 创建数据上下文并注册工具
             _toolManager.CreateVsTools(_selectedVsInstance.DTE2, Dispatcher)
 
-            LogOperation("工具管理器", "数据上下文创建成功", $"实例: {_selectedVsInstance.Caption}, 工具数量: {_toolManager.GetToolCount()}")
+            LogOperation(My.Resources.LogToolManager, My.Resources.LogCompleted, String.Format(My.Resources.LogInstanceAndToolCount, _selectedVsInstance.Caption, _toolManager.GetToolCount()))
 
             ' 重新加载权限以包含新工具的权限项
             LoadPermissions()
 
         Catch ex As Exception
-            LogOperation("工具管理器", "数据上下文创建失败", ex.Message)
+            LogOperation(My.Resources.LogToolManager, My.Resources.LogFailed, ex.Message)
             UtilityModule.ShowError(Me, String.Format(My.Resources.MsgCreateToolManagerContextFailed, ex.Message))
         End Try
     End Sub

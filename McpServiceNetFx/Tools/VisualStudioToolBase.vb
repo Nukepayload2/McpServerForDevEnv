@@ -80,7 +80,7 @@ Public MustInherit Class VisualStudioToolBase
         Try
             ' 检查数据上下文
             If Not HasDataContext Then
-                Throw New McpException("工具数据上下文未设置，无法执行工具", McpErrorCode.InternalError)
+                Throw New McpException(My.Resources.LogToolDataContextNotSet, McpErrorCode.InternalError)
             End If
 
             ' 调用具体的执行实现
@@ -89,8 +89,8 @@ Public MustInherit Class VisualStudioToolBase
             If TypeOf ex Is McpException Then
                 Throw
             Else
-                LogOperation(ToolName, "执行异常", ex.Message)
-                Throw New McpException($"工具执行失败: {ex.Message}", McpErrorCode.InternalError)
+                LogOperation(ToolName, My.Resources.LogExecutionException, ex.Message)
+                Throw New McpException(String.Format(My.Resources.LogToolExecutionFailed, ex.Message), McpErrorCode.InternalError)
             End If
         End Try
     End Function
@@ -111,7 +111,7 @@ Public MustInherit Class VisualStudioToolBase
         Try
             Return _permissionHandler.CheckPermission(FeatureName, ToolDescription)
         Catch ex As Exception
-            _logger?.LogMcpRequest("权限检查", "异常", ex.Message)
+            _logger?.LogMcpRequest(My.Resources.LogPermissionCheckException, My.Resources.LogException, ex.Message)
             Return False
         End Try
     End Function
@@ -134,12 +134,12 @@ Public MustInherit Class VisualStudioToolBase
     ''' <exception cref="McpException">缺少必需参数时抛出</exception>
     Protected Sub ValidateRequiredArguments(arguments As Dictionary(Of String, Object), ParamArray requiredParams As String())
         If arguments Is Nothing Then
-            Throw New McpException("参数不能为空", McpErrorCode.InvalidParams)
+            Throw New McpException(My.Resources.LogParameterCannotBeNull, McpErrorCode.InvalidParams)
         End If
 
         For Each param In requiredParams
             If Not arguments.ContainsKey(param) OrElse arguments(param) Is Nothing Then
-                Throw New McpException($"缺少必需参数: {param}", McpErrorCode.InvalidParams)
+                Throw New McpException(String.Format(My.Resources.LogMissingRequiredParameter, param), McpErrorCode.InvalidParams)
             End If
         Next
     End Sub
@@ -157,7 +157,7 @@ Public MustInherit Class VisualStudioToolBase
             Try
                 Return CType(Convert.ChangeType(arguments(paramName), GetType(T)), T)
             Catch ex As Exception
-                LogOperation(ToolName, "参数转换失败", $"参数 {paramName} 转换失败: {ex.Message}")
+                LogOperation(ToolName, My.Resources.LogParameterConversionFailed, String.Format(My.Resources.LogParameterConversionFailure, paramName, ex.Message))
                 Return defaultValue
             End Try
         End If

@@ -21,7 +21,7 @@ Partial Public Class MainWindow
             SyncPermissionsWithToolManager()
 
             DgPermissions.ItemsSource = _permissionItems
-            LogOperation("权限加载", "完成", $"共加载 {_permissionItems.Count} 个权限配置")
+            LogOperation(My.Resources.LogPermissions, My.Resources.LogCompleted, String.Format(My.Resources.LogPermissionsLoaded, _permissionItems.Count))
         Catch ex As Exception
             UtilityModule.ShowError(Me, String.Format(My.Resources.MsgLoadPermissionsFailed, ex.Message))
         End Try
@@ -36,14 +36,14 @@ Partial Public Class MainWindow
             ' 获取工具管理器实例（如果已创建）
             Dim toolManager = GetCurrentToolManager()
             If toolManager Is Nothing Then
-                LogOperation("权限同步", "跳过", "工具管理器尚未初始化")
+                LogOperation(My.Resources.LogPermissionSync, My.Resources.LogSkipped, My.Resources.LogToolManagerNotInitialized)
                 Return
             End If
 
             ' 获取工具管理器中的默认权限配置
             Dim defaultPermissions = toolManager.GetDefaultPermissions()
             If defaultPermissions Is Nothing OrElse defaultPermissions.Count = 0 Then
-                LogOperation("权限同步", "跳过", "工具管理器中没有权限配置")
+                LogOperation(My.Resources.LogPermissionSync, My.Resources.LogSkipped, My.Resources.LogNoPermissionConfig)
                 Return
             End If
 
@@ -72,9 +72,9 @@ Partial Public Class MainWindow
             '     _permissionItems.Remove(removed)
             ' Next
 
-            LogOperation("权限同步", "完成", $"添加了 {addedCount} 个新工具权限项")
+            LogOperation(My.Resources.LogPermissionSync, My.Resources.LogCompleted, String.Format(My.Resources.LogAddedNewToolPermissions, addedCount))
         Catch ex As Exception
-            LogOperation("权限同步", "失败", ex.Message)
+            LogOperation(My.Resources.LogPermissionSync, My.Resources.LogFailed, ex.Message)
         End Try
     End Sub
 
@@ -88,11 +88,11 @@ Partial Public Class MainWindow
             If _toolManager IsNot Nothing Then
                 Return _toolManager
             Else
-                LogOperation("获取工具管理器", "跳过", "工具管理器尚未初始化")
+                LogOperation(My.Resources.LogGetToolManager, My.Resources.LogSkipped, My.Resources.LogToolManagerNotInitialized)
                 Return Nothing
             End If
         Catch ex As Exception
-            LogOperation("获取工具管理器", "失败", ex.Message)
+            LogOperation(My.Resources.LogGetToolManager, My.Resources.LogFailed, ex.Message)
             Return Nothing
         End Try
     End Function
@@ -111,7 +111,7 @@ Partial Public Class MainWindow
             item.Permission = permission
         Next
 
-        LogOperation("权限设置", "批量设置完成", $"所有权限已设置为: {permission}")
+        LogOperation(My.Resources.LogPermissionSet, My.Resources.LogCompleted, String.Format(My.Resources.LogBatchSetCompleted, permission))
     End Sub
 
     Private Sub BtnSavePermissions_Click() Handles BtnSavePermissions.Click
@@ -130,39 +130,39 @@ Partial Public Class MainWindow
     Public Function GetPermission(featureName As String) As PermissionLevel
         Dim permissionItem = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = featureName)
         If permissionItem Is Nothing Then
-            LogOperation("权限检查", "未找到配置", $"功能 '{featureName}' 使用默认权限 Ask")
+            LogOperation(My.Resources.LogPermissionCheck, My.Resources.LogFailed, String.Format(My.Resources.LogPermissionConfigNotFound, featureName))
             Return PermissionLevel.Ask ' 默认为询问
         Else
-            LogOperation("权限检查", "找到配置", $"功能 '{featureName}' 权限: {permissionItem.Permission}")
+            LogOperation(My.Resources.LogPermissionCheck, My.Resources.LogCompleted, String.Format(My.Resources.LogPermissionConfigFound, featureName, permissionItem.Permission))
             Return permissionItem.Permission
         End If
     End Function
 
     Public Function CheckPermission(featureName As String, operationDescription As String) As Boolean Implements IMcpPermissionHandler.CheckPermission
         Dim permission = GetPermission(featureName)
-        LogOperation("权限检查", "获取权限", $"功能: {featureName}, 权限值: {permission}")
+        LogOperation(My.Resources.LogPermissionCheck, My.Resources.LogGetPermission, String.Format(My.Resources.LogFeaturePermissionValue, featureName, permission))
 
         Select Case permission
             Case PermissionLevel.Allow
-                LogOperation(featureName, "已允许", operationDescription)
+                LogOperation(featureName, My.Resources.LogAllowed, operationDescription)
                 Return True
             Case PermissionLevel.Deny
-                LogOperation(featureName, "已拒绝", operationDescription)
+                LogOperation(featureName, My.Resources.LogDenied, operationDescription)
                 Return False
             Case PermissionLevel.Ask
-                LogOperation(featureName, "询问用户", operationDescription)
+                LogOperation(featureName, My.Resources.LogAskUser, operationDescription)
                 Dim message = String.Format(My.Resources.MsgPermissionRequest, Environment.NewLine, featureName, operationDescription)
                 Dim result = UtilityModule.ShowConfirmModal(Me, message, My.Resources.TitlePermissionConfirm)
 
                 If result Then
-                    LogOperation(featureName, "用户允许", operationDescription)
+                    LogOperation(featureName, My.Resources.LogUserAllowed, operationDescription)
                 Else
-                    LogOperation(featureName, "用户拒绝", operationDescription)
+                    LogOperation(featureName, My.Resources.LogUserDenied, operationDescription)
                 End If
 
                 Return result
             Case Else
-                LogOperation(featureName, "未知权限", $"权限值: {permission}")
+                LogOperation(featureName, My.Resources.LogUnknownPermission, String.Format(My.Resources.LogPermissionValueDetails, permission))
                 Return False
         End Select
     End Function

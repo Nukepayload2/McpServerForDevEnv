@@ -79,7 +79,7 @@ Partial Public Class MainWindow
             PersistenceModule.SaveServiceConfig(port)
 
             ' 记录日志
-            LogServiceAction("服务启动", "成功", $"端口: {port}, 实例: {_selectedVsInstance.Caption}, 工具数量: {_toolManager.GetToolCount()}")
+            LogServiceAction(My.Resources.LogServiceStarted, My.Resources.LogSuccess, String.Format(My.Resources.LogServiceStartedWithDetails, port, _selectedVsInstance.Caption, _toolManager.GetToolCount()))
 
             ' 权限已在选择实例时同步，无需再次同步
         Catch ex As Exception
@@ -108,7 +108,7 @@ Partial Public Class MainWindow
             UpdateServiceUI(False)
 
             ' 记录日志
-            LogServiceAction("服务停止", "成功", "用户手动停止")
+            LogServiceAction(My.Resources.LogServiceStopped, My.Resources.LogSuccess, My.Resources.LogUserStopped)
         Catch ex As Exception
             CleanupService()
             Throw
@@ -117,7 +117,7 @@ Partial Public Class MainWindow
 
     Private Sub OnVisualStudioExited(sender As Object, e As EventArgs)
         UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
-                                                      LogServiceAction("Visual Studio 退出", "警告", "关联的 Visual Studio 实例已退出，服务将自动停止")
+                                                      LogServiceAction(My.Resources.LogVsExited, My.Resources.LogFailed, My.Resources.LogVsInstanceServiceStop)
                                                       CleanupService()
                                                       UtilityModule.ShowWarning(Me, My.Resources.MsgVsInstanceExited, My.Resources.TitleInstanceExited)
                                                   End Sub)
@@ -125,7 +125,7 @@ Partial Public Class MainWindow
 
     Private Sub OnVisualStudioShutdown(sender As Object, e As EventArgs)
         UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
-                                                      LogServiceAction("Visual Studio 关闭", "警告", "关联的 Visual Studio 实例正在关闭，服务将自动停止")
+                                                      LogServiceAction(My.Resources.LogVsShutdown, My.Resources.LogFailed, My.Resources.LogVsInstanceServiceStopClosing)
                                                       CleanupService()
                                                       UtilityModule.ShowWarning(Me, My.Resources.MsgVsInstanceClosing, My.Resources.TitleInstanceClosing)
                                                   End Sub)

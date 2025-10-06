@@ -364,4 +364,236 @@ This software does not support remote information transmission, only local netwo
   <data name="FileNoFile" xml:space="preserve">
     <value>No file</value>
   </data>
+
+  <!-- Log operation common strings -->
+  <data name="LogToolManager" xml:space="preserve">
+    <value>Tool Manager</value>
+  </data>
+  <data name="LogPermissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="LogPermissionCheck" xml:space="preserve">
+    <value>Permission Check</value>
+  </data>
+  <data name="LogGetToolManager" xml:space="preserve">
+    <value>Get Tool Manager</value>
+  </data>
+  <data name="LogBuildSolution" xml:space="preserve">
+    <value>Build Solution</value>
+  </data>
+  <data name="LogBuildProject" xml:space="preserve">
+    <value>Build Project</value>
+  </data>
+  <data name="LogGetAllOpenDocuments" xml:space="preserve">
+    <value>Get All Open Documents</value>
+  </data>
+  <data name="LogGetActiveDocument" xml:space="preserve">
+    <value>Get Active Document</value>
+  </data>
+  <data name="LogGetSolutionInfo" xml:space="preserve">
+    <value>Get Solution Info</value>
+  </data>
+  <data name="LogGetErrorList" xml:space="preserve">
+    <value>Get Error List</value>
+  </data>
+  <data name="LogRunProjectCustomTools" xml:space="preserve">
+    <value>Run Project Custom Tools</value>
+  </data>
+
+  <!-- Log operation results -->
+  <data name="LogSuccess" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="LogFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="LogCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="LogSkipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="LogStarted" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="LogAllowed" xml:space="preserve">
+    <value>Allowed</value>
+  </data>
+  <data name="LogDenied" xml:space="preserve">
+    <value>Denied</value>
+  </data>
+  <data name="LogAskUser" xml:space="preserve">
+    <value>Ask User</value>
+  </data>
+  <data name="LogUserAllowed" xml:space="preserve">
+    <value>User Allowed</value>
+  </data>
+  <data name="LogUserDenied" xml:space="preserve">
+    <value>User Denied</value>
+  </data>
+  <data name="LogUnknownPermission" xml:space="preserve">
+    <value>Unknown Permission</value>
+  </data>
+
+  <!-- Log operation details -->
+  <data name="LogFrameworkCreated" xml:space="preserve">
+    <value>Tool manager framework created, waiting for data context</value>
+  </data>
+  <data name="LogFrameworkCreateFailed" xml:space="preserve">
+    <value>Tool manager framework creation failed</value>
+  </data>
+  <data name="LogInstanceCanceled" xml:space="preserve">
+    <value>Visual Studio instance selection canceled</value>
+  </data>
+  <data name="LogDataContextCreated" xml:space="preserve">
+    <value>Data context created successfully</value>
+  </data>
+  <data name="LogDataContextCreateFailed" xml:space="preserve">
+    <value>Data context creation failed</value>
+  </data>
+  <data name="LogPermissionsLoaded" xml:space="preserve">
+    <value>Permission configurations loaded</value>
+  </data>
+  <data name="LogPermissionSync" xml:space="preserve">
+    <value>Permission synchronization</value>
+  </data>
+  <data name="LogPermissionSet" xml:space="preserve">
+    <value>Permission batch set</value>
+  </data>
+  <data name="LogPermissionConfigNotFound" xml:space="preserve">
+    <value>Permission configuration not found, using default permission: Ask</value>
+  </data>
+  <data name="LogPermissionConfigFound" xml:space="preserve">
+    <value>Permission configuration found</value>
+  </data>
+  <data name="LogGetPermission" xml:space="preserve">
+    <value>Get permission</value>
+  </data>
+  <data name="LogToolManagerNotInitialized" xml:space="preserve">
+    <value>Tool manager not initialized</value>
+  </data>
+  <data name="LogNoPermissionConfig" xml:space="preserve">
+    <value>No permission configuration in tool manager</value>
+  </data>
+  <data name="LogBatchSetCompleted" xml:space="preserve">
+    <value>All permissions have been set to: {0}</value>
+  </data>
+  <data name="LogAddedNewToolPermissions" xml:space="preserve">
+    <value>Added {0} new tool permission items</value>
+  </data>
+  <data name="LogMcpRequest" xml:space="preserve">
+    <value>MCP Request - {0}</value>
+  </data>
+  <data name="LogServiceStarted" xml:space="preserve">
+    <value>Service Started</value>
+  </data>
+  <data name="LogServiceStopped" xml:space="preserve">
+    <value>Service Stopped</value>
+  </data>
+  <data name="LogVsExited" xml:space="preserve">
+    <value>Visual Studio Exited</value>
+  </data>
+  <data name="LogVsShutdown" xml:space="preserve">
+    <value>Visual Studio Shutdown</value>
+  </data>
+  <data name="LogExecutionException" xml:space="preserve">
+    <value>Execution Exception</value>
+  </data>
+  <data name="LogParameterConversionFailed" xml:space="preserve">
+    <value>Parameter conversion failed</value>
+  </data>
+
+  <!-- Tool log details -->
+  <data name="LogBuildStart" xml:space="preserve">
+    <value>Start building</value>
+  </data>
+  <data name="LogWithConfiguration" xml:space="preserve">
+    <value>Configuration: {0}</value>
+  </data>
+  <data name="LogProjectAndConfig" xml:space="preserve">
+    <value>Project: {0}, Configuration: {1}</value>
+  </data>
+  <data name="LogGetAllOpenDocsStart" xml:space="preserve">
+    <value>Get all open document information</value>
+  </data>
+  <data name="LogFoundOpenDocs" xml:space="preserve">
+    <value>Found {0} open documents</value>
+  </data>
+  <data name="LogNoOpenDocs" xml:space="preserve">
+    <value>No open documents found</value>
+  </data>
+  <data name="LogGetActiveDocStart" xml:space="preserve">
+    <value>Get current active document information</value>
+  </data>
+  <data name="LogActiveDocPath" xml:space="preserve">
+    <value>Document path: {0}</value>
+  </data>
+  <data name="LogNoActiveDoc" xml:space="preserve">
+    <value>No active document</value>
+  </data>
+  <data name="LogGetSolutionInfoStart" xml:space="preserve">
+    <value>Get detailed solution information</value>
+  </data>
+  <data name="LogProjectCount" xml:space="preserve">
+    <value>Project count: {0}</value>
+  </data>
+  <data name="LogGetErrorListStart" xml:space="preserve">
+    <value>Get error list with filter level: {0}</value>
+  </data>
+  <data name="LogErrorListCounts" xml:space="preserve">
+    <value>Errors: {0}, Warnings: {1}</value>
+  </data>
+  <data name="LogRunCustomToolsStart" xml:space="preserve">
+    <value>Run custom tools for project: {0}</value>
+  </data>
+  <data name="LogParameterConversionFailure" xml:space="preserve">
+    <value>Parameter {0} conversion failed: {1}</value>
+  </data>
+  <data name="LogInstanceAndToolCount" xml:space="preserve">
+    <value>Instance: {0}, Tool count: {1}</value>
+  </data>
+  <data name="LogServiceStartedWithDetails" xml:space="preserve">
+    <value>Port: {0}, Instance: {1}, Tool count: {2}</value>
+  </data>
+  <data name="LogUserStopped" xml:space="preserve">
+    <value>User manually stopped</value>
+  </data>
+  <data name="LogVsInstanceServiceStop" xml:space="preserve">
+    <value>Associated Visual Studio instance exited, service will stop automatically</value>
+  </data>
+  <data name="LogVsInstanceServiceStopClosing" xml:space="preserve">
+    <value>Associated Visual Studio instance is closing, service will stop automatically</value>
+  </data>
+  <data name="LogFeaturePermission" xml:space="preserve">
+    <value>Feature: {0}, Permission: {1}</value>
+  </data>
+  <data name="LogFeaturePermissionValue" xml:space="preserve">
+    <value>Feature: {0}, Permission value: {1}</value>
+  </data>
+  <data name="LogPermissionRequestDetails" xml:space="preserve">
+    <value>Feature: {0}, Description: {1}</value>
+  </data>
+  <data name="LogPermissionValueDetails" xml:space="preserve">
+    <value>Permission value: {0}</value>
+  </data>
+
+  <!-- Additional log strings for missing patterns -->
+  <data name="LogToolExecutionFailed" xml:space="preserve">
+    <value>Tool execution failed: {0}</value>
+  </data>
+  <data name="LogParameterCannotBeNull" xml:space="preserve">
+    <value>Parameters cannot be null</value>
+  </data>
+  <data name="LogMissingRequiredParameter" xml:space="preserve">
+    <value>Missing required parameter: {0}</value>
+  </data>
+  <data name="LogToolDataContextNotSet" xml:space="preserve">
+    <value>Tool data context not set, cannot execute tool</value>
+  </data>
+  <data name="LogPermissionCheckException" xml:space="preserve">
+    <value>Permission check</value>
+  </data>
+  <data name="LogException" xml:space="preserve">
+    <value>Exception</value>
+  </data>
 </root>
