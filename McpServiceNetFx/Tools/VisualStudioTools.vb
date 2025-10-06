@@ -1,5 +1,7 @@
-Imports EnvDTE80
+Imports System.Text
 Imports System.Windows.Threading
+Imports EnvDTE80
+Imports VSLangProj
 
 Public Class VisualStudioTools
     Private ReadOnly _dte2 As DTE2
@@ -351,5 +353,94 @@ Public Class VisualStudioTools
 
         Return response
     End Function
+
+    ''' <summary>
+    ''' 运行指定项目中所有 resx 文件的自定义工具
+    ''' </summary>
+    ''' <param name="projectName">项目名称</param>
+    ''' <returns>执行结果</returns>
+    Public Async Function RunProjectCustomToolsAsync(projectName As String) As Task(Of RunCustomToolsResult)
+        Return Await Task.Run(
+        Function()
+            Try
+                Dim errors As New StringBuilder()
+                Dim processedFiles As New List(Of String)
+
+                ' 在UI线程上执行DTE操作
+                UtilityModule.SafeInvoke(_dispatcher,
+                Sub()
+                    ' 查找指定项目
+                    Dim targetProject As EnvDTE.Project = Nothing
+                    For Each project As EnvDTE.Project In _dte2.Solution.Projects
+                        If String.Equals(project.Name, projectName, StringComparison.OrdinalIgnoreCase) Then
+                            targetProject = project
+                            Exit For
+                        End If
+                    Next
+
+                    If targetProject IsNot Nothing Then
+                        ProcessProjectForCustomTools(targetProject, errors, processedFiles)
+                    Else
+                        errors.AppendLine($"未找到项目: {projectName}")
+                    End If
+                End Sub)
+
+                Return New RunCustomToolsResult With {
+                    .Success = errors.Length = 0,
+                    .Message = If(errors.Length = 0,
+                        $"成功处理项目 {projectName} 中 {processedFiles.Count} 个文件的自定义工具",
+                        $"处理项目 {projectName} 时发生错误: {errors.ToString()}"),
+                    .ProcessedFiles = processedFiles.ToArray(),
+                    .Errors = If(errors.Length > 0, errors.ToString(), Nothing)
+                }
+            Catch ex As Exception
+                Return New RunCustomToolsResult With {
+                    .Success = False,
+                    .Message = $"执行过程中发生错误: {ex.Message}",
+                    .ProcessedFiles = {},
+                    .Errors = ex.Message
+                }
+            End Try
+        End Function)
+    End Function
+
+    ''' <summary>
+    ''' 处理项目中的 resx 文件
+    ''' </summary>
+    Private Sub ProcessProjectForCustomTools(project As EnvDTE.Project, errors As StringBuilder, processedFiles As List(Of String))
+        If project Is Nothing Then Return
+
+        Try
+            ' 处理项目中的所有项目项
+            For Each item As EnvDTE.ProjectItem In project.ProjectItems
+                ProcessProjectItemForCustomTools(item, errors, processedFiles)
+            Next
+        Catch ex As Exception
+            errors.AppendLine($"处理项目 {project.Name} 时出错: {ex.Message}")
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' 处理项目项，如果是 resx 文件则运行自定义工具
+    ''' </summary>
+    Private Sub ProcessProjectItemForCustomTools(item As EnvDTE.ProjectItem, errors As StringBuilder, processedFiles As List(Of String))
+        Try
+            Dim customToolValue = CStr(item.Properties.Item("CustomTool").Value)
+            If Not String.IsNullOrEmpty(customToolValue) Then
+                ' 运行自定义工具
+                CType(item.Object, VSProjectItem).RunCustomTool()
+                processedFiles.Add(item.Name)
+                Debug.WriteLine($"已为 {item.Name} 运行自定义工具")
+            End If
+            Dim subItems = item.ProjectItems
+            If subItems IsNot Nothing Then
+                For Each subItem As EnvDTE.ProjectItem In item.ProjectItems
+                    ProcessProjectItemForCustomTools(subItem, errors, processedFiles)
+                Next
+            End If
+        Catch ex As Exception
+            errors.AppendLine($"处理项目项 {item.Name} 时出错: {ex.Message}")
+        End Try
+    End Sub
 
 End Class

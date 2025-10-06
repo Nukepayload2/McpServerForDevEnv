@@ -69,6 +69,7 @@ Public Class VisualStudioToolManager
             ' 使用延迟数据上下文构造函数
             RegisterTool(New BuildSolutionTool(_logger, _permissionHandler))
             RegisterTool(New BuildProjectTool(_logger, _permissionHandler))
+            RegisterTool(New RunProjectCustomToolsTool(_logger, _permissionHandler))
             RegisterTool(New GetErrorListTool(_logger, _permissionHandler))
             RegisterTool(New GetSolutionInfoTool(_logger, _permissionHandler))
             RegisterTool(New GetActiveDocumentTool(_logger, _permissionHandler))

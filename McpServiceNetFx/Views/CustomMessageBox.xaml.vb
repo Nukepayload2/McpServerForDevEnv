@@ -10,9 +10,9 @@ Partial Public Class CustomMessageBox
 
     Public Enum MessageBoxResult
         None
+        No = None
         OK
-        Yes
-        No
+        Yes = OK
     End Enum
 
     Private _result As MessageBoxResult = MessageBoxResult.None
