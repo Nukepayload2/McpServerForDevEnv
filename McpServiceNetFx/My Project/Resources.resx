@@ -120,4 +120,119 @@
   <data name="AppTitle" xml:space="preserve">
     <value>Visual Studio MCP Server</value>
   </data>
+  <data name="TabServiceManagement" xml:space="preserve">
+    <value>Service Management</value>
+  </data>
+  <data name="TabMcpPermissions" xml:space="preserve">
+    <value>MCP Permissions</value>
+  </data>
+  <data name="TabLogs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="TabAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="ButtonRefresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ButtonStartService" xml:space="preserve">
+    <value>Start Service</value>
+  </data>
+  <data name="ButtonStopService" xml:space="preserve">
+    <value>Stop Service</value>
+  </data>
+  <data name="ButtonAllowAll" xml:space="preserve">
+    <value>Allow All</value>
+  </data>
+  <data name="ButtonAskAll" xml:space="preserve">
+    <value>Ask All</value>
+  </data>
+  <data name="ButtonSaveConfig" xml:space="preserve">
+    <value>Save Config</value>
+  </data>
+  <data name="ButtonReload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="ButtonClearLogs" xml:space="preserve">
+    <value>Clear Logs</value>
+  </data>
+  <data name="ButtonExportLogs" xml:space="preserve">
+    <value>Export Logs</value>
+  </data>
+  <data name="HeaderWindowCaption" xml:space="preserve">
+    <value>Window Caption</value>
+  </data>
+  <data name="HeaderSolutionPath" xml:space="preserve">
+    <value>Solution Path</value>
+  </data>
+  <data name="HeaderVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="HeaderProcessId" xml:space="preserve">
+    <value>Process ID</value>
+  </data>
+  <data name="GroupServiceSettings" xml:space="preserve">
+    <value>Service Settings</value>
+  </data>
+  <data name="LabelInstance" xml:space="preserve">
+    <value>Instance:</value>
+  </data>
+  <data name="LabelPort" xml:space="preserve">
+    <value>Port:</value>
+  </data>
+  <data name="LabelStatus" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="LabelClientConfig" xml:space="preserve">
+    <value>Client Config:</value>
+  </data>
+  <data name="TextSelectInstance" xml:space="preserve">
+    <value>Please select an instance from the list above</value>
+  </data>
+  <data name="TextServiceNotStarted" xml:space="preserve">
+    <value>Service not started</value>
+  </data>
+  <data name="TabJsonConfig" xml:space="preserve">
+    <value>JSON Config</value>
+  </data>
+  <data name="TabClaudeConfig" xml:space="preserve">
+    <value>Claude CLI Config</value>
+  </data>
+  <data name="TextJsonConfigHint" xml:space="preserve">
+    <value>Add this configuration to your MCP client configuration file</value>
+  </data>
+  <data name="TextClaudeConfigHint" xml:space="preserve">
+    <value>Run this command to add MCP server to Claude Desktop</value>
+  </data>
+  <data name="HeaderFeatureName" xml:space="preserve">
+    <value>Feature Name</value>
+  </data>
+  <data name="HeaderDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="HeaderPermission" xml:space="preserve">
+    <value>Permission</value>
+  </data>
+  <data name="HeaderTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="HeaderOperation" xml:space="preserve">
+    <value>Operation</value>
+  </data>
+  <data name="HeaderResult" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="HeaderDetails" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TextAboutTitle" xml:space="preserve">
+    <value>About This Software</value>
+  </data>
+  <data name="TextAboutContent" xml:space="preserve">
+    <value>© 2025 Nukepayload2
+This software is distributed under Apache License 2.0, permanently free.
+This software is protected by Chinese and international copyright laws.
+Privacy Policy: This software collects your Microsoft Visual Studio project information to support basic functions, and the information is only stored locally.
+This software does not support remote information transmission, only local network loopback transmission.</value>
+  </data>
 </root>

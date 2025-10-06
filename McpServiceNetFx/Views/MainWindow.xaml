@@ -10,7 +10,7 @@
         Title="{x:Static res:Resources.AppTitle}" Height="600" Width="900" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <TabControl x:Name="TabControlMain">
-            <TabItem Header="服务管理">
+            <TabItem Header="{x:Static res:Resources.TabServiceManagement}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -20,21 +20,21 @@
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
                         <TextBox x:Name="TxtSearch" Width="300" Margin="0,0,10,0"/>
-                        <Button x:Name="BtnRefresh" Content="刷新" Width="80"/>
+                        <Button x:Name="BtnRefresh" Content="{x:Static res:Resources.ButtonRefresh}" Width="80"/>
                     </StackPanel>
 
                     <ui:DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
                               IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
                               GridLinesVisibility="Horizontal" HeadersVisibility="Column">
                         <ui:DataGrid.Columns>
-                            <DataGridTextColumn Header="窗口标题" Binding="{Binding Caption}" Width="*" FontSize="12"/>
-                            <DataGridTextColumn Header="解决方案路径" Binding="{Binding SolutionPath}" Width="2*" FontSize="12"/>
-                            <DataGridTextColumn Header="版本" Binding="{Binding Version}"/>
-                            <DataGridTextColumn Header="进程ID" Binding="{Binding ProcessId}"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderWindowCaption}" Binding="{Binding Caption}" Width="*" FontSize="12"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderSolutionPath}" Binding="{Binding SolutionPath}" Width="2*" FontSize="12"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderVersion}" Binding="{Binding Version}"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderProcessId}" Binding="{Binding ProcessId}"/>
                         </ui:DataGrid.Columns>
                     </ui:DataGrid>
       
-                    <GroupBox Grid.Row="2" Header="服务设置" Margin="0,0,0,0">
+                    <GroupBox Grid.Row="2" Header="{x:Static res:Resources.GroupServiceSettings}" Margin="0,0,0,0">
                         <Grid Margin="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -49,42 +49,42 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <Label Grid.Row="0" Grid.Column="0" Content="实例:" VerticalAlignment="Center"/>
+                            <Label Grid.Row="0" Grid.Column="0" Content="{x:Static res:Resources.LabelInstance}" VerticalAlignment="Center"/>
                             <TextBlock x:Name="TxtSelectedInstance" Grid.Row="0" Grid.Column="1"
-                                       Text="请在上方列表中选择实例" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                       Text="{x:Static res:Resources.TextSelectInstance}" VerticalAlignment="Center" Margin="10,0,0,0"/>
 
-                            <Label Grid.Row="1" Grid.Column="0" Content="端口号:" VerticalAlignment="Center"
+                            <Label Grid.Row="1" Grid.Column="0" Content="{x:Static res:Resources.LabelPort}" VerticalAlignment="Center"
                                     Margin="0,10,0,0"/>
                             <TextBox x:Name="TxtPort" Grid.Row="1" Grid.Column="1"
                                      Margin="10,10,10,0" Text="38080"/>
                             <Button x:Name="BtnStartService" Grid.Row="1" Grid.Column="2"
-                                    Content="启动服务" Width="100" Margin="0,10,0,0"/>
+                                    Content="{x:Static res:Resources.ButtonStartService}" Width="100" Margin="0,10,0,0"/>
 
-                            <Label Grid.Row="2" Grid.Column="0" Content="状态:" VerticalAlignment="Center"
+                            <Label Grid.Row="2" Grid.Column="0" Content="{x:Static res:Resources.LabelStatus}" VerticalAlignment="Center"
                                     Margin="0,10,0,0"/>
                             <TextBlock x:Name="TxtServiceStatus" Grid.Row="2" Grid.Column="1"
-                                       Text="服务未启动" VerticalAlignment="Center" Margin="10,10,0,0"/>
+                                       Text="{x:Static res:Resources.TextServiceNotStarted}" VerticalAlignment="Center" Margin="10,10,0,0"/>
                             <Button x:Name="BtnStopService" Grid.Row="2" Grid.Column="2"
-                                    Content="停止服务" Width="100" Margin="0,10,0,0"
+                                    Content="{x:Static res:Resources.ButtonStopService}" Width="100" Margin="0,10,0,0"
                                     IsEnabled="False"/>
 
-                            <Label Grid.Row="3" Grid.Column="0" Content="客户端配置:" VerticalAlignment="Center"
+                            <Label Grid.Row="3" Grid.Column="0" Content="{x:Static res:Resources.LabelClientConfig}" VerticalAlignment="Center"
                                     Margin="0,10,0,0"/>
                             <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,0">
                                 <TabControl x:Name="TabClientConfig" Visibility="Collapsed">
-                                    <TabItem Header="JSON 配置">
+                                    <TabItem Header="{x:Static res:Resources.TabJsonConfig}">
                                         <TextBox x:Name="TxtJsonConfig" Margin="5"
                                                  IsReadOnly="True" VerticalScrollBarVisibility="Auto"
                                                  HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"
                                                  FontFamily="Consolas" FontSize="11"
-                                                 Text="将此配置添加到您的 MCP 客户端配置文件中"/>
+                                                 Text="{x:Static res:Resources.TextJsonConfigHint}"/>
                                     </TabItem>
-                                    <TabItem Header="Claude CLI 配置">
+                                    <TabItem Header="{x:Static res:Resources.TabClaudeConfig}">
                                         <TextBox x:Name="TxtClaudeConfig" Margin="5"
                                                  IsReadOnly="True" VerticalScrollBarVisibility="Auto"
                                                  HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"
                                                  FontFamily="Consolas" FontSize="11"
-                                                 Text="运行此命令添加 MCP 服务器到 Claude Desktop"/>
+                                                 Text="{x:Static res:Resources.TextClaudeConfigHint}"/>
                                     </TabItem>
                                 </TabControl>
                             </Grid>
@@ -94,7 +94,7 @@
             </TabItem>
 
             <!-- MCP 功能授权选项卡 -->
-            <TabItem Header="MCP 功能授权">
+            <TabItem Header="{x:Static res:Resources.TabMcpPermissions}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -103,9 +103,9 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
-                        <Button x:Name="BtnAllowAll" Content="全部允许" Width="100"
+                        <Button x:Name="BtnAllowAll" Content="{x:Static res:Resources.ButtonAllowAll}" Width="100"
                                 Margin="0,0,10,0"/>
-                        <Button x:Name="BtnAskAll" Content="全部询问" Width="100"
+                        <Button x:Name="BtnAskAll" Content="{x:Static res:Resources.ButtonAskAll}" Width="100"
                                 Margin="0,0,10,0"/>
                     </StackPanel>
 
@@ -113,9 +113,9 @@
                               CanUserAddRows="False" GridLinesVisibility="Horizontal"
                               HeadersVisibility="Column">
                         <ui:DataGrid.Columns>
-                            <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}"/>
-                            <DataGridTextColumn Header="描述" Binding="{Binding Description}"/>
-                            <DataGridTemplateColumn Header="权限" >
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderFeatureName}" Binding="{Binding FeatureName}"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderDescription}" Binding="{Binding Description}"/>
+                            <DataGridTemplateColumn Header="{x:Static res:Resources.HeaderPermission}" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <ComboBox ItemsSource="{x:Static local:PermissionLevels.Value}"
@@ -130,16 +130,16 @@
                     </ui:DataGrid>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
-                        <Button x:Name="BtnSavePermissions" Content="保存配置" Width="100"
+                        <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfig}" Width="100"
                                 Margin="0,0,10,0"/>
-                        <Button x:Name="BtnReloadPermissions" Content="重新加载" Width="100"/>
+                        <Button x:Name="BtnReloadPermissions" Content="{x:Static res:Resources.ButtonReload}" Width="100"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
 
     
             <!-- 日志选项卡 -->
-            <TabItem Header="日志">
+            <TabItem Header="{x:Static res:Resources.TabLogs}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -147,9 +147,9 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
-                        <Button x:Name="BtnClearLogs" Content="清空日志" Width="100"
+                        <Button x:Name="BtnClearLogs" Content="{x:Static res:Resources.ButtonClearLogs}" Width="100"
                                 Margin="0,0,10,0"/>
-                        <Button x:Name="BtnExportLogs" Content="导出日志" Width="100"/>
+                        <Button x:Name="BtnExportLogs" Content="{x:Static res:Resources.ButtonExportLogs}" Width="100"/>
                     </StackPanel>
 
                     <DataGrid x:Name="DgLogs" Grid.Row="1" AutoGenerateColumns="False"
@@ -159,27 +159,23 @@
                               VirtualizingPanel.VirtualizationMode="Recycling"
                               EnableRowVirtualization="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="时间" Binding="{Binding Timestamp}" Width="150"/>
-                            <DataGridTextColumn Header="操作" Binding="{Binding Operation}" Width="*"/>
-                            <DataGridTextColumn Header="结果" Binding="{Binding Result}" Width="100"/>
-                            <DataGridTextColumn Header="详情" Binding="{Binding Details}" Width="2*"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderTime}" Binding="{Binding Timestamp}" Width="150"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderOperation}" Binding="{Binding Operation}" Width="*"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderResult}" Binding="{Binding Result}" Width="100"/>
+                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderDetails}" Binding="{Binding Details}" Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
             </TabItem>
             
-            <TabItem Header="关于">
+            <TabItem Header="{x:Static res:Resources.TabAbout}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock FontSize="28" Margin="4">关于本软件</TextBlock>
-                    <TextBlock Grid.Row="1" FontSize="14" Margin="4" TextWrapping="Wrap">© 2025 Nukepayload2<LineBreak/>
-                        本软件在 Apache License 2.0 下分发，永久免费。<LineBreak/>
-                        本软件受到中国和国际版权保护，倒卖将面临法律制裁。<LineBreak/>
-                        隐私协议：本软件收集你的 Microsoft Visual Studio 项目信息用于支撑基本功能，并且信息仅保存在本地。<LineBreak/>
-                        本软件不支持信息远程传输，仅能将信息在本地网络回环传输。</TextBlock>
+                    <TextBlock FontSize="28" Margin="4" Text="{x:Static res:Resources.TextAboutTitle}"/>
+                    <TextBlock Grid.Row="1" FontSize="14" Margin="4" TextWrapping="Wrap" Text="{x:Static res:Resources.TextAboutContent}"/>
                 </Grid>
             </TabItem>
         </TabControl>

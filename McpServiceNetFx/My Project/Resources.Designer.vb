@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  一个强类型的资源类，用于查找本地化的字符串等。
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -59,13 +59,350 @@ Namespace My.Resources
                 resourceCulture = value
             End Set
         End Property
-
+        
         '''<summary>
         '''  查找类似 Visual Studio MCP Server 的本地化字符串。
         '''</summary>
         Public ReadOnly Property AppTitle() As String
             Get
                 Return ResourceManager.GetString("AppTitle", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Allow All 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonAllowAll() As String
+            Get
+                Return ResourceManager.GetString("ButtonAllowAll", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Ask All 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonAskAll() As String
+            Get
+                Return ResourceManager.GetString("ButtonAskAll", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Clear Logs 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonClearLogs() As String
+            Get
+                Return ResourceManager.GetString("ButtonClearLogs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Export Logs 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonExportLogs() As String
+            Get
+                Return ResourceManager.GetString("ButtonExportLogs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Refresh 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonRefresh() As String
+            Get
+                Return ResourceManager.GetString("ButtonRefresh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Reload 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonReload() As String
+            Get
+                Return ResourceManager.GetString("ButtonReload", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Save Config 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonSaveConfig() As String
+            Get
+                Return ResourceManager.GetString("ButtonSaveConfig", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Start Service 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonStartService() As String
+            Get
+                Return ResourceManager.GetString("ButtonStartService", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Stop Service 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonStopService() As String
+            Get
+                Return ResourceManager.GetString("ButtonStopService", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service Settings 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property GroupServiceSettings() As String
+            Get
+                Return ResourceManager.GetString("GroupServiceSettings", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Description 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderDescription() As String
+            Get
+                Return ResourceManager.GetString("HeaderDescription", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Details 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderDetails() As String
+            Get
+                Return ResourceManager.GetString("HeaderDetails", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Feature Name 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderFeatureName() As String
+            Get
+                Return ResourceManager.GetString("HeaderFeatureName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Operation 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderOperation() As String
+            Get
+                Return ResourceManager.GetString("HeaderOperation", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderPermission() As String
+            Get
+                Return ResourceManager.GetString("HeaderPermission", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Process ID 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderProcessId() As String
+            Get
+                Return ResourceManager.GetString("HeaderProcessId", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Result 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderResult() As String
+            Get
+                Return ResourceManager.GetString("HeaderResult", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Solution Path 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderSolutionPath() As String
+            Get
+                Return ResourceManager.GetString("HeaderSolutionPath", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Time 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderTime() As String
+            Get
+                Return ResourceManager.GetString("HeaderTime", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Version 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderVersion() As String
+            Get
+                Return ResourceManager.GetString("HeaderVersion", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Window Caption 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderWindowCaption() As String
+            Get
+                Return ResourceManager.GetString("HeaderWindowCaption", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Client Config: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LabelClientConfig() As String
+            Get
+                Return ResourceManager.GetString("LabelClientConfig", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Instance: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LabelInstance() As String
+            Get
+                Return ResourceManager.GetString("LabelInstance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Port: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LabelPort() As String
+            Get
+                Return ResourceManager.GetString("LabelPort", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Status: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LabelStatus() As String
+            Get
+                Return ResourceManager.GetString("LabelStatus", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 About 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabAbout() As String
+            Get
+                Return ResourceManager.GetString("TabAbout", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Claude CLI Config 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabClaudeConfig() As String
+            Get
+                Return ResourceManager.GetString("TabClaudeConfig", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 JSON Config 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabJsonConfig() As String
+            Get
+                Return ResourceManager.GetString("TabJsonConfig", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Logs 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabLogs() As String
+            Get
+                Return ResourceManager.GetString("TabLogs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 MCP Permissions 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabMcpPermissions() As String
+            Get
+                Return ResourceManager.GetString("TabMcpPermissions", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service Management 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabServiceManagement() As String
+            Get
+                Return ResourceManager.GetString("TabServiceManagement", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 © 2025 Nukepayload2
+        '''This software is distributed under Apache License 2.0, permanently free.
+        '''This software is protected by Chinese and international copyright laws.
+        '''Privacy Policy: This software collects your Microsoft Visual Studio project information to support basic functions, and the information is only stored locally.
+        '''This software does not support remote information transmission, only local network loopback transmission. 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TextAboutContent() As String
+            Get
+                Return ResourceManager.GetString("TextAboutContent", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 About This Software 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TextAboutTitle() As String
+            Get
+                Return ResourceManager.GetString("TextAboutTitle", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Run this command to add MCP server to Claude Desktop 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TextClaudeConfigHint() As String
+            Get
+                Return ResourceManager.GetString("TextClaudeConfigHint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Add this configuration to your MCP client configuration file 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TextJsonConfigHint() As String
+            Get
+                Return ResourceManager.GetString("TextJsonConfigHint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Please select an instance from the list above 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TextSelectInstance() As String
+            Get
+                Return ResourceManager.GetString("TextSelectInstance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service not started 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TextServiceNotStarted() As String
+            Get
+                Return ResourceManager.GetString("TextServiceNotStarted", resourceCulture)
             End Get
         End Property
     End Module

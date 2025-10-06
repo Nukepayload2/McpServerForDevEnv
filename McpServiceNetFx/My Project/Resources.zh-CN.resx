@@ -120,4 +120,119 @@
   <data name="AppTitle" xml:space="preserve">
     <value>Visual Studio MCP 服务器</value>
   </data>
+  <data name="TabServiceManagement" xml:space="preserve">
+    <value>服务管理</value>
+  </data>
+  <data name="TabMcpPermissions" xml:space="preserve">
+    <value>MCP 功能授权</value>
+  </data>
+  <data name="TabLogs" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="TabAbout" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="ButtonRefresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="ButtonStartService" xml:space="preserve">
+    <value>启动服务</value>
+  </data>
+  <data name="ButtonStopService" xml:space="preserve">
+    <value>停止服务</value>
+  </data>
+  <data name="ButtonAllowAll" xml:space="preserve">
+    <value>全部允许</value>
+  </data>
+  <data name="ButtonAskAll" xml:space="preserve">
+    <value>全部询问</value>
+  </data>
+  <data name="ButtonSaveConfig" xml:space="preserve">
+    <value>保存配置</value>
+  </data>
+  <data name="ButtonReload" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="ButtonClearLogs" xml:space="preserve">
+    <value>清空日志</value>
+  </data>
+  <data name="ButtonExportLogs" xml:space="preserve">
+    <value>导出日志</value>
+  </data>
+  <data name="HeaderWindowCaption" xml:space="preserve">
+    <value>窗口标题</value>
+  </data>
+  <data name="HeaderSolutionPath" xml:space="preserve">
+    <value>解决方案路径</value>
+  </data>
+  <data name="HeaderVersion" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="HeaderProcessId" xml:space="preserve">
+    <value>进程ID</value>
+  </data>
+  <data name="GroupServiceSettings" xml:space="preserve">
+    <value>服务设置</value>
+  </data>
+  <data name="LabelInstance" xml:space="preserve">
+    <value>实例:</value>
+  </data>
+  <data name="LabelPort" xml:space="preserve">
+    <value>端口号:</value>
+  </data>
+  <data name="LabelStatus" xml:space="preserve">
+    <value>状态:</value>
+  </data>
+  <data name="LabelClientConfig" xml:space="preserve">
+    <value>客户端配置:</value>
+  </data>
+  <data name="TextSelectInstance" xml:space="preserve">
+    <value>请在上方列表中选择实例</value>
+  </data>
+  <data name="TextServiceNotStarted" xml:space="preserve">
+    <value>服务未启动</value>
+  </data>
+  <data name="TabJsonConfig" xml:space="preserve">
+    <value>JSON 配置</value>
+  </data>
+  <data name="TabClaudeConfig" xml:space="preserve">
+    <value>Claude CLI 配置</value>
+  </data>
+  <data name="TextJsonConfigHint" xml:space="preserve">
+    <value>将此配置添加到您的 MCP 客户端配置文件中</value>
+  </data>
+  <data name="TextClaudeConfigHint" xml:space="preserve">
+    <value>运行此命令添加 MCP 服务器到 Claude Desktop</value>
+  </data>
+  <data name="HeaderFeatureName" xml:space="preserve">
+    <value>功能名称</value>
+  </data>
+  <data name="HeaderDescription" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="HeaderPermission" xml:space="preserve">
+    <value>权限</value>
+  </data>
+  <data name="HeaderTime" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="HeaderOperation" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="HeaderResult" xml:space="preserve">
+    <value>结果</value>
+  </data>
+  <data name="HeaderDetails" xml:space="preserve">
+    <value>详情</value>
+  </data>
+  <data name="TextAboutTitle" xml:space="preserve">
+    <value>关于本软件</value>
+  </data>
+  <data name="TextAboutContent" xml:space="preserve">
+    <value>© 2025 Nukepayload2
+本软件在 Apache License 2.0 下分发，永久免费。
+本软件受到中国和国际版权保护，倒卖将面临法律制裁。
+隐私协议：本软件收集你的 Microsoft Visual Studio 项目信息用于支撑基本功能，并且信息仅保存在本地。
+本软件不支持信息远程传输，仅能将信息在本地网络回环传输。</value>
+  </data>
 </root>
