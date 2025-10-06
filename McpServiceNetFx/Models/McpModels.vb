@@ -1,6 +1,6 @@
 Imports Newtonsoft.Json
 
-' MCP ¹¤¾ß¶¨ÒåµÄÏÔÊ½ÀàĞÍ
+' MCP å·¥å…·å®šä¹‰çš„æ˜¾å¼ç±»å‹
 Public Class ToolsListResponse
     <JsonProperty("tools")>
     Public Property Tools As ToolDefinition()
@@ -15,6 +15,35 @@ Public Class ToolDefinition
 
     <JsonProperty("inputSchema")>
     Public Property InputSchema As InputSchema
+End Class
+
+''' <summary>
+''' è¿è¡Œè‡ªå®šä¹‰å·¥å…·çš„ç»“æœ
+''' </summary>
+Public Class RunCustomToolsResult
+    ''' <summary>
+    ''' æ˜¯å¦æˆåŠŸ
+    ''' </summary>
+    <JsonProperty("success")>
+    Public Property Success As Boolean
+
+    ''' <summary>
+    ''' ç»“æœæ¶ˆæ¯
+    ''' </summary>
+    <JsonProperty("message")>
+    Public Property Message As String
+
+    ''' <summary>
+    ''' å·²å¤„ç†çš„æ–‡ä»¶åˆ—è¡¨
+    ''' </summary>
+    <JsonProperty("processedFiles")>
+    Public Property ProcessedFiles As String()
+
+    ''' <summary>
+    ''' é”™è¯¯ä¿¡æ¯ï¼ˆå¦‚æœæœ‰ï¼‰
+    ''' </summary>
+    <JsonProperty("errors")>
+    Public Property Errors As String
 End Class
 
 Public Class InputSchema
@@ -47,7 +76,7 @@ Public Class ToolCallParams
     Public Property Arguments As Dictionary(Of String, Object)
 End Class
 
-' MCP ±ê×¼ÄÚÈİÏìÓ¦Àà
+' MCP æ ‡å‡†å†…å®¹å“åº”ç±»
 Public Class McpContentItem
     <JsonProperty("type", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Type As String
@@ -74,51 +103,51 @@ Public Class McpContentItem
 End Class
 
 ''' <summary>
-''' ±íÊ¾ MCP ¹¤¾ßµ÷ÓÃ³É¹¦½á¹ûµÄ»ùÀà
+''' è¡¨ç¤º MCP å·¥å…·è°ƒç”¨æˆåŠŸç»“æœçš„åŸºç±»
 ''' </summary>
 Public MustInherit Class CallToolResultBase
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃÏìÓ¦ÄÚÈİÁĞ±í
+    ''' è·å–æˆ–è®¾ç½®å“åº”å†…å®¹åˆ—è¡¨
     ''' </summary>
     <JsonProperty("content")>
     Public Property Content As IList(Of ContentBlock) = New List(Of ContentBlock)()
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ¿ÉÑ¡µÄ½á¹¹»¯½á¹û
+    ''' è·å–æˆ–è®¾ç½®å¯é€‰çš„ç»“æ„åŒ–ç»“æœ
     ''' </summary>
     <JsonProperty("structuredContent")>
     Public Property StructuredContent As Object
 End Class
 
 ''' <summary>
-''' ±íÊ¾ MCP ¹¤¾ßµ÷ÓÃ³É¹¦½á¹û
+''' è¡¨ç¤º MCP å·¥å…·è°ƒç”¨æˆåŠŸç»“æœ
 ''' </summary>
 ''' <remarks>
-''' ¹¤¾ß³É¹¦Ö´ĞĞºó·µ»ØµÄ½á¹û£¬°üº¬¹¤¾ßµÄÊä³öÄÚÈİ
+''' å·¥å…·æˆåŠŸæ‰§è¡Œåè¿”å›çš„ç»“æœï¼ŒåŒ…å«å·¥å…·çš„è¾“å‡ºå†…å®¹
 ''' </remarks>
 Public Class CallToolSuccessResult
     Inherits CallToolResultBase
 
     ''' <summary>
-    ''' ³õÊ¼»¯ CallToolSuccessResult µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– CallToolSuccessResult çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         MyBase.New()
     End Sub
 
     ''' <summary>
-    ''' Ê¹ÓÃÖ¸¶¨µÄÄÚÈİ³õÊ¼»¯ CallToolSuccessResult µÄĞÂÊµÀı
+    ''' ä½¿ç”¨æŒ‡å®šçš„å†…å®¹åˆå§‹åŒ– CallToolSuccessResult çš„æ–°å®ä¾‹
     ''' </summary>
-    ''' <param name="content">¹¤¾ß·µ»ØµÄÄÚÈİ</param>
+    ''' <param name="content">å·¥å…·è¿”å›çš„å†…å®¹</param>
     Public Sub New(content As IList(Of ContentBlock))
         Me.New()
         Me.Content = content
     End Sub
 
     ''' <summary>
-    ''' Ê¹ÓÃÖ¸¶¨µÄÎÄ±¾ÄÚÈİ³õÊ¼»¯ CallToolSuccessResult µÄĞÂÊµÀı
+    ''' ä½¿ç”¨æŒ‡å®šçš„æ–‡æœ¬å†…å®¹åˆå§‹åŒ– CallToolSuccessResult çš„æ–°å®ä¾‹
     ''' </summary>
-    ''' <param name="text">¹¤¾ß·µ»ØµÄÎÄ±¾ÄÚÈİ</param>
+    ''' <param name="text">å·¥å…·è¿”å›çš„æ–‡æœ¬å†…å®¹</param>
     Public Sub New(text As String)
         Me.New()
         If Not String.IsNullOrEmpty(text) Then
@@ -128,70 +157,70 @@ Public Class CallToolSuccessResult
 End Class
 
 ''' <summary>
-''' ±íÊ¾ MCP ¹¤¾ßµ÷ÓÃ´íÎó½á¹û
+''' è¡¨ç¤º MCP å·¥å…·è°ƒç”¨é”™è¯¯ç»“æœ
 ''' </summary>
 ''' <remarks>
-''' ¹¤¾ßÖ´ĞĞÊ§°ÜÊ±·µ»ØµÄ´íÎó½á¹û£¬°üº¬´íÎóĞÅÏ¢ºÍÏêÏ¸ĞÅÏ¢
+''' å·¥å…·æ‰§è¡Œå¤±è´¥æ—¶è¿”å›çš„é”™è¯¯ç»“æœï¼ŒåŒ…å«é”™è¯¯ä¿¡æ¯å’Œè¯¦ç»†ä¿¡æ¯
 ''' </remarks>
 Public Class CallToolErrorResult
     Inherits CallToolResultBase
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ´íÎóÖ¸Ê¾Æ÷£¬Ê¼ÖÕÎª true
+    ''' è·å–æˆ–è®¾ç½®é”™è¯¯æŒ‡ç¤ºå™¨ï¼Œå§‹ç»ˆä¸º true
     ''' </summary>
     <JsonProperty("isError")>
     Public Property IsError As Boolean = True
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ´íÎóÏûÏ¢
+    ''' è·å–æˆ–è®¾ç½®é”™è¯¯æ¶ˆæ¯
     ''' </summary>
     <JsonProperty("errorMessage")>
     Public Property ErrorMessage As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ´íÎó´úÂë
+    ''' è·å–æˆ–è®¾ç½®é”™è¯¯ä»£ç 
     ''' </summary>
     <JsonProperty("errorCode")>
     Public Property ErrorCode As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ´íÎóÏêÇé
+    ''' è·å–æˆ–è®¾ç½®é”™è¯¯è¯¦æƒ…
     ''' </summary>
     <JsonProperty("errorDetails")>
     Public Property ErrorDetails As Object
 
     ''' <summary>
-    ''' ³õÊ¼»¯ CallToolErrorResult µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– CallToolErrorResult çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         MyBase.New()
     End Sub
 
     ''' <summary>
-    ''' Ê¹ÓÃÖ¸¶¨µÄ´íÎóÏûÏ¢³õÊ¼»¯ CallToolErrorResult µÄĞÂÊµÀı
+    ''' ä½¿ç”¨æŒ‡å®šçš„é”™è¯¯æ¶ˆæ¯åˆå§‹åŒ– CallToolErrorResult çš„æ–°å®ä¾‹
     ''' </summary>
-    ''' <param name="errorMessage">´íÎóÏûÏ¢</param>
+    ''' <param name="errorMessage">é”™è¯¯æ¶ˆæ¯</param>
     Public Sub New(errorMessage As String)
         Me.New()
         Me.ErrorMessage = errorMessage
     End Sub
 
     ''' <summary>
-    ''' Ê¹ÓÃÖ¸¶¨µÄ´íÎóÏûÏ¢ºÍ´íÎó´úÂë³õÊ¼»¯ CallToolErrorResult µÄĞÂÊµÀı
+    ''' ä½¿ç”¨æŒ‡å®šçš„é”™è¯¯æ¶ˆæ¯å’Œé”™è¯¯ä»£ç åˆå§‹åŒ– CallToolErrorResult çš„æ–°å®ä¾‹
     ''' </summary>
-    ''' <param name="errorMessage">´íÎóÏûÏ¢</param>
-    ''' <param name="errorCode">´íÎó´úÂë</param>
+    ''' <param name="errorMessage">é”™è¯¯æ¶ˆæ¯</param>
+    ''' <param name="errorCode">é”™è¯¯ä»£ç </param>
     Public Sub New(errorMessage As String, errorCode As String)
         Me.New(errorMessage)
         Me.ErrorCode = errorCode
     End Sub
 
     ''' <summary>
-    ''' Ê¹ÓÃÖ¸¶¨µÄ´íÎóÏûÏ¢¡¢´íÎó´úÂëºÍ´íÎóÏêÇé³õÊ¼»¯ CallToolErrorResult µÄĞÂÊµÀı
+    ''' ä½¿ç”¨æŒ‡å®šçš„é”™è¯¯æ¶ˆæ¯ã€é”™è¯¯ä»£ç å’Œé”™è¯¯è¯¦æƒ…åˆå§‹åŒ– CallToolErrorResult çš„æ–°å®ä¾‹
     ''' </summary>
-    ''' <param name="errorMessage">´íÎóÏûÏ¢</param>
-    ''' <param name="errorCode">´íÎó´úÂë</param>
-    ''' <param name="errorDetails">´íÎóÏêÇé</param>
+    ''' <param name="errorMessage">é”™è¯¯æ¶ˆæ¯</param>
+    ''' <param name="errorCode">é”™è¯¯ä»£ç </param>
+    ''' <param name="errorDetails">é”™è¯¯è¯¦æƒ…</param>
     Public Sub New(errorMessage As String, errorCode As String, errorDetails As Object)
         Me.New(errorMessage, errorCode)
         Me.ErrorDetails = errorDetails
@@ -199,160 +228,160 @@ Public Class CallToolErrorResult
 End Class
 
 ''' <summary>
-''' ÄÚÈİ¿é»ùÀà
+''' å†…å®¹å—åŸºç±»
 ''' </summary>
 Public MustInherit Class ContentBlock
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃÄÚÈİÀàĞÍ
+    ''' è·å–æˆ–è®¾ç½®å†…å®¹ç±»å‹
     ''' </summary>
     <JsonProperty("type")>
     Public Property Type As String = String.Empty
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ¿ÉÑ¡µÄ×¢ÊÍ
+    ''' è·å–æˆ–è®¾ç½®å¯é€‰çš„æ³¨é‡Š
     ''' </summary>
     <JsonProperty("annotations")>
     Public Property Annotations As Object
 End Class
 
 ''' <summary>
-''' ÎÄ±¾ÄÚÈİ¿é
+''' æ–‡æœ¬å†…å®¹å—
 ''' </summary>
 Public Class TextContentBlock
     Inherits ContentBlock
 
     ''' <summary>
-    ''' ³õÊ¼»¯ TextContentBlock µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– TextContentBlock çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         Type = "text"
     End Sub
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃÎÄ±¾ÄÚÈİ
+    ''' è·å–æˆ–è®¾ç½®æ–‡æœ¬å†…å®¹
     ''' </summary>
     <JsonProperty("text")>
     Public Property Text As String
 End Class
 
 ''' <summary>
-''' Í¼Æ¬ÄÚÈİ¿é
+''' å›¾ç‰‡å†…å®¹å—
 ''' </summary>
 Public Class ImageContentBlock
     Inherits ContentBlock
 
     ''' <summary>
-    ''' ³õÊ¼»¯ ImageContentBlock µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– ImageContentBlock çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         Type = "image"
     End Sub
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ base64 ±àÂëµÄÍ¼Æ¬Êı¾İ
+    ''' è·å–æˆ–è®¾ç½® base64 ç¼–ç çš„å›¾ç‰‡æ•°æ®
     ''' </summary>
     <JsonProperty("data")>
     Public Property Data As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ MIME ÀàĞÍ
+    ''' è·å–æˆ–è®¾ç½® MIME ç±»å‹
     ''' </summary>
     <JsonProperty("mimeType")>
     Public Property MimeType As String
 End Class
 
 ''' <summary>
-''' ÒôÆµÄÚÈİ¿é
+''' éŸ³é¢‘å†…å®¹å—
 ''' </summary>
 Public Class AudioContentBlock
     Inherits ContentBlock
 
     ''' <summary>
-    ''' ³õÊ¼»¯ AudioContentBlock µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– AudioContentBlock çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         Type = "audio"
     End Sub
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ base64 ±àÂëµÄÒôÆµÊı¾İ
+    ''' è·å–æˆ–è®¾ç½® base64 ç¼–ç çš„éŸ³é¢‘æ•°æ®
     ''' </summary>
     <JsonProperty("data")>
     Public Property Data As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ MIME ÀàĞÍ
+    ''' è·å–æˆ–è®¾ç½® MIME ç±»å‹
     ''' </summary>
     <JsonProperty("mimeType")>
     Public Property MimeType As String
 End Class
 
 ''' <summary>
-''' Ç¶Èë×ÊÔ´ÄÚÈİ¿é
+''' åµŒå…¥èµ„æºå†…å®¹å—
 ''' </summary>
 Public Class EmbeddedResourceBlock
     Inherits ContentBlock
 
     ''' <summary>
-    ''' ³õÊ¼»¯ EmbeddedResourceBlock µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– EmbeddedResourceBlock çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         Type = "resource"
     End Sub
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ×ÊÔ´ÄÚÈİ
+    ''' è·å–æˆ–è®¾ç½®èµ„æºå†…å®¹
     ''' </summary>
     <JsonProperty("resource")>
     Public Property Resource As Object
 End Class
 
 ''' <summary>
-''' ×ÊÔ´Á´½ÓÄÚÈİ¿é
+''' èµ„æºé“¾æ¥å†…å®¹å—
 ''' </summary>
 Public Class ResourceLinkBlock
     Inherits ContentBlock
 
     ''' <summary>
-    ''' ³õÊ¼»¯ ResourceLinkBlock µÄĞÂÊµÀı
+    ''' åˆå§‹åŒ– ResourceLinkBlock çš„æ–°å®ä¾‹
     ''' </summary>
     Public Sub New()
         Type = "resource_link"
     End Sub
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ×ÊÔ´ URI
+    ''' è·å–æˆ–è®¾ç½®èµ„æº URI
     ''' </summary>
     <JsonProperty("uri")>
     Public Property Uri As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ×ÊÔ´Ãû³Æ
+    ''' è·å–æˆ–è®¾ç½®èµ„æºåç§°
     ''' </summary>
     <JsonProperty("name")>
     Public Property Name As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ×ÊÔ´ÃèÊö
+    ''' è·å–æˆ–è®¾ç½®èµ„æºæè¿°
     ''' </summary>
     <JsonProperty("description")>
     Public Property Description As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ MIME ÀàĞÍ
+    ''' è·å–æˆ–è®¾ç½® MIME ç±»å‹
     ''' </summary>
     <JsonProperty("mimeType")>
     Public Property MimeType As String
 
     ''' <summary>
-    ''' »ñÈ¡»òÉèÖÃ×ÊÔ´´óĞ¡£¨×Ö½Ú£©
+    ''' è·å–æˆ–è®¾ç½®èµ„æºå¤§å°ï¼ˆå­—èŠ‚ï¼‰
     ''' </summary>
     <JsonProperty("size")>
     Public Property Size As Long?
 End Class
 
 
-' JSON-RPC 2.0 Êı¾İÄ£ĞÍ - Ê¹ÓÃ Newtonsoft.Json ĞòÁĞ»¯
+' JSON-RPC 2.0 æ•°æ®æ¨¡å‹ - ä½¿ç”¨ Newtonsoft.Json åºåˆ—åŒ–
 Public Class JsonRpcRequest
     <JsonProperty("jsonrpc")>
     Public Property JsonRpc As String = "2.0"

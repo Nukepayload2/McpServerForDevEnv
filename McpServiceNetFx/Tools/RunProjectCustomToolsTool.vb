@@ -1,5 +1,3 @@
-Imports System.Text
-
 ''' <summary>
 ''' 运行指定项目自定义工具的工具
 ''' </summary>
@@ -73,29 +71,4 @@ Public Class RunProjectCustomToolsTool
     Private Async Function RunCustomToolForProjectAsync(projectName As String) As Task(Of RunCustomToolsResult)
         Return Await _vsTools.RunProjectCustomToolsAsync(projectName)
     End Function
-End Class
-
-''' <summary>
-''' 运行自定义工具的结果
-''' </summary>
-Public Class RunCustomToolsResult
-    ''' <summary>
-    ''' 是否成功
-    ''' </summary>
-    Public Property Success As Boolean
-
-    ''' <summary>
-    ''' 结果消息
-    ''' </summary>
-    Public Property Message As String
-
-    ''' <summary>
-    ''' 已处理的文件列表
-    ''' </summary>
-    Public Property ProcessedFiles As String()
-
-    ''' <summary>
-    ''' 错误信息（如果有）
-    ''' </summary>
-    Public Property Errors As String
 End Class
