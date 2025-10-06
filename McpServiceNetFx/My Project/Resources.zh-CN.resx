@@ -235,4 +235,25 @@
 隐私协议：本软件收集你的 Microsoft Visual Studio 项目信息用于支撑基本功能，并且信息仅保存在本地。
 本软件不支持信息远程传输，仅能将信息在本地网络回环传输。</value>
   </data>
+  <data name="UserMessageTitle" xml:space="preserve">
+    <value>用户消息</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>提示信息:</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="CustomMessageBoxTitle" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="ButtonOK" xml:space="preserve">
+    <value>确定</value>
+  </data>
 </root>

@@ -97,11 +97,38 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Close 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonClose() As String
+            Get
+                Return ResourceManager.GetString("ButtonClose", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Export Logs 的本地化字符串。
         '''</summary>
         Public ReadOnly Property ButtonExportLogs() As String
             Get
                 Return ResourceManager.GetString("ButtonExportLogs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 No 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonNo() As String
+            Get
+                Return ResourceManager.GetString("ButtonNo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 OK 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonOK() As String
+            Get
+                Return ResourceManager.GetString("ButtonOK", resourceCulture)
             End Get
         End Property
         
@@ -147,6 +174,24 @@ Namespace My.Resources
         Public ReadOnly Property ButtonStopService() As String
             Get
                 Return ResourceManager.GetString("ButtonStopService", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Yes 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonYes() As String
+            Get
+                Return ResourceManager.GetString("ButtonYes", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Message 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property CustomMessageBoxTitle() As String
+            Get
+                Return ResourceManager.GetString("CustomMessageBoxTitle", resourceCulture)
             End Get
         End Property
         
@@ -295,6 +340,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Message: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MessageLabel() As String
+            Get
+                Return ResourceManager.GetString("MessageLabel", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 About 的本地化字符串。
         '''</summary>
         Public ReadOnly Property TabAbout() As String
@@ -403,6 +457,15 @@ Namespace My.Resources
         Public ReadOnly Property TextServiceNotStarted() As String
             Get
                 Return ResourceManager.GetString("TextServiceNotStarted", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 User Message 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property UserMessageTitle() As String
+            Get
+                Return ResourceManager.GetString("UserMessageTitle", resourceCulture)
             End Get
         End Property
     End Module

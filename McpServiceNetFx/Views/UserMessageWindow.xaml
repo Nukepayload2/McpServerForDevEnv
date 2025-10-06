@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:res="clr-namespace:McpServiceNetFx.My.Resources"
         mc:Ignorable="d"
-        Title="UserMessageWindow"
+        Title="{x:Static res:Resources.UserMessageTitle}"
         Height="300"
         Width="500"
         WindowStartupLocation="CenterScreen"
@@ -12,7 +13,7 @@
     <StackPanel Margin="8">
         <!-- 消息标签 -->
         <Label x:Name="MessageLabel"
-               Content="提示信息:"
+               Content="{x:Static res:Resources.MessageLabel}"
                FontWeight="Bold"
                Margin="0,0,0,4"/>
 
@@ -34,7 +35,7 @@
                     HorizontalAlignment="Right"
                     Margin="0,8,0,0">
             <Button x:Name="CloseButton"
-                    Content="关闭"
+                    Content="{x:Static res:Resources.ButtonClose}"
                     MinWidth="80"
                     Margin="8,0,0,0"
                     IsCancel="True"/>

@@ -235,4 +235,25 @@ This software is protected by Chinese and international copyright laws.
 Privacy Policy: This software collects your Microsoft Visual Studio project information to support basic functions, and the information is only stored locally.
 This software does not support remote information transmission, only local network loopback transmission.</value>
   </data>
+  <data name="UserMessageTitle" xml:space="preserve">
+    <value>User Message</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>Message:</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CustomMessageBoxTitle" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ButtonOK" xml:space="preserve">
+    <value>OK</value>
+  </data>
 </root>
