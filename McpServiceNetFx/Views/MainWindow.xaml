@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:McpServiceNetFx"
         mc:Ignorable="d" Background="#F7F7F7"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="Visual Studio MCP 服务器" Height="600" Width="900" WindowStartupLocation="CenterScreen">
+        xmlns:res="clr-namespace:McpServiceNetFx.My.Resources"
+        Title="{x:Static res:Resources.AppTitle}" Height="600" Width="900" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <TabControl x:Name="TabControlMain">
             <TabItem Header="服务管理">
@@ -164,6 +165,21 @@
                             <DataGridTextColumn Header="详情" Binding="{Binding Details}" Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="关于">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="28" Margin="4">关于本软件</TextBlock>
+                    <TextBlock Grid.Row="1" FontSize="14" Margin="4" TextWrapping="Wrap">© 2025 Nukepayload2<LineBreak/>
+                        本软件在 Apache License 2.0 下分发，永久免费。<LineBreak/>
+                        本软件受到中国和国际版权保护，倒卖将面临法律制裁。<LineBreak/>
+                        隐私协议：本软件收集你的 Microsoft Visual Studio 项目信息用于支撑基本功能，并且信息仅保存在本地。<LineBreak/>
+                        本软件不支持信息远程传输，仅能将信息在本地网络回环传输。</TextBlock>
                 </Grid>
             </TabItem>
         </TabControl>

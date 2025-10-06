@@ -59,9 +59,9 @@ Namespace My.Resources
                 resourceCulture = value
             End Set
         End Property
-        
+
         '''<summary>
-        '''  查找类似  的本地化字符串。
+        '''  查找类似 Visual Studio MCP Server 的本地化字符串。
         '''</summary>
         Public ReadOnly Property AppTitle() As String
             Get
