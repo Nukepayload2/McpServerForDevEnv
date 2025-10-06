@@ -23,7 +23,7 @@ Partial Public Class MainWindow
             DgPermissions.ItemsSource = _permissionItems
             LogOperation("权限加载", "完成", $"共加载 {_permissionItems.Count} 个权限配置")
         Catch ex As Exception
-            UtilityModule.ShowError(Me, $"加载权限配置失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgLoadPermissionsFailed, ex.Message))
         End Try
     End Sub
 
@@ -117,9 +117,9 @@ Partial Public Class MainWindow
     Private Sub BtnSavePermissions_Click() Handles BtnSavePermissions.Click
         Try
             PersistenceModule.SavePermissions(_permissionItems)
-            UtilityModule.ShowInfo(Me, "权限配置已保存", "保存成功")
+            UtilityModule.ShowInfo(Me, My.Resources.MsgSavePermissionsSuccess, My.Resources.TitleSaveSuccess)
         Catch ex As Exception
-            UtilityModule.ShowError(Me, $"保存权限配置失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgSavePermissionsFailed, ex.Message))
         End Try
     End Sub
 
@@ -151,8 +151,8 @@ Partial Public Class MainWindow
                 Return False
             Case PermissionLevel.Ask
                 LogOperation(featureName, "询问用户", operationDescription)
-                Dim message = $"是否允许执行以下操作？{Environment.NewLine}{Environment.NewLine}功能: {featureName}{Environment.NewLine}描述: {operationDescription}"
-                Dim result = UtilityModule.ShowConfirmModal(Me, message, "权限确认")
+                Dim message = String.Format(My.Resources.MsgPermissionRequest, Environment.NewLine, featureName, operationDescription)
+                Dim result = UtilityModule.ShowConfirmModal(Me, message, My.Resources.TitlePermissionConfirm)
 
                 If result Then
                     LogOperation(featureName, "用户允许", operationDescription)

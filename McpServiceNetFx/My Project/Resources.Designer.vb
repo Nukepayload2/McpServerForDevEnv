@@ -196,6 +196,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 No file 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property FileNoFile() As String
+            Get
+                Return ResourceManager.GetString("FileNoFile", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 XML Files (*.xml)|*.xml|All Files (*.*)|*.* 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property FilterXmlFiles() As String
+            Get
+                Return ResourceManager.GetString("FilterXmlFiles", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Service Settings 的本地化字符串。
         '''</summary>
         Public ReadOnly Property GroupServiceSettings() As String
@@ -349,6 +367,195 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Failed to clear logs: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgClearLogsFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgClearLogsFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Are you sure you want to clear all logs? This action cannot be undone. 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgConfirmClearLogs() As String
+            Get
+                Return ResourceManager.GetString("MsgConfirmClearLogs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to create tool manager data context: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgCreateToolManagerContextFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgCreateToolManagerContextFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to export logs: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgExportLogsFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgExportLogsFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to load permission configuration: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgLoadPermissionsFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgLoadPermissionsFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Logs have been cleared 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgLogsCleared() As String
+            Get
+                Return ResourceManager.GetString("MsgLogsCleared", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Logs have been exported to: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgLogsExported() As String
+            Get
+                Return ResourceManager.GetString("MsgLogsExported", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 No instance selected 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgNoInstanceSelected() As String
+            Get
+                Return ResourceManager.GetString("MsgNoInstanceSelected", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 No logs to export 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgNoLogsToExport() As String
+            Get
+                Return ResourceManager.GetString("MsgNoLogsToExport", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Do you want to allow the following operation?{0}{0}Feature: {1}{0}Description: {2} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgPermissionRequest() As String
+            Get
+                Return ResourceManager.GetString("MsgPermissionRequest", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to refresh Visual Studio instance list: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgRefreshVsInstancesFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgRefreshVsInstancesFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to save permission configuration: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgSavePermissionsFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgSavePermissionsFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission configuration saved 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgSavePermissionsSuccess() As String
+            Get
+                Return ResourceManager.GetString("MsgSavePermissionsSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Please select a Visual Studio instance first 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgSelectVsInstance() As String
+            Get
+                Return ResourceManager.GetString("MsgSelectVsInstance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service is already running 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgServiceAlreadyRunning() As String
+            Get
+                Return ResourceManager.GetString("MsgServiceAlreadyRunning", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service is not running 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgServiceNotRunning() As String
+            Get
+                Return ResourceManager.GetString("MsgServiceNotRunning", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to start service: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgStartServiceFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgStartServiceFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to stop service: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgStopServiceFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgStopServiceFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 The associated Visual Studio instance is closing, MCP service has been automatically stopped 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgVsInstanceClosing() As String
+            Get
+                Return ResourceManager.GetString("MsgVsInstanceClosing", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 The associated Visual Studio instance has exited, MCP service has been automatically stopped 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgVsInstanceExited() As String
+            Get
+                Return ResourceManager.GetString("MsgVsInstanceExited", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service Running - Port: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property StatusServiceRunning() As String
+            Get
+                Return ResourceManager.GetString("StatusServiceRunning", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 About 的本地化字符串。
         '''</summary>
         Public ReadOnly Property TabAbout() As String
@@ -457,6 +664,123 @@ Namespace My.Resources
         Public ReadOnly Property TextServiceNotStarted() As String
             Get
                 Return ResourceManager.GetString("TextServiceNotStarted", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Confirm 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleConfirm() As String
+            Get
+                Return ResourceManager.GetString("TitleConfirm", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Confirm Clear 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleConfirmClear() As String
+            Get
+                Return ResourceManager.GetString("TitleConfirmClear", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Error 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleError() As String
+            Get
+                Return ResourceManager.GetString("TitleError", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Export Logs 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleExportLogs() As String
+            Get
+                Return ResourceManager.GetString("TitleExportLogs", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Export Successful 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleExportSuccess() As String
+            Get
+                Return ResourceManager.GetString("TitleExportSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Hint 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleHint() As String
+            Get
+                Return ResourceManager.GetString("TitleHint", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Information 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleInfo() As String
+            Get
+                Return ResourceManager.GetString("TitleInfo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Instance Closing 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleInstanceClosing() As String
+            Get
+                Return ResourceManager.GetString("TitleInstanceClosing", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Instance Exited 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleInstanceExited() As String
+            Get
+                Return ResourceManager.GetString("TitleInstanceExited", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Operation Successful 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleOperationSuccess() As String
+            Get
+                Return ResourceManager.GetString("TitleOperationSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission Confirmation 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitlePermissionConfirm() As String
+            Get
+                Return ResourceManager.GetString("TitlePermissionConfirm", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Save Successful 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleSaveSuccess() As String
+            Get
+                Return ResourceManager.GetString("TitleSaveSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Warning 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TitleWarning() As String
+            Get
+                Return ResourceManager.GetString("TitleWarning", resourceCulture)
             End Get
         End Property
         

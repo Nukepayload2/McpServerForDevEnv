@@ -20,7 +20,7 @@ Partial Public Class MainWindow
             End If
 
         Catch ex As Exception
-            UtilityModule.ShowError(Me, $"刷新 Visual Studio 实例列表失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgRefreshVsInstancesFailed, ex.Message))
         End Try
     End Sub
 
@@ -82,7 +82,7 @@ Partial Public Class MainWindow
 
         Catch ex As Exception
             LogOperation("工具管理器", "数据上下文创建失败", ex.Message)
-            UtilityModule.ShowError(Me, $"创建工具管理器数据上下文失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgCreateToolManagerContextFailed, ex.Message))
         End Try
     End Sub
 
@@ -90,7 +90,7 @@ Partial Public Class MainWindow
         If _selectedVsInstance IsNot Nothing Then
             TxtSelectedInstance.Text = $"{_selectedVsInstance.Caption} - {UtilityModule.GetFileDisplayName(_selectedVsInstance.SolutionPath)}"
         Else
-            TxtSelectedInstance.Text = "未选择实例"
+            TxtSelectedInstance.Text = My.Resources.MsgNoInstanceSelected
         End If
     End Sub
 End Class

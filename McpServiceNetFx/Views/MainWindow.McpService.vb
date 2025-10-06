@@ -17,12 +17,12 @@ Partial Public Class MainWindow
 
     Private Sub BtnStartService_Click() Handles BtnStartService.Click
         If _isServiceRunning Then
-            UtilityModule.ShowWarning(Me, "服务已经在运行中", "提示")
+            UtilityModule.ShowWarning(Me, My.Resources.MsgServiceAlreadyRunning, My.Resources.TitleHint)
             Return
         End If
 
         If _selectedVsInstance Is Nothing Then
-            UtilityModule.ShowWarning(Me, "请先选择一个 Visual Studio 实例", "提示")
+            UtilityModule.ShowWarning(Me, My.Resources.MsgSelectVsInstance, My.Resources.TitleHint)
             Return
         End If
 
@@ -33,21 +33,21 @@ Partial Public Class MainWindow
             StartMcpService(port)
         Catch ex As Exception
             If TypeOf ex IsNot AddressAccessDeniedException Then
-                UtilityModule.ShowError(Me, $"启动服务失败: {ex.Message}")
+                UtilityModule.ShowError(Me, String.Format(My.Resources.MsgStartServiceFailed, ex.Message))
             End If
         End Try
     End Sub
 
     Private Sub BtnStopService_Click() Handles BtnStopService.Click
         If Not _isServiceRunning Then
-            UtilityModule.ShowWarning(Me, "服务未运行", "提示")
+            UtilityModule.ShowWarning(Me, My.Resources.MsgServiceNotRunning, My.Resources.TitleHint)
             Return
         End If
 
         Try
             StopMcpService()
         Catch ex As Exception
-            UtilityModule.ShowError(Me, $"停止服务失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgStopServiceFailed, ex.Message))
         End Try
     End Sub
 
@@ -119,7 +119,7 @@ Partial Public Class MainWindow
         UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
                                                       LogServiceAction("Visual Studio 退出", "警告", "关联的 Visual Studio 实例已退出，服务将自动停止")
                                                       CleanupService()
-                                                      UtilityModule.ShowWarning(Me, "关联的 Visual Studio 实例已退出，MCP 服务已自动停止", "实例退出")
+                                                      UtilityModule.ShowWarning(Me, My.Resources.MsgVsInstanceExited, My.Resources.TitleInstanceExited)
                                                   End Sub)
     End Sub
 
@@ -127,7 +127,7 @@ Partial Public Class MainWindow
         UtilityModule.SafeBeginInvoke(Dispatcher, Sub()
                                                       LogServiceAction("Visual Studio 关闭", "警告", "关联的 Visual Studio 实例正在关闭，服务将自动停止")
                                                       CleanupService()
-                                                      UtilityModule.ShowWarning(Me, "关联的 Visual Studio 实例正在关闭，MCP 服务已自动停止", "实例关闭")
+                                                      UtilityModule.ShowWarning(Me, My.Resources.MsgVsInstanceClosing, My.Resources.TitleInstanceClosing)
                                                   End Sub)
     End Sub
 
@@ -157,7 +157,7 @@ Partial Public Class MainWindow
 
     Private Sub UpdateServiceUI(isRunning As Boolean)
         If isRunning Then
-            TxtServiceStatus.Text = $"服务运行中 - 端口: {TxtPort.Text}"
+            TxtServiceStatus.Text = String.Format(My.Resources.StatusServiceRunning, TxtPort.Text)
             BtnStartService.IsEnabled = False
             BtnStopService.IsEnabled = True
             TxtPort.IsEnabled = False

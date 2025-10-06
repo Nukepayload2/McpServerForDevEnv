@@ -5,7 +5,7 @@ Partial Public Class MainWindow
     Private _appStartTime As DateTime = DateTime.Now
 
     Private Sub BtnClearLogs_Click() Handles BtnClearLogs.Click
-        If Not UtilityModule.ShowConfirm(Me, "确定要清空所有日志吗？此操作不可撤销。", "确认清空") Then
+        If Not UtilityModule.ShowConfirm(Me, My.Resources.MsgConfirmClearLogs, My.Resources.TitleConfirmClear) Then
             Return
         End If
 
@@ -13,30 +13,30 @@ Partial Public Class MainWindow
             _logs.Clear()
             ' 不再需要保存空日志，因为每个会话使用不同的文件
 
-            UtilityModule.ShowInfo(Me, "日志已清空", "操作成功")
+            UtilityModule.ShowInfo(Me, My.Resources.MsgLogsCleared, My.Resources.TitleOperationSuccess)
         Catch ex As Exception
-            UtilityModule.ShowError(Me, $"清空日志失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgClearLogsFailed, ex.Message))
         End Try
     End Sub
 
     Private Sub BtnExportLogs_Click() Handles BtnExportLogs.Click
         If _logs.Count = 0 Then
-            UtilityModule.ShowWarning(Me, "没有日志可以导出", "提示")
+            UtilityModule.ShowWarning(Me, My.Resources.MsgNoLogsToExport, My.Resources.TitleHint)
             Return
         End If
 
         Dim saveDialog As New Microsoft.Win32.SaveFileDialog With {
-            .Filter = "XML 文件 (*.xml)|*.xml|所有文件 (*.*)|*.*",
+            .Filter = My.Resources.FilterXmlFiles,
             .FileName = $"mcp_logs_{DateTime.Now:yyyyMMdd_HHmmss}.xml",
-            .Title = "导出日志"
+            .Title = My.Resources.TitleExportLogs
         }
 
         If saveDialog.ShowDialog() Then
             Try
                 PersistenceModule.ExportLogs(saveDialog.FileName, _logs)
-                UtilityModule.ShowInfo(Me, $"日志已导出到: {saveDialog.FileName}", "导出成功")
+                UtilityModule.ShowInfo(Me, String.Format(My.Resources.MsgLogsExported, saveDialog.FileName), My.Resources.TitleExportSuccess)
             Catch ex As Exception
-                UtilityModule.ShowError(Me, $"导出日志失败: {ex.Message}")
+                UtilityModule.ShowError(Me, String.Format(My.Resources.MsgExportLogsFailed, ex.Message))
             End Try
         End If
     End Sub

@@ -256,4 +256,112 @@
   <data name="ButtonOK" xml:space="preserve">
     <value>确定</value>
   </data>
+  <data name="MsgConfirmClearLogs" xml:space="preserve">
+    <value>确定要清空所有日志吗？此操作不可撤销。</value>
+  </data>
+  <data name="TitleConfirmClear" xml:space="preserve">
+    <value>确认清空</value>
+  </data>
+  <data name="MsgLogsCleared" xml:space="preserve">
+    <value>日志已清空</value>
+  </data>
+  <data name="TitleOperationSuccess" xml:space="preserve">
+    <value>操作成功</value>
+  </data>
+  <data name="MsgClearLogsFailed" xml:space="preserve">
+    <value>清空日志失败: {0}</value>
+  </data>
+  <data name="MsgNoLogsToExport" xml:space="preserve">
+    <value>没有日志可以导出</value>
+  </data>
+  <data name="TitleHint" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="FilterXmlFiles" xml:space="preserve">
+    <value>XML 文件 (*.xml)|*.xml|所有文件 (*.*)|*.*</value>
+  </data>
+  <data name="TitleExportLogs" xml:space="preserve">
+    <value>导出日志</value>
+  </data>
+  <data name="MsgLogsExported" xml:space="preserve">
+    <value>日志已导出到: {0}</value>
+  </data>
+  <data name="TitleExportSuccess" xml:space="preserve">
+    <value>导出成功</value>
+  </data>
+  <data name="MsgExportLogsFailed" xml:space="preserve">
+    <value>导出日志失败: {0}</value>
+  </data>
+  <data name="MsgServiceAlreadyRunning" xml:space="preserve">
+    <value>服务已经在运行中</value>
+  </data>
+  <data name="MsgSelectVsInstance" xml:space="preserve">
+    <value>请先选择一个 Visual Studio 实例</value>
+  </data>
+  <data name="MsgServiceNotRunning" xml:space="preserve">
+    <value>服务未运行</value>
+  </data>
+  <data name="MsgStartServiceFailed" xml:space="preserve">
+    <value>启动服务失败: {0}</value>
+  </data>
+  <data name="MsgStopServiceFailed" xml:space="preserve">
+    <value>停止服务失败: {0}</value>
+  </data>
+  <data name="MsgVsInstanceExited" xml:space="preserve">
+    <value>关联的 Visual Studio 实例已退出，MCP 服务已自动停止</value>
+  </data>
+  <data name="TitleInstanceExited" xml:space="preserve">
+    <value>实例退出</value>
+  </data>
+  <data name="MsgVsInstanceClosing" xml:space="preserve">
+    <value>关联的 Visual Studio 实例正在关闭，MCP 服务已自动停止</value>
+  </data>
+  <data name="TitleInstanceClosing" xml:space="preserve">
+    <value>实例关闭</value>
+  </data>
+  <data name="StatusServiceRunning" xml:space="preserve">
+    <value>服务运行中 - 端口: {0}</value>
+  </data>
+  <data name="MsgLoadPermissionsFailed" xml:space="preserve">
+    <value>加载权限配置失败: {0}</value>
+  </data>
+  <data name="MsgSavePermissionsSuccess" xml:space="preserve">
+    <value>权限配置已保存</value>
+  </data>
+  <data name="TitleSaveSuccess" xml:space="preserve">
+    <value>保存成功</value>
+  </data>
+  <data name="MsgSavePermissionsFailed" xml:space="preserve">
+    <value>保存权限配置失败: {0}</value>
+  </data>
+  <data name="MsgPermissionRequest" xml:space="preserve">
+    <value>是否允许执行以下操作？{0}{0}功能: {1}{0}描述: {2}</value>
+  </data>
+  <data name="TitlePermissionConfirm" xml:space="preserve">
+    <value>权限确认</value>
+  </data>
+  <data name="MsgRefreshVsInstancesFailed" xml:space="preserve">
+    <value>刷新 Visual Studio 实例列表失败: {0}</value>
+  </data>
+  <data name="MsgCreateToolManagerContextFailed" xml:space="preserve">
+    <value>创建工具管理器数据上下文失败: {0}</value>
+  </data>
+  <data name="MsgNoInstanceSelected" xml:space="preserve">
+    <value>未选择实例</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="TitleWarning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="TitleInfo" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="TitleConfirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="FileNoFile" xml:space="preserve">
+    <value>无文件</value>
+  </data>
 </root>

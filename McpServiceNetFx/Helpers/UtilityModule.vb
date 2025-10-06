@@ -73,29 +73,34 @@ Public Module UtilityModule
         End If
     End Function
 
-    Public Sub ShowError(window As Window, message As String, Optional title As String = "错误")
+    Public Sub ShowError(window As Window, message As String, Optional title As String = Nothing)
+        If title Is Nothing Then title = My.Resources.TitleError
         CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Error)
     End Sub
 
-    Public Sub ShowWarning(window As Window, message As String, Optional title As String = "警告")
+    Public Sub ShowWarning(window As Window, message As String, Optional title As String = Nothing)
+        If title Is Nothing Then title = My.Resources.TitleWarning
         CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Warning)
     End Sub
 
-    Public Sub ShowInfo(window As Window, message As String, Optional title As String = "信息")
+    Public Sub ShowInfo(window As Window, message As String, Optional title As String = Nothing)
+        If title Is Nothing Then title = My.Resources.TitleInfo
         CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Information)
     End Sub
 
-    Public Function ShowConfirm(window As Window, message As String, Optional title As String = "确认") As Boolean
+    Public Function ShowConfirm(window As Window, message As String, Optional title As String = Nothing) As Boolean
+        If title Is Nothing Then title = My.Resources.TitleConfirm
         Return CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Question, True) = CustomMessageBox.MessageBoxResult.OK
     End Function
 
-    Public Function ShowConfirmModal(window As Window, message As String, Optional title As String = "确认") As Boolean
+    Public Function ShowConfirmModal(window As Window, message As String, Optional title As String = Nothing) As Boolean
+        If title Is Nothing Then title = My.Resources.TitleConfirm
         Return CustomMessageBox.Show(window, message, title, CustomMessageBox.MessageBoxType.Question, True, True) = CustomMessageBox.MessageBoxResult.OK
     End Function
 
     Public Function GetFileDisplayName(filePath As String) As String
         If String.IsNullOrEmpty(filePath) Then
-            Return "无文件"
+            Return My.Resources.FileNoFile
         End If
 
         Try

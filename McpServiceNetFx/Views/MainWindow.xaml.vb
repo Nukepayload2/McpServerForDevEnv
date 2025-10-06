@@ -37,7 +37,7 @@
             LogOperation("工具管理器", "框架创建", "工具管理器框架已创建，等待数据上下文")
         Catch ex As Exception
             LogOperation("工具管理器", "框架创建失败", ex.Message)
-            UtilityModule.ShowError(Me, $"创建工具管理器框架失败: {ex.Message}")
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgCreateToolManagerContextFailed, ex.Message))
         End Try
     End Sub
 
