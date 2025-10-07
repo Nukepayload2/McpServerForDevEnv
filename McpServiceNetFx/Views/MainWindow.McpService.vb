@@ -1,4 +1,5 @@
 Imports System.ServiceModel
+Imports System.Windows.Threading
 
 Partial Public Class MainWindow
     Implements IMcpLogger, IMcpPermissionHandler
@@ -51,6 +52,55 @@ Partial Public Class MainWindow
         End Try
     End Sub
 
+    Private Class ClipboardService
+        Implements IClipboard
+
+        Public Sub SetText(text As String) Implements IClipboard.SetText
+            Clipboard.SetText(text)
+        End Sub
+    End Class
+
+    Private Class InteractionService
+        Implements IInteraction
+
+        Public Sub ShowCopyCommandDialog(title As String, message As String, command As String) Implements IInteraction.ShowCopyCommandDialog
+            Dim wnd As New UserMessageWindow(title, message, command)
+            wnd.ShowDialog()
+        End Sub
+    End Class
+
+    Private Class DispatcherService
+        Implements IDispatcher
+
+        Private ReadOnly _dispatcher As Dispatcher
+
+        Public Sub New(dispatcher As Dispatcher)
+            _dispatcher = dispatcher
+        End Sub
+
+        Public Sub Invoke(job As Action) Implements IDispatcher.Invoke
+            _dispatcher.Invoke(job)
+        End Sub
+
+        Public Async Function InvokeAsync(job As Func(Of Task)) As Task Implements IDispatcher.InvokeAsync
+            Dim tcs As New TaskCompletionSource(Of Boolean)
+            Dim unused = _dispatcher.BeginInvoke(
+            Async Sub()
+                Try
+                    Await job()
+                    tcs.SetResult(True)
+                Catch ex As Exception
+                    tcs.SetException(ex)
+                End Try
+            End Sub)
+            Await tcs.Task
+        End Function
+
+        Public Async Function InvokeAsync(job As Action) As Task Implements IDispatcher.InvokeAsync
+            Await _dispatcher.BeginInvoke(job)
+        End Function
+    End Class
+
     Private Sub StartMcpService(port As Integer)
         Try
             ' 创建 Visual Studio 监控器
@@ -68,7 +118,7 @@ Partial Public Class MainWindow
             End If
 
             ' 创建并启动 MCP 服务，传入工具管理器
-            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Dispatcher, _toolManager)
+            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, New DispatcherService(Dispatcher), _toolManager, New ClipboardService, New InteractionService)
             _mcpService.Start()
 
             ' 更新 UI 状态

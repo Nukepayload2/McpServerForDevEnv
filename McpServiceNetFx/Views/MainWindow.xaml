@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:McpServiceNetFx"
         mc:Ignorable="d" Background="#F7F7F7"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        xmlns:res="clr-namespace:McpServiceNetFx.My.Resources"
+        xmlns:core="clr-namespace:McpServiceNetFx;assembly=McpServiceNetFx.Core"
+        xmlns:res="clr-namespace:McpServiceNetFx.My.Resources;assembly=McpServiceNetFx.Core"
         Title="{x:Static res:Resources.AppTitle}" Height="600" Width="900" WindowStartupLocation="CenterScreen">
     <Grid Margin="10">
         <TabControl x:Name="TabControlMain">
@@ -118,7 +119,7 @@
                             <DataGridTemplateColumn Header="{x:Static res:Resources.HeaderPermission}" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <ComboBox ItemsSource="{x:Static local:PermissionLevels.Value}"
+                                        <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
                                           SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                           IsEditable="False"
                                           Background="Transparent"

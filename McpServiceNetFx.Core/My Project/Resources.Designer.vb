@@ -26,7 +26,7 @@ Namespace My.Resources
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
-    Friend Module Resources
+    Public Module Resources
         
         Private resourceMan As Global.System.Resources.ResourceManager
         
@@ -36,7 +36,7 @@ Namespace My.Resources
         '''  返回此类使用的缓存的 ResourceManager 实例。
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
+        Public ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
                     Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("McpServiceNetFx.Resources", GetType(Resources).Assembly)
@@ -51,7 +51,7 @@ Namespace My.Resources
         '''  使用此强类型资源类的所有资源查找执行重写。
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend Property Culture() As Global.System.Globalization.CultureInfo
+        Public Property Culture() As Global.System.Globalization.CultureInfo
             Get
                 Return resourceCulture
             End Get
@@ -63,7 +63,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Visual Studio MCP Server 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property AppTitle() As String
+        Public ReadOnly Property AppTitle() As String
             Get
                 Return ResourceManager.GetString("AppTitle", resourceCulture)
             End Get
@@ -72,7 +72,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Allow All 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonAllowAll() As String
+        Public ReadOnly Property ButtonAllowAll() As String
             Get
                 Return ResourceManager.GetString("ButtonAllowAll", resourceCulture)
             End Get
@@ -81,7 +81,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Ask All 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonAskAll() As String
+        Public ReadOnly Property ButtonAskAll() As String
             Get
                 Return ResourceManager.GetString("ButtonAskAll", resourceCulture)
             End Get
@@ -90,7 +90,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Clear Logs 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonClearLogs() As String
+        Public ReadOnly Property ButtonClearLogs() As String
             Get
                 Return ResourceManager.GetString("ButtonClearLogs", resourceCulture)
             End Get
@@ -99,7 +99,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Close 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonClose() As String
+        Public ReadOnly Property ButtonClose() As String
             Get
                 Return ResourceManager.GetString("ButtonClose", resourceCulture)
             End Get
@@ -108,7 +108,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Export Logs 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonExportLogs() As String
+        Public ReadOnly Property ButtonExportLogs() As String
             Get
                 Return ResourceManager.GetString("ButtonExportLogs", resourceCulture)
             End Get
@@ -117,7 +117,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonNo() As String
+        Public ReadOnly Property ButtonNo() As String
             Get
                 Return ResourceManager.GetString("ButtonNo", resourceCulture)
             End Get
@@ -126,7 +126,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 OK 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonOK() As String
+        Public ReadOnly Property ButtonOK() As String
             Get
                 Return ResourceManager.GetString("ButtonOK", resourceCulture)
             End Get
@@ -135,7 +135,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Refresh 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonRefresh() As String
+        Public ReadOnly Property ButtonRefresh() As String
             Get
                 Return ResourceManager.GetString("ButtonRefresh", resourceCulture)
             End Get
@@ -144,7 +144,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Reload 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonReload() As String
+        Public ReadOnly Property ButtonReload() As String
             Get
                 Return ResourceManager.GetString("ButtonReload", resourceCulture)
             End Get
@@ -153,7 +153,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Save Config 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonSaveConfig() As String
+        Public ReadOnly Property ButtonSaveConfig() As String
             Get
                 Return ResourceManager.GetString("ButtonSaveConfig", resourceCulture)
             End Get
@@ -162,7 +162,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Start Service 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonStartService() As String
+        Public ReadOnly Property ButtonStartService() As String
             Get
                 Return ResourceManager.GetString("ButtonStartService", resourceCulture)
             End Get
@@ -171,7 +171,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Stop Service 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonStopService() As String
+        Public ReadOnly Property ButtonStopService() As String
             Get
                 Return ResourceManager.GetString("ButtonStopService", resourceCulture)
             End Get
@@ -180,7 +180,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Yes 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property ButtonYes() As String
+        Public ReadOnly Property ButtonYes() As String
             Get
                 Return ResourceManager.GetString("ButtonYes", resourceCulture)
             End Get
@@ -189,7 +189,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Message 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property CustomMessageBoxTitle() As String
+        Public ReadOnly Property CustomMessageBoxTitle() As String
             Get
                 Return ResourceManager.GetString("CustomMessageBoxTitle", resourceCulture)
             End Get
@@ -198,7 +198,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No file 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property FileNoFile() As String
+        Public ReadOnly Property FileNoFile() As String
             Get
                 Return ResourceManager.GetString("FileNoFile", resourceCulture)
             End Get
@@ -207,7 +207,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 XML Files (*.xml)|*.xml|All Files (*.*)|*.* 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property FilterXmlFiles() As String
+        Public ReadOnly Property FilterXmlFiles() As String
             Get
                 Return ResourceManager.GetString("FilterXmlFiles", resourceCulture)
             End Get
@@ -216,7 +216,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service Settings 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property GroupServiceSettings() As String
+        Public ReadOnly Property GroupServiceSettings() As String
             Get
                 Return ResourceManager.GetString("GroupServiceSettings", resourceCulture)
             End Get
@@ -225,7 +225,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Description 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderDescription() As String
+        Public ReadOnly Property HeaderDescription() As String
             Get
                 Return ResourceManager.GetString("HeaderDescription", resourceCulture)
             End Get
@@ -234,7 +234,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Details 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderDetails() As String
+        Public ReadOnly Property HeaderDetails() As String
             Get
                 Return ResourceManager.GetString("HeaderDetails", resourceCulture)
             End Get
@@ -243,7 +243,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Feature Name 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderFeatureName() As String
+        Public ReadOnly Property HeaderFeatureName() As String
             Get
                 Return ResourceManager.GetString("HeaderFeatureName", resourceCulture)
             End Get
@@ -252,7 +252,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Operation 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderOperation() As String
+        Public ReadOnly Property HeaderOperation() As String
             Get
                 Return ResourceManager.GetString("HeaderOperation", resourceCulture)
             End Get
@@ -261,7 +261,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderPermission() As String
+        Public ReadOnly Property HeaderPermission() As String
             Get
                 Return ResourceManager.GetString("HeaderPermission", resourceCulture)
             End Get
@@ -270,7 +270,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Process ID 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderProcessId() As String
+        Public ReadOnly Property HeaderProcessId() As String
             Get
                 Return ResourceManager.GetString("HeaderProcessId", resourceCulture)
             End Get
@@ -279,7 +279,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Result 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderResult() As String
+        Public ReadOnly Property HeaderResult() As String
             Get
                 Return ResourceManager.GetString("HeaderResult", resourceCulture)
             End Get
@@ -288,7 +288,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Solution Path 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderSolutionPath() As String
+        Public ReadOnly Property HeaderSolutionPath() As String
             Get
                 Return ResourceManager.GetString("HeaderSolutionPath", resourceCulture)
             End Get
@@ -297,7 +297,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Time 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderTime() As String
+        Public ReadOnly Property HeaderTime() As String
             Get
                 Return ResourceManager.GetString("HeaderTime", resourceCulture)
             End Get
@@ -306,7 +306,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Version 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderVersion() As String
+        Public ReadOnly Property HeaderVersion() As String
             Get
                 Return ResourceManager.GetString("HeaderVersion", resourceCulture)
             End Get
@@ -315,7 +315,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Window Caption 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property HeaderWindowCaption() As String
+        Public ReadOnly Property HeaderWindowCaption() As String
             Get
                 Return ResourceManager.GetString("HeaderWindowCaption", resourceCulture)
             End Get
@@ -324,7 +324,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Client Config: 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LabelClientConfig() As String
+        Public ReadOnly Property LabelClientConfig() As String
             Get
                 Return ResourceManager.GetString("LabelClientConfig", resourceCulture)
             End Get
@@ -333,7 +333,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Instance: 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LabelInstance() As String
+        Public ReadOnly Property LabelInstance() As String
             Get
                 Return ResourceManager.GetString("LabelInstance", resourceCulture)
             End Get
@@ -342,7 +342,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Port: 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LabelPort() As String
+        Public ReadOnly Property LabelPort() As String
             Get
                 Return ResourceManager.GetString("LabelPort", resourceCulture)
             End Get
@@ -351,7 +351,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Status: 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LabelStatus() As String
+        Public ReadOnly Property LabelStatus() As String
             Get
                 Return ResourceManager.GetString("LabelStatus", resourceCulture)
             End Get
@@ -360,7 +360,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Document path: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogActiveDocPath() As String
+        Public ReadOnly Property LogActiveDocPath() As String
             Get
                 Return ResourceManager.GetString("LogActiveDocPath", resourceCulture)
             End Get
@@ -369,7 +369,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Added {0} new tool permission items 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogAddedNewToolPermissions() As String
+        Public ReadOnly Property LogAddedNewToolPermissions() As String
             Get
                 Return ResourceManager.GetString("LogAddedNewToolPermissions", resourceCulture)
             End Get
@@ -378,7 +378,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Allowed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogAllowed() As String
+        Public ReadOnly Property LogAllowed() As String
             Get
                 Return ResourceManager.GetString("LogAllowed", resourceCulture)
             End Get
@@ -387,7 +387,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Ask User 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogAskUser() As String
+        Public ReadOnly Property LogAskUser() As String
             Get
                 Return ResourceManager.GetString("LogAskUser", resourceCulture)
             End Get
@@ -396,7 +396,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 All permissions have been set to: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogBatchSetCompleted() As String
+        Public ReadOnly Property LogBatchSetCompleted() As String
             Get
                 Return ResourceManager.GetString("LogBatchSetCompleted", resourceCulture)
             End Get
@@ -405,7 +405,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Build Project 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogBuildProject() As String
+        Public ReadOnly Property LogBuildProject() As String
             Get
                 Return ResourceManager.GetString("LogBuildProject", resourceCulture)
             End Get
@@ -414,7 +414,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Build Solution 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogBuildSolution() As String
+        Public ReadOnly Property LogBuildSolution() As String
             Get
                 Return ResourceManager.GetString("LogBuildSolution", resourceCulture)
             End Get
@@ -423,7 +423,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Start building 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogBuildStart() As String
+        Public ReadOnly Property LogBuildStart() As String
             Get
                 Return ResourceManager.GetString("LogBuildStart", resourceCulture)
             End Get
@@ -432,7 +432,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Completed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogCompleted() As String
+        Public ReadOnly Property LogCompleted() As String
             Get
                 Return ResourceManager.GetString("LogCompleted", resourceCulture)
             End Get
@@ -441,7 +441,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Data context created successfully 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogDataContextCreated() As String
+        Public ReadOnly Property LogDataContextCreated() As String
             Get
                 Return ResourceManager.GetString("LogDataContextCreated", resourceCulture)
             End Get
@@ -450,7 +450,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Data context creation failed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogDataContextCreateFailed() As String
+        Public ReadOnly Property LogDataContextCreateFailed() As String
             Get
                 Return ResourceManager.GetString("LogDataContextCreateFailed", resourceCulture)
             End Get
@@ -459,7 +459,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Denied 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogDenied() As String
+        Public ReadOnly Property LogDenied() As String
             Get
                 Return ResourceManager.GetString("LogDenied", resourceCulture)
             End Get
@@ -468,7 +468,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Errors: {0}, Warnings: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogErrorListCounts() As String
+        Public ReadOnly Property LogErrorListCounts() As String
             Get
                 Return ResourceManager.GetString("LogErrorListCounts", resourceCulture)
             End Get
@@ -477,7 +477,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Exception 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogException() As String
+        Public ReadOnly Property LogException() As String
             Get
                 Return ResourceManager.GetString("LogException", resourceCulture)
             End Get
@@ -486,7 +486,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Execution Exception 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogExecutionException() As String
+        Public ReadOnly Property LogExecutionException() As String
             Get
                 Return ResourceManager.GetString("LogExecutionException", resourceCulture)
             End Get
@@ -495,7 +495,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogFailed() As String
+        Public ReadOnly Property LogFailed() As String
             Get
                 Return ResourceManager.GetString("LogFailed", resourceCulture)
             End Get
@@ -504,7 +504,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Feature: {0}, Permission: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogFeaturePermission() As String
+        Public ReadOnly Property LogFeaturePermission() As String
             Get
                 Return ResourceManager.GetString("LogFeaturePermission", resourceCulture)
             End Get
@@ -513,7 +513,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Feature: {0}, Permission value: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogFeaturePermissionValue() As String
+        Public ReadOnly Property LogFeaturePermissionValue() As String
             Get
                 Return ResourceManager.GetString("LogFeaturePermissionValue", resourceCulture)
             End Get
@@ -522,7 +522,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Found {0} open documents 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogFoundOpenDocs() As String
+        Public ReadOnly Property LogFoundOpenDocs() As String
             Get
                 Return ResourceManager.GetString("LogFoundOpenDocs", resourceCulture)
             End Get
@@ -531,7 +531,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Tool manager framework created, waiting for data context 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogFrameworkCreated() As String
+        Public ReadOnly Property LogFrameworkCreated() As String
             Get
                 Return ResourceManager.GetString("LogFrameworkCreated", resourceCulture)
             End Get
@@ -540,7 +540,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Tool manager framework creation failed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogFrameworkCreateFailed() As String
+        Public ReadOnly Property LogFrameworkCreateFailed() As String
             Get
                 Return ResourceManager.GetString("LogFrameworkCreateFailed", resourceCulture)
             End Get
@@ -549,7 +549,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get current active document information 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetActiveDocStart() As String
+        Public ReadOnly Property LogGetActiveDocStart() As String
             Get
                 Return ResourceManager.GetString("LogGetActiveDocStart", resourceCulture)
             End Get
@@ -558,7 +558,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get Active Document 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetActiveDocument() As String
+        Public ReadOnly Property LogGetActiveDocument() As String
             Get
                 Return ResourceManager.GetString("LogGetActiveDocument", resourceCulture)
             End Get
@@ -567,7 +567,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get all open document information 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetAllOpenDocsStart() As String
+        Public ReadOnly Property LogGetAllOpenDocsStart() As String
             Get
                 Return ResourceManager.GetString("LogGetAllOpenDocsStart", resourceCulture)
             End Get
@@ -576,7 +576,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get All Open Documents 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetAllOpenDocuments() As String
+        Public ReadOnly Property LogGetAllOpenDocuments() As String
             Get
                 Return ResourceManager.GetString("LogGetAllOpenDocuments", resourceCulture)
             End Get
@@ -585,7 +585,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get Error List 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetErrorList() As String
+        Public ReadOnly Property LogGetErrorList() As String
             Get
                 Return ResourceManager.GetString("LogGetErrorList", resourceCulture)
             End Get
@@ -594,7 +594,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get error list with filter level: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetErrorListStart() As String
+        Public ReadOnly Property LogGetErrorListStart() As String
             Get
                 Return ResourceManager.GetString("LogGetErrorListStart", resourceCulture)
             End Get
@@ -603,7 +603,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get permission 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetPermission() As String
+        Public ReadOnly Property LogGetPermission() As String
             Get
                 Return ResourceManager.GetString("LogGetPermission", resourceCulture)
             End Get
@@ -612,7 +612,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get Solution Info 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetSolutionInfo() As String
+        Public ReadOnly Property LogGetSolutionInfo() As String
             Get
                 Return ResourceManager.GetString("LogGetSolutionInfo", resourceCulture)
             End Get
@@ -621,7 +621,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get detailed solution information 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetSolutionInfoStart() As String
+        Public ReadOnly Property LogGetSolutionInfoStart() As String
             Get
                 Return ResourceManager.GetString("LogGetSolutionInfoStart", resourceCulture)
             End Get
@@ -630,7 +630,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Get Tool Manager 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogGetToolManager() As String
+        Public ReadOnly Property LogGetToolManager() As String
             Get
                 Return ResourceManager.GetString("LogGetToolManager", resourceCulture)
             End Get
@@ -639,7 +639,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Instance: {0}, Tool count: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogInstanceAndToolCount() As String
+        Public ReadOnly Property LogInstanceAndToolCount() As String
             Get
                 Return ResourceManager.GetString("LogInstanceAndToolCount", resourceCulture)
             End Get
@@ -648,7 +648,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Visual Studio instance selection canceled 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogInstanceCanceled() As String
+        Public ReadOnly Property LogInstanceCanceled() As String
             Get
                 Return ResourceManager.GetString("LogInstanceCanceled", resourceCulture)
             End Get
@@ -657,7 +657,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 MCP Request - {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogMcpRequest() As String
+        Public ReadOnly Property LogMcpRequest() As String
             Get
                 Return ResourceManager.GetString("LogMcpRequest", resourceCulture)
             End Get
@@ -666,7 +666,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Missing required parameter: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogMissingRequiredParameter() As String
+        Public ReadOnly Property LogMissingRequiredParameter() As String
             Get
                 Return ResourceManager.GetString("LogMissingRequiredParameter", resourceCulture)
             End Get
@@ -675,7 +675,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No active document 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogNoActiveDoc() As String
+        Public ReadOnly Property LogNoActiveDoc() As String
             Get
                 Return ResourceManager.GetString("LogNoActiveDoc", resourceCulture)
             End Get
@@ -684,7 +684,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No open documents found 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogNoOpenDocs() As String
+        Public ReadOnly Property LogNoOpenDocs() As String
             Get
                 Return ResourceManager.GetString("LogNoOpenDocs", resourceCulture)
             End Get
@@ -693,7 +693,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No permission configuration in tool manager 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogNoPermissionConfig() As String
+        Public ReadOnly Property LogNoPermissionConfig() As String
             Get
                 Return ResourceManager.GetString("LogNoPermissionConfig", resourceCulture)
             End Get
@@ -702,7 +702,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Parameters cannot be null 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogParameterCannotBeNull() As String
+        Public ReadOnly Property LogParameterCannotBeNull() As String
             Get
                 Return ResourceManager.GetString("LogParameterCannotBeNull", resourceCulture)
             End Get
@@ -711,7 +711,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Parameter conversion failed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogParameterConversionFailed() As String
+        Public ReadOnly Property LogParameterConversionFailed() As String
             Get
                 Return ResourceManager.GetString("LogParameterConversionFailed", resourceCulture)
             End Get
@@ -720,7 +720,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Parameter {0} conversion failed: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogParameterConversionFailure() As String
+        Public ReadOnly Property LogParameterConversionFailure() As String
             Get
                 Return ResourceManager.GetString("LogParameterConversionFailure", resourceCulture)
             End Get
@@ -729,7 +729,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission Check 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionCheck() As String
+        Public ReadOnly Property LogPermissionCheck() As String
             Get
                 Return ResourceManager.GetString("LogPermissionCheck", resourceCulture)
             End Get
@@ -738,7 +738,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission check 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionCheckException() As String
+        Public ReadOnly Property LogPermissionCheckException() As String
             Get
                 Return ResourceManager.GetString("LogPermissionCheckException", resourceCulture)
             End Get
@@ -747,7 +747,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission configuration found 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionConfigFound() As String
+        Public ReadOnly Property LogPermissionConfigFound() As String
             Get
                 Return ResourceManager.GetString("LogPermissionConfigFound", resourceCulture)
             End Get
@@ -756,7 +756,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission configuration not found, using default permission: Ask 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionConfigNotFound() As String
+        Public ReadOnly Property LogPermissionConfigNotFound() As String
             Get
                 Return ResourceManager.GetString("LogPermissionConfigNotFound", resourceCulture)
             End Get
@@ -765,7 +765,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Feature: {0}, Description: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionRequestDetails() As String
+        Public ReadOnly Property LogPermissionRequestDetails() As String
             Get
                 Return ResourceManager.GetString("LogPermissionRequestDetails", resourceCulture)
             End Get
@@ -774,7 +774,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permissions 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissions() As String
+        Public ReadOnly Property LogPermissions() As String
             Get
                 Return ResourceManager.GetString("LogPermissions", resourceCulture)
             End Get
@@ -783,7 +783,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission batch set 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionSet() As String
+        Public ReadOnly Property LogPermissionSet() As String
             Get
                 Return ResourceManager.GetString("LogPermissionSet", resourceCulture)
             End Get
@@ -792,7 +792,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission configurations loaded 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionsLoaded() As String
+        Public ReadOnly Property LogPermissionsLoaded() As String
             Get
                 Return ResourceManager.GetString("LogPermissionsLoaded", resourceCulture)
             End Get
@@ -801,7 +801,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission synchronization 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionSync() As String
+        Public ReadOnly Property LogPermissionSync() As String
             Get
                 Return ResourceManager.GetString("LogPermissionSync", resourceCulture)
             End Get
@@ -810,7 +810,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission value: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogPermissionValueDetails() As String
+        Public ReadOnly Property LogPermissionValueDetails() As String
             Get
                 Return ResourceManager.GetString("LogPermissionValueDetails", resourceCulture)
             End Get
@@ -819,7 +819,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Project: {0}, Configuration: {1} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogProjectAndConfig() As String
+        Public ReadOnly Property LogProjectAndConfig() As String
             Get
                 Return ResourceManager.GetString("LogProjectAndConfig", resourceCulture)
             End Get
@@ -828,7 +828,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Project count: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogProjectCount() As String
+        Public ReadOnly Property LogProjectCount() As String
             Get
                 Return ResourceManager.GetString("LogProjectCount", resourceCulture)
             End Get
@@ -837,7 +837,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Run custom tools for project: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogRunCustomToolsStart() As String
+        Public ReadOnly Property LogRunCustomToolsStart() As String
             Get
                 Return ResourceManager.GetString("LogRunCustomToolsStart", resourceCulture)
             End Get
@@ -846,7 +846,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Run Project Custom Tools 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogRunProjectCustomTools() As String
+        Public ReadOnly Property LogRunProjectCustomTools() As String
             Get
                 Return ResourceManager.GetString("LogRunProjectCustomTools", resourceCulture)
             End Get
@@ -855,7 +855,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service Started 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogServiceStarted() As String
+        Public ReadOnly Property LogServiceStarted() As String
             Get
                 Return ResourceManager.GetString("LogServiceStarted", resourceCulture)
             End Get
@@ -864,7 +864,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Port: {0}, Instance: {1}, Tool count: {2} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogServiceStartedWithDetails() As String
+        Public ReadOnly Property LogServiceStartedWithDetails() As String
             Get
                 Return ResourceManager.GetString("LogServiceStartedWithDetails", resourceCulture)
             End Get
@@ -873,7 +873,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service Stopped 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogServiceStopped() As String
+        Public ReadOnly Property LogServiceStopped() As String
             Get
                 Return ResourceManager.GetString("LogServiceStopped", resourceCulture)
             End Get
@@ -882,7 +882,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Skipped 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogSkipped() As String
+        Public ReadOnly Property LogSkipped() As String
             Get
                 Return ResourceManager.GetString("LogSkipped", resourceCulture)
             End Get
@@ -891,7 +891,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Started 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogStarted() As String
+        Public ReadOnly Property LogStarted() As String
             Get
                 Return ResourceManager.GetString("LogStarted", resourceCulture)
             End Get
@@ -900,7 +900,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Success 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogSuccess() As String
+        Public ReadOnly Property LogSuccess() As String
             Get
                 Return ResourceManager.GetString("LogSuccess", resourceCulture)
             End Get
@@ -909,7 +909,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Tool data context not set, cannot execute tool 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogToolDataContextNotSet() As String
+        Public ReadOnly Property LogToolDataContextNotSet() As String
             Get
                 Return ResourceManager.GetString("LogToolDataContextNotSet", resourceCulture)
             End Get
@@ -918,7 +918,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Tool execution failed: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogToolExecutionFailed() As String
+        Public ReadOnly Property LogToolExecutionFailed() As String
             Get
                 Return ResourceManager.GetString("LogToolExecutionFailed", resourceCulture)
             End Get
@@ -927,7 +927,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Tool Manager 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogToolManager() As String
+        Public ReadOnly Property LogToolManager() As String
             Get
                 Return ResourceManager.GetString("LogToolManager", resourceCulture)
             End Get
@@ -936,7 +936,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Tool manager not initialized 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogToolManagerNotInitialized() As String
+        Public ReadOnly Property LogToolManagerNotInitialized() As String
             Get
                 Return ResourceManager.GetString("LogToolManagerNotInitialized", resourceCulture)
             End Get
@@ -945,7 +945,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Unknown Permission 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogUnknownPermission() As String
+        Public ReadOnly Property LogUnknownPermission() As String
             Get
                 Return ResourceManager.GetString("LogUnknownPermission", resourceCulture)
             End Get
@@ -954,7 +954,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 User Allowed 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogUserAllowed() As String
+        Public ReadOnly Property LogUserAllowed() As String
             Get
                 Return ResourceManager.GetString("LogUserAllowed", resourceCulture)
             End Get
@@ -963,7 +963,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 User Denied 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogUserDenied() As String
+        Public ReadOnly Property LogUserDenied() As String
             Get
                 Return ResourceManager.GetString("LogUserDenied", resourceCulture)
             End Get
@@ -972,7 +972,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 User manually stopped 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogUserStopped() As String
+        Public ReadOnly Property LogUserStopped() As String
             Get
                 Return ResourceManager.GetString("LogUserStopped", resourceCulture)
             End Get
@@ -981,7 +981,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Visual Studio Exited 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogVsExited() As String
+        Public ReadOnly Property LogVsExited() As String
             Get
                 Return ResourceManager.GetString("LogVsExited", resourceCulture)
             End Get
@@ -990,7 +990,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Associated Visual Studio instance exited, service will stop automatically 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogVsInstanceServiceStop() As String
+        Public ReadOnly Property LogVsInstanceServiceStop() As String
             Get
                 Return ResourceManager.GetString("LogVsInstanceServiceStop", resourceCulture)
             End Get
@@ -999,7 +999,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Associated Visual Studio instance is closing, service will stop automatically 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogVsInstanceServiceStopClosing() As String
+        Public ReadOnly Property LogVsInstanceServiceStopClosing() As String
             Get
                 Return ResourceManager.GetString("LogVsInstanceServiceStopClosing", resourceCulture)
             End Get
@@ -1008,7 +1008,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Visual Studio Shutdown 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogVsShutdown() As String
+        Public ReadOnly Property LogVsShutdown() As String
             Get
                 Return ResourceManager.GetString("LogVsShutdown", resourceCulture)
             End Get
@@ -1017,7 +1017,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Configuration: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property LogWithConfiguration() As String
+        Public ReadOnly Property LogWithConfiguration() As String
             Get
                 Return ResourceManager.GetString("LogWithConfiguration", resourceCulture)
             End Get
@@ -1026,7 +1026,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Message: 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MessageLabel() As String
+        Public ReadOnly Property MessageLabel() As String
             Get
                 Return ResourceManager.GetString("MessageLabel", resourceCulture)
             End Get
@@ -1035,7 +1035,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to clear logs: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgClearLogsFailed() As String
+        Public ReadOnly Property MsgClearLogsFailed() As String
             Get
                 Return ResourceManager.GetString("MsgClearLogsFailed", resourceCulture)
             End Get
@@ -1044,7 +1044,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Are you sure you want to clear all logs? This action cannot be undone. 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgConfirmClearLogs() As String
+        Public ReadOnly Property MsgConfirmClearLogs() As String
             Get
                 Return ResourceManager.GetString("MsgConfirmClearLogs", resourceCulture)
             End Get
@@ -1053,7 +1053,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to create tool manager data context: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgCreateToolManagerContextFailed() As String
+        Public ReadOnly Property MsgCreateToolManagerContextFailed() As String
             Get
                 Return ResourceManager.GetString("MsgCreateToolManagerContextFailed", resourceCulture)
             End Get
@@ -1062,7 +1062,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to export logs: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgExportLogsFailed() As String
+        Public ReadOnly Property MsgExportLogsFailed() As String
             Get
                 Return ResourceManager.GetString("MsgExportLogsFailed", resourceCulture)
             End Get
@@ -1071,7 +1071,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to load permission configuration: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgLoadPermissionsFailed() As String
+        Public ReadOnly Property MsgLoadPermissionsFailed() As String
             Get
                 Return ResourceManager.GetString("MsgLoadPermissionsFailed", resourceCulture)
             End Get
@@ -1080,7 +1080,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Logs have been cleared 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgLogsCleared() As String
+        Public ReadOnly Property MsgLogsCleared() As String
             Get
                 Return ResourceManager.GetString("MsgLogsCleared", resourceCulture)
             End Get
@@ -1089,7 +1089,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Logs have been exported to: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgLogsExported() As String
+        Public ReadOnly Property MsgLogsExported() As String
             Get
                 Return ResourceManager.GetString("MsgLogsExported", resourceCulture)
             End Get
@@ -1098,7 +1098,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No instance selected 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgNoInstanceSelected() As String
+        Public ReadOnly Property MsgNoInstanceSelected() As String
             Get
                 Return ResourceManager.GetString("MsgNoInstanceSelected", resourceCulture)
             End Get
@@ -1107,7 +1107,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 No logs to export 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgNoLogsToExport() As String
+        Public ReadOnly Property MsgNoLogsToExport() As String
             Get
                 Return ResourceManager.GetString("MsgNoLogsToExport", resourceCulture)
             End Get
@@ -1116,7 +1116,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Do you want to allow the following operation?{0}{0}Feature: {1}{0}Description: {2} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgPermissionRequest() As String
+        Public ReadOnly Property MsgPermissionRequest() As String
             Get
                 Return ResourceManager.GetString("MsgPermissionRequest", resourceCulture)
             End Get
@@ -1125,7 +1125,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to refresh Visual Studio instance list: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgRefreshVsInstancesFailed() As String
+        Public ReadOnly Property MsgRefreshVsInstancesFailed() As String
             Get
                 Return ResourceManager.GetString("MsgRefreshVsInstancesFailed", resourceCulture)
             End Get
@@ -1134,7 +1134,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to save permission configuration: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgSavePermissionsFailed() As String
+        Public ReadOnly Property MsgSavePermissionsFailed() As String
             Get
                 Return ResourceManager.GetString("MsgSavePermissionsFailed", resourceCulture)
             End Get
@@ -1143,7 +1143,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission configuration saved 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgSavePermissionsSuccess() As String
+        Public ReadOnly Property MsgSavePermissionsSuccess() As String
             Get
                 Return ResourceManager.GetString("MsgSavePermissionsSuccess", resourceCulture)
             End Get
@@ -1152,7 +1152,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Please select a Visual Studio instance first 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgSelectVsInstance() As String
+        Public ReadOnly Property MsgSelectVsInstance() As String
             Get
                 Return ResourceManager.GetString("MsgSelectVsInstance", resourceCulture)
             End Get
@@ -1161,7 +1161,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service is already running 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgServiceAlreadyRunning() As String
+        Public ReadOnly Property MsgServiceAlreadyRunning() As String
             Get
                 Return ResourceManager.GetString("MsgServiceAlreadyRunning", resourceCulture)
             End Get
@@ -1170,7 +1170,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service is not running 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgServiceNotRunning() As String
+        Public ReadOnly Property MsgServiceNotRunning() As String
             Get
                 Return ResourceManager.GetString("MsgServiceNotRunning", resourceCulture)
             End Get
@@ -1179,7 +1179,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to start service: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgStartServiceFailed() As String
+        Public ReadOnly Property MsgStartServiceFailed() As String
             Get
                 Return ResourceManager.GetString("MsgStartServiceFailed", resourceCulture)
             End Get
@@ -1188,7 +1188,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Failed to stop service: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgStopServiceFailed() As String
+        Public ReadOnly Property MsgStopServiceFailed() As String
             Get
                 Return ResourceManager.GetString("MsgStopServiceFailed", resourceCulture)
             End Get
@@ -1197,7 +1197,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 The associated Visual Studio instance is closing, MCP service has been automatically stopped 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgVsInstanceClosing() As String
+        Public ReadOnly Property MsgVsInstanceClosing() As String
             Get
                 Return ResourceManager.GetString("MsgVsInstanceClosing", resourceCulture)
             End Get
@@ -1206,7 +1206,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 The associated Visual Studio instance has exited, MCP service has been automatically stopped 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property MsgVsInstanceExited() As String
+        Public ReadOnly Property MsgVsInstanceExited() As String
             Get
                 Return ResourceManager.GetString("MsgVsInstanceExited", resourceCulture)
             End Get
@@ -1215,7 +1215,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service Running - Port: {0} 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property StatusServiceRunning() As String
+        Public ReadOnly Property StatusServiceRunning() As String
             Get
                 Return ResourceManager.GetString("StatusServiceRunning", resourceCulture)
             End Get
@@ -1224,7 +1224,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 About 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TabAbout() As String
+        Public ReadOnly Property TabAbout() As String
             Get
                 Return ResourceManager.GetString("TabAbout", resourceCulture)
             End Get
@@ -1233,7 +1233,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Claude CLI Config 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TabClaudeConfig() As String
+        Public ReadOnly Property TabClaudeConfig() As String
             Get
                 Return ResourceManager.GetString("TabClaudeConfig", resourceCulture)
             End Get
@@ -1242,7 +1242,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 JSON Config 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TabJsonConfig() As String
+        Public ReadOnly Property TabJsonConfig() As String
             Get
                 Return ResourceManager.GetString("TabJsonConfig", resourceCulture)
             End Get
@@ -1251,7 +1251,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Logs 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TabLogs() As String
+        Public ReadOnly Property TabLogs() As String
             Get
                 Return ResourceManager.GetString("TabLogs", resourceCulture)
             End Get
@@ -1260,7 +1260,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 MCP Permissions 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TabMcpPermissions() As String
+        Public ReadOnly Property TabMcpPermissions() As String
             Get
                 Return ResourceManager.GetString("TabMcpPermissions", resourceCulture)
             End Get
@@ -1269,7 +1269,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service Management 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TabServiceManagement() As String
+        Public ReadOnly Property TabServiceManagement() As String
             Get
                 Return ResourceManager.GetString("TabServiceManagement", resourceCulture)
             End Get
@@ -1282,7 +1282,7 @@ Namespace My.Resources
         '''Privacy Policy: This software collects your Microsoft Visual Studio project information to support basic functions, and the information is only stored locally.
         '''This software does not support remote information transmission, only local network loopback transmission. 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TextAboutContent() As String
+        Public ReadOnly Property TextAboutContent() As String
             Get
                 Return ResourceManager.GetString("TextAboutContent", resourceCulture)
             End Get
@@ -1291,7 +1291,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 About This Software 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TextAboutTitle() As String
+        Public ReadOnly Property TextAboutTitle() As String
             Get
                 Return ResourceManager.GetString("TextAboutTitle", resourceCulture)
             End Get
@@ -1300,7 +1300,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Run this command to add MCP server to Claude Desktop 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TextClaudeConfigHint() As String
+        Public ReadOnly Property TextClaudeConfigHint() As String
             Get
                 Return ResourceManager.GetString("TextClaudeConfigHint", resourceCulture)
             End Get
@@ -1309,7 +1309,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Add this configuration to your MCP client configuration file 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TextJsonConfigHint() As String
+        Public ReadOnly Property TextJsonConfigHint() As String
             Get
                 Return ResourceManager.GetString("TextJsonConfigHint", resourceCulture)
             End Get
@@ -1318,7 +1318,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Please select an instance from the list above 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TextSelectInstance() As String
+        Public ReadOnly Property TextSelectInstance() As String
             Get
                 Return ResourceManager.GetString("TextSelectInstance", resourceCulture)
             End Get
@@ -1327,7 +1327,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Service not started 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TextServiceNotStarted() As String
+        Public ReadOnly Property TextServiceNotStarted() As String
             Get
                 Return ResourceManager.GetString("TextServiceNotStarted", resourceCulture)
             End Get
@@ -1336,7 +1336,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Confirm 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleConfirm() As String
+        Public ReadOnly Property TitleConfirm() As String
             Get
                 Return ResourceManager.GetString("TitleConfirm", resourceCulture)
             End Get
@@ -1345,7 +1345,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Confirm Clear 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleConfirmClear() As String
+        Public ReadOnly Property TitleConfirmClear() As String
             Get
                 Return ResourceManager.GetString("TitleConfirmClear", resourceCulture)
             End Get
@@ -1354,7 +1354,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Error 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleError() As String
+        Public ReadOnly Property TitleError() As String
             Get
                 Return ResourceManager.GetString("TitleError", resourceCulture)
             End Get
@@ -1363,7 +1363,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Export Logs 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleExportLogs() As String
+        Public ReadOnly Property TitleExportLogs() As String
             Get
                 Return ResourceManager.GetString("TitleExportLogs", resourceCulture)
             End Get
@@ -1372,7 +1372,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Export Successful 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleExportSuccess() As String
+        Public ReadOnly Property TitleExportSuccess() As String
             Get
                 Return ResourceManager.GetString("TitleExportSuccess", resourceCulture)
             End Get
@@ -1381,7 +1381,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Hint 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleHint() As String
+        Public ReadOnly Property TitleHint() As String
             Get
                 Return ResourceManager.GetString("TitleHint", resourceCulture)
             End Get
@@ -1390,7 +1390,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Information 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleInfo() As String
+        Public ReadOnly Property TitleInfo() As String
             Get
                 Return ResourceManager.GetString("TitleInfo", resourceCulture)
             End Get
@@ -1399,7 +1399,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Instance Closing 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleInstanceClosing() As String
+        Public ReadOnly Property TitleInstanceClosing() As String
             Get
                 Return ResourceManager.GetString("TitleInstanceClosing", resourceCulture)
             End Get
@@ -1408,7 +1408,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Instance Exited 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleInstanceExited() As String
+        Public ReadOnly Property TitleInstanceExited() As String
             Get
                 Return ResourceManager.GetString("TitleInstanceExited", resourceCulture)
             End Get
@@ -1417,7 +1417,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Operation Successful 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleOperationSuccess() As String
+        Public ReadOnly Property TitleOperationSuccess() As String
             Get
                 Return ResourceManager.GetString("TitleOperationSuccess", resourceCulture)
             End Get
@@ -1426,7 +1426,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Permission Confirmation 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitlePermissionConfirm() As String
+        Public ReadOnly Property TitlePermissionConfirm() As String
             Get
                 Return ResourceManager.GetString("TitlePermissionConfirm", resourceCulture)
             End Get
@@ -1435,7 +1435,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Save Successful 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleSaveSuccess() As String
+        Public ReadOnly Property TitleSaveSuccess() As String
             Get
                 Return ResourceManager.GetString("TitleSaveSuccess", resourceCulture)
             End Get
@@ -1444,7 +1444,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 Warning 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property TitleWarning() As String
+        Public ReadOnly Property TitleWarning() As String
             Get
                 Return ResourceManager.GetString("TitleWarning", resourceCulture)
             End Get
@@ -1453,7 +1453,7 @@ Namespace My.Resources
         '''<summary>
         '''  查找类似 User Message 的本地化字符串。
         '''</summary>
-        Friend ReadOnly Property UserMessageTitle() As String
+        Public ReadOnly Property UserMessageTitle() As String
             Get
                 Return ResourceManager.GetString("UserMessageTitle", resourceCulture)
             End Get
