@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:McpServiceNetFx.VsixAsync.ToolWindows"
              xmlns:core="clr-namespace:McpServiceNetFx;assembly=McpServiceNetFx.Core"
              xmlns:vs_shell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:vs="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="350">
 
@@ -113,113 +114,7 @@
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
                     </Style>
-                    <Style TargetType="ComboBox">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ComboBox">
-                                    <Grid>
-                                        <ToggleButton Name="ToggleButton"
-                                                      Background="{TemplateBinding Background}"
-                                                      BorderBrush="{TemplateBinding BorderBrush}"
-                                                      BorderThickness="{TemplateBinding BorderThickness}"
-                                                      IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                                            <ToggleButton.Template>
-                                                <ControlTemplate TargetType="ToggleButton">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="*"/>
-                                                                <ColumnDefinition Width="20"/>
-                                                            </Grid.ColumnDefinitions>
-                                                            <ContentPresenter Grid.Column="0"
-                                                                            HorizontalAlignment="Left"
-                                                                            VerticalAlignment="Center"
-                                                                            TextBlock.Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                                                            <Path Grid.Column="1"
-                                                                  HorizontalAlignment="Center"
-                                                                  VerticalAlignment="Center"
-                                                                  Fill="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
-                                                                  Data="M 0 0 L 4 4 L 8 0 Z"/>
-                                                        </Grid>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </ToggleButton.Template>
-                                        </ToggleButton>
-                                        <ContentPresenter Name="ContentSite"
-                                                        IsHitTestVisible="False"
-                                                        Content="{TemplateBinding SelectionBoxItem}"
-                                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                        ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                                        Margin="3,3,23,3"
-                                                        VerticalAlignment="Center"
-                                                        HorizontalAlignment="Left"
-                                                        TextBlock.Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                                        <Popup Name="Popup"
-                                               Placement="Bottom"
-                                               IsOpen="{TemplateBinding IsDropDownOpen}"
-                                               AllowsTransparency="True"
-                                               Focusable="False"
-                                               PopupAnimation="Slide">
-                                            <Grid Name="DropDown"
-                                                  SnapsToDevicePixels="True"
-                                                  MinWidth="{TemplateBinding ActualWidth}"
-                                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                                <Border Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
-                                                        BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                                                        BorderThickness="1">
-                                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
-                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                                    </ScrollViewer>
-                                                </Border>
-                                            </Grid>
-                                        </Popup>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="ToggleButton" Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                                        </Trigger>
-                                        <Trigger Property="IsDropDownOpen" Value="True">
-                                            <Setter TargetName="ToggleButton" Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                            <Setter TargetName="ToggleButton" Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                    <Style TargetType="ComboBoxItem">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="Padding" Value="8,4"/>
-                        <Setter Property="Margin" Value="1"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                            </Trigger>
-                            <MultiTrigger>
-                                <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="True"/>
-                                    <Condition Property="IsMouseOver" Value="True"/>
-                                </MultiTrigger.Conditions>
-                                <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                            </MultiTrigger>
-                        </Style.Triggers>
-                    </Style>
+                    <!-- 使用官方预定义样式，无需自定义 ComboBox 样式 -->
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -269,8 +164,7 @@
                                     <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
                                               SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               IsEditable="False"
-                                              Background="Transparent"
-                                              BorderThickness="0"
+                                              Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogComboBoxStyleKey}}"
                                               Margin="2"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -318,8 +212,7 @@
                 <TabControl Grid.Row="1">
                     <TabItem Header="MCP JSON 配置">
                         <TextBox x:Name="McpJsonConfigTextBox"
-                                 BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                                 BorderThickness="1"
+                                 Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
                                  FontFamily="Consolas"
                                  FontSize="11"
                                  TextWrapping="Wrap"
@@ -330,8 +223,7 @@
                     </TabItem>
                     <TabItem Header="Claude CLI 配置">
                         <TextBox x:Name="ClaudeCliConfigTextBox"
-                                 BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                                 BorderThickness="1"
+                                 Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
                                  FontFamily="Consolas"
                                  FontSize="11"
                                  TextWrapping="Wrap"
