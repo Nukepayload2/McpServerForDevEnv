@@ -80,6 +80,14 @@ Namespace ToolWindows
             ' 创建工具管理器（简化版本）
             Try
                 _toolManager = New VisualStudioToolManager(Me, Me)
+
+                ' 初始化工具管理器，传入 DTE2 和调度器
+                If _dte2 IsNot Nothing Then
+                    _toolManager.CreateVsTools(_dte2, New DispatcherService())
+                    LogInfo("工具管理器", "Visual Studio 工具管理器已初始化")
+                Else
+                    LogError("工具管理器", "无法初始化工具管理器：DTE2 服务未获取")
+                End If
             Catch ex As Exception
                 LogError("ServiceError", $"无法创建工具管理器: {ex.Message}")
             End Try
