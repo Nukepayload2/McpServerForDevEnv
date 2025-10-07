@@ -155,16 +155,10 @@ Namespace ToolWindows
         Private Sub ToolsDataGrid_CurrentCellChanged() Handles ToolsDataGrid.CurrentCellChanged
             ' 工具权限变更时的处理
             If ToolsDataGrid.SelectedItem IsNot Nothing Then
-                Dim tool = CType(ToolsDataGrid.SelectedItem, McpToolState)
+                Dim tool = CType(ToolsDataGrid.SelectedItem, PermissionItem)
                 If tool IsNot Nothing Then
                     ' 记录工具权限变更
-                    _state.LogToolOperation("UpdateToolPermission", "Success", $"工具 {tool.ToolName} 权限已更新为: {tool.PermissionLevel}")
-
-                    ' 更新使用次数（仅在工具被允许时）
-                    If tool.PermissionLevel = PermissionLevel.Allow Then
-                        tool.LastUsed = DateTime.Now
-                        tool.UsageCount += 1
-                    End If
+                    _state.LogToolOperation("UpdateToolPermission", "Success", $"工具 {tool.FeatureName} 权限已更新为: {tool.Permission}")
                 End If
             End If
 

@@ -9,63 +9,11 @@ Imports Microsoft.VisualStudio.Shell.Interop
 Imports EnvDTE80
 Imports System.Threading.Tasks
 Imports System.Runtime.CompilerServices
+Imports McpServiceNetFx.Models
+Imports McpServiceNetFx.VsixAsync.Helpers
 
 Namespace ToolWindows
-    ''' <summary>
-    ''' MCP 工具授权和服务状态信息
-    ''' </summary>
-    Public Class McpToolState
-        Implements INotifyPropertyChanged
-
-        Private _permissionLevel As PermissionLevel = PermissionLevel.Ask
-
-        Public Property ToolName As String
-        Public Property Description As String
-        Public Property LastUsed As DateTime?
-        Public Property UsageCount As Integer
-
-        ''' <summary>
-        ''' 权限级别 - 支持 INotifyPropertyChanged 以便界面更新
-        ''' </summary>
-        Public Property PermissionLevel As PermissionLevel
-            Get
-                Return _permissionLevel
-            End Get
-            Set(value As PermissionLevel)
-                If _permissionLevel <> value Then
-                    _permissionLevel = value
-                    OnPropertyChanged()
-                    OnPropertyChanged(NameOf(IsAuthorized))
-                    OnPropertyChanged(NameOf(IsEnabled))
-                End If
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' 兼容性属性 - 根据权限级别判断是否已授权
-        ''' </summary>
-        Public ReadOnly Property IsAuthorized As Boolean
-            Get
-                Return PermissionLevel <> PermissionLevel.Deny
-            End Get
-        End Property
-
-        ''' <summary>
-        ''' 兼容性属性 - 根据权限级别判断是否启用
-        ''' </summary>
-        Public ReadOnly Property IsEnabled As Boolean
-            Get
-                Return PermissionLevel = PermissionLevel.Allow
-            End Get
-        End Property
-
-        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
-
-        Protected Overridable Sub OnPropertyChanged(<CallerMemberName> Optional propertyName As String = Nothing)
-            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
-        End Sub
-    End Class
-
+  
     ''' <summary>
     ''' MCP 服务状态
     ''' </summary>
@@ -100,7 +48,7 @@ Namespace ToolWindows
     Public Class McpWindowState
         Implements IMcpLogger, IMcpPermissionHandler
 
-        Public Property Tools As New List(Of McpToolState)
+        Public Property Tools As New List(Of PermissionItem)
         Public Property Services As New List(Of McpServiceState)
         Public Property LogItems As New ObservableCollection(Of ActivityLogItem)
 
@@ -109,8 +57,12 @@ Namespace ToolWindows
         Private _mcpService As McpService
         Private _toolManager As VisualStudioToolManager
         Private _permissionItems As New List(Of PermissionItem)()
+        Private ReadOnly _settingsHelper As SettingsPersistenceHelper
 
         Public Sub New(package As AsyncPackage)
+            ' 初始化设置持久化辅助类
+            _settingsHelper = New SettingsPersistenceHelper(package)
+
             ' 获取 ActivityLog 服务
             Try
                 _activityLog = package.GetService(Of SVsActivityLog, IVsActivityLog)()
@@ -146,27 +98,57 @@ Namespace ToolWindows
         ''' </summary>
         Private Sub LoadPermissions()
             Try
-                ' 如果工具管理器已初始化，加载真实的工具权限
-                If _toolManager IsNot Nothing AndAlso _toolManager.IsInitialized Then
-                    Dim defaultPermissions = _toolManager.GetDefaultPermissions()
-                    If defaultPermissions IsNot Nothing Then
-                        Tools.Clear()
-                        For Each permission In defaultPermissions
-                            Tools.Add(New McpToolState With {
-                                .ToolName = permission.FeatureName,
-                                .Description = permission.Description,
-                                .PermissionLevel = permission.Permission,
-                                .LastUsed = Nothing,
-                                .UsageCount = 0
+                ' 首先尝试从Visual Studio设置加载保存的权限配置
+                Dim savedPermissionDict = _settingsHelper.LoadPermissions()
+
+                If savedPermissionDict.Any() Then
+                    ' 从工具管理器获取默认权限作为基础
+                    Dim defaultPermissions = GetDefaultPermissionsFromToolManager()
+
+                    ' 应用保存的权限级别
+                    Tools.Clear()
+                    For Each defaultPermission In defaultPermissions
+                        Dim savedPermission As PermissionLevel = Nothing
+                        Dim permissionValue As PermissionLevel
+                        If savedPermissionDict.TryGetValue(defaultPermission.FeatureName, savedPermission) Then
+                            permissionValue = savedPermission
+                        Else
+                            permissionValue = defaultPermission.Permission
+                        End If
+
+                        Dim permission = New PermissionItem With {
+                            .FeatureName = defaultPermission.FeatureName,
+                            .Description = defaultPermission.Description,
+                            .Permission = permissionValue
+                        }
+                        Tools.Add(permission)
+                    Next
+
+                    ' 添加保存的权限中存在但默认权限中没有的工具
+                    For Each kvp In savedPermissionDict
+                        Dim featureName = kvp.Key
+                        Dim savedPermission = kvp.Value
+
+                        If Not Tools.Any(Function(t) t.FeatureName = featureName) Then
+                            Tools.Add(New PermissionItem With {
+                                .FeatureName = featureName,
+                                .Description = featureName, ' 使用功能名作为描述
+                                .Permission = savedPermission
                             })
-                        Next
+                        End If
+                    Next
+
+                    LogServiceAction("权限加载", "成功", $"从Visual Studio设置加载了 {Tools.Count} 个工具权限")
+                Else
+                    ' 如果没有保存的配置，从工具管理器加载默认权限
+                    Dim defaultPermissions = GetDefaultPermissionsFromToolManager()
+                    If defaultPermissions.Any() Then
+                        Tools.Clear()
+                        Tools.AddRange(defaultPermissions)
                         LogServiceAction("权限加载", "成功", $"从工具管理器加载了 {Tools.Count} 个工具权限")
                     Else
                         AddDefaultTools()
                     End If
-                Else
-                    ' 如果工具管理器未初始化，添加默认工具
-                    AddDefaultTools()
                 End If
             Catch ex As Exception
                 LogError("权限错误", $"加载权限配置失败: {ex.Message}")
@@ -175,38 +157,44 @@ Namespace ToolWindows
         End Sub
 
         ''' <summary>
+        ''' 从工具管理器获取默认权限配置
+        ''' </summary>
+        Private Function GetDefaultPermissionsFromToolManager() As List(Of PermissionItem)
+            If _toolManager IsNot Nothing AndAlso _toolManager.IsInitialized Then
+                Try
+                    Return _toolManager.GetDefaultPermissions()
+                Catch ex As Exception
+                    LogError("工具管理器错误", $"获取默认权限失败: {ex.Message}")
+                End Try
+            End If
+            Return New List(Of PermissionItem)()
+        End Function
+
+        ''' <summary>
         ''' 添加默认工具权限配置
         ''' </summary>
         Private Sub AddDefaultTools()
             Tools.Clear()
-            Tools.AddRange(New McpToolState() {
-                New McpToolState With {
-                    .ToolName = "解决方案信息",
+            Tools.AddRange(New PermissionItem() {
+                New PermissionItem With {
+                    .FeatureName = "解决方案信息",
                     .Description = "获取当前解决方案的信息",
-                    .PermissionLevel = PermissionLevel.Allow,
-                    .LastUsed = Nothing,
-                    .UsageCount = 0
+                    .Permission = PermissionLevel.Allow
                 },
-                New McpToolState With {
-                    .ToolName = "项目构建",
+                New PermissionItem With {
+                    .FeatureName = "项目构建",
                     .Description = "构建当前项目或解决方案",
-                    .PermissionLevel = PermissionLevel.Allow,
-                    .LastUsed = Nothing,
-                    .UsageCount = 0
+                    .Permission = PermissionLevel.Allow
                 },
-                New McpToolState With {
-                    .ToolName = "错误列表",
+                New PermissionItem With {
+                    .FeatureName = "错误列表",
                     .Description = "获取当前错误列表",
-                    .PermissionLevel = PermissionLevel.Allow,
-                    .LastUsed = Nothing,
-                    .UsageCount = 0
+                    .Permission = PermissionLevel.Allow
                 },
-                New McpToolState With {
-                    .ToolName = "文档操作",
+                New PermissionItem With {
+                    .FeatureName = "文档操作",
                     .Description = "读取和编辑当前文档",
-                    .PermissionLevel = PermissionLevel.Ask,
-                    .LastUsed = Nothing,
-                    .UsageCount = 0
+                    .Permission = PermissionLevel.Ask
                 }
             })
             LogServiceAction("权限加载", "部分成功", $"添加了 {Tools.Count} 个默认工具权限")
@@ -307,7 +295,7 @@ Namespace ToolWindows
         ''' </summary>
         Public Sub SetAllPermissions(permission As PermissionLevel)
             For Each tool In Tools
-                tool.PermissionLevel = permission
+                tool.Permission = permission
             Next
             LogToolOperation("SetAllPermissions", "Success", $"批量设置所有工具权限为: {permission}")
         End Sub
@@ -317,17 +305,12 @@ Namespace ToolWindows
         ''' </summary>
         Public Sub SavePermissions()
             Try
-                ' 将工具权限转换为 PermissionItem 列表
-                Dim permissionItems = Tools.Select(Function(tool) New PermissionItem With {
-                    .FeatureName = tool.ToolName,
-                    .Description = tool.Description,
-                    .Permission = tool.PermissionLevel
-                }).ToList()
-
-                ' 这里可以调用持久化方法，暂时只记录日志
-                LogServiceAction("权限保存", "成功", $"保存了 {permissionItems.Count} 个权限配置")
+                ' 使用Visual Studio设置保存权限配置
+                _settingsHelper.SavePermissions(Tools)
+                LogServiceAction("权限保存", "成功", $"保存了 {Tools.Count} 个权限配置")
             Catch ex As Exception
                 LogError("权限保存", $"保存权限配置失败: {ex.Message}")
+                Throw
             End Try
         End Sub
 
@@ -450,8 +433,8 @@ Namespace ToolWindows
         ''' 检查工具权限
         ''' </summary>
         Public Function CheckToolPermission(toolName As String) As Boolean
-            Dim tool = Tools.FirstOrDefault(Function(t) t.ToolName = toolName)
-            Return tool?.IsAuthorized AndAlso tool?.IsEnabled
+            Dim tool = Tools.FirstOrDefault(Function(t) t.FeatureName = toolName)
+            Return tool?.Permission <> PermissionLevel.Deny
         End Function
 
         ''' <summary>
@@ -473,7 +456,7 @@ Namespace ToolWindows
             Dim askCount As Integer = 0
             Dim deniedCount As Integer = 0
             For Each tool In Tools
-                Select Case tool.PermissionLevel
+                Select Case tool.Permission
                     Case PermissionLevel.Allow
                         allowedCount += 1
                     Case PermissionLevel.Ask

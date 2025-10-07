@@ -63,6 +63,7 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\SettingsPersistenceHelper.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="McpServiceNetFx.VsixAsyncPackage.vb" />
     <Compile Include="Commands\ShowMcpToolWindowCommand.vb" />

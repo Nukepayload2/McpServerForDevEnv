@@ -4,31 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:McpServiceNetFx.VsixAsync.ToolWindows"
+             xmlns:core="clr-namespace:McpServiceNetFx;assembly=McpServiceNetFx.Core"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="350">
-    <UserControl.Resources>
-        <local:PermissionLevelConverter x:Key="PermissionLevelConverter"/>
-    </UserControl.Resources>
 
     <Grid Background="#F5F5F5">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 标题栏 -->
-        <Border Grid.Row="0" Background="#007ACC" Padding="10,8">
-            <TextBlock Text="MCP 服务管理器"
-                       Foreground="White"
-                       FontSize="14"
-                       FontWeight="Bold"/>
-        </Border>
-
         <!-- MCP 工具授权管理 -->
-        <GroupBox Grid.Row="1" Header="MCP 工具授权" Margin="5" Padding="8">
+        <GroupBox Grid.Row="0" Header="MCP 工具授权" Margin="5" Padding="8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -58,25 +47,21 @@
                           RowBackground="White"
                           AlternatingRowBackground="#F9F9F9">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="功能名称" Binding="{Binding ToolName}" Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}" Width="*" IsReadOnly="True"/>
                         <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="1.5*" IsReadOnly="True"/>
                         <DataGridTemplateColumn Header="权限级别" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ComboBox SelectedValue="{Binding PermissionLevel, Converter={StaticResource PermissionLevelConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
+                                              SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                               IsEditable="False"
                                               Background="Transparent"
                                               BorderThickness="0"
-                                              Margin="2">
-                                        <ComboBoxItem Content="允许" Tag="Allow"/>
-                                        <ComboBoxItem Content="询问" Tag="Ask"/>
-                                        <ComboBoxItem Content="拒绝" Tag="Deny"/>
-                                    </ComboBox>
+                                              Margin="2"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="使用次数" Binding="{Binding UsageCount}" Width="80" IsReadOnly="True"/>
-                    </DataGrid.Columns>
+                                            </DataGrid.Columns>
                 </DataGrid>
 
                 <!-- 底部操作按钮 -->
@@ -90,7 +75,7 @@
         </GroupBox>
 
         <!-- MCP 服务管理 -->
-        <GroupBox Grid.Row="2" Header="MCP 服务状态" Margin="5" Padding="8">
+        <GroupBox Grid.Row="1" Header="MCP 服务状态" Margin="5" Padding="8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -148,7 +133,7 @@
         </GroupBox>
 
         <!-- ActivityLog 信息 -->
-        <GroupBox Grid.Row="3" Header="Visual Studio ActivityLog" Margin="5" Padding="8">
+        <GroupBox Grid.Row="2" Header="Visual Studio ActivityLog" Margin="5" Padding="8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -189,7 +174,7 @@
         </GroupBox>
 
         <!-- 状态栏 -->
-        <Border Grid.Row="4" Background="#E9ECEF" Padding="8,4">
+        <Border Grid.Row="3" Background="#E9ECEF" Padding="8,4">
             <StackPanel Orientation="Horizontal">
                 <TextBlock x:Name="StatusText" Text="就绪" VerticalAlignment="Center"/>
                 <Separator Margin="10,0"/>
