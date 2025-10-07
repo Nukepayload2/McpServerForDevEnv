@@ -11,114 +11,56 @@
              d:DesignHeight="700" d:DesignWidth="350">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary>
-                    <Style TargetType="Label">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                    </Style>
-                    <Style TargetType="TextBox">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                    </Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                    </Style>
-                    <Style TargetType="GroupBox">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="GroupBox">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <Border Grid.Row="0"
-                                                Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
-                                                BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                                                BorderThickness="1,1,1,0"
-                                                Padding="8,4">
-                                            <ContentPresenter ContentSource="Header"
-                                                            TextBlock.Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                                        </Border>
-                                        <Border Grid.Row="1"
-                                                Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
-                                                BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
-                                                BorderThickness="1"
-                                                Padding="8">
-                                            <ContentPresenter/>
-                                        </Border>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                    <Style TargetType="DataGrid">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="RowBackground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="AlternatingRowBackground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                    </Style>
-                    <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                    </Style>
-                    <Style TargetType="TabControl">
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                    </Style>
-                    <Style TargetType="TabItem">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Padding" Value="12,4"/>
-                        <Setter Property="Margin" Value="0,0,2,0"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TabItem">
-                                    <Border Name="Border"
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            Padding="{TemplateBinding Padding}"
-                                            Margin="{TemplateBinding Margin}">
-                                        <ContentPresenter x:Name="ContentSite"
-                                                        VerticalAlignment="Center"
-                                                        HorizontalAlignment="Center"
-                                                        ContentSource="Header"
-                                                        TextBlock.Foreground="{TemplateBinding Foreground}"/>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                            <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0"/>
-                                            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="False">
-                                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
-                                            <Setter TargetName="Border" Property="BorderThickness" Value="0"/>
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
-                    </Style>
-                    <!-- 使用官方预定义样式，无需自定义 ComboBox 样式 -->
-                </ResourceDictionary>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
+        <!-- DataGrid 列标题样式 -->
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+        </Style>
+
+        <!-- TabItem 样式 -->
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,4"/>
+            <Setter Property="Margin" Value="0,0,2,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="{TemplateBinding Margin}">
+                            <ContentPresenter x:Name="ContentSite"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            ContentSource="Header"
+                                            TextBlock.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+                                <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0"/>
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                                <Setter TargetName="Border" Property="BorderThickness" Value="0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+          </UserControl.Resources>
 
     <Grid Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
         <Grid.RowDefinitions>
@@ -129,7 +71,10 @@
         </Grid.RowDefinitions>
 
         <!-- MCP 工具授权管理 -->
-        <GroupBox Grid.Row="0" Header="MCP 工具授权" Margin="5" Padding="8">
+        <GroupBox Grid.Row="0" Header="MCP 工具授权" Margin="5" Padding="8"
+                  Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
+                  Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                  BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -139,12 +84,12 @@
 
                 <!-- 批量操作按钮 -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-                    <Button x:Name="AuthorizeAllButton" Content="全部允许" Margin="0,0,10,0" Padding="12,4"
-                            Background="#28A745" Foreground="White" BorderBrush="#28A745"/>
-                    <Button x:Name="AskAllButton" Content="全部询问" Margin="0,0,10,0" Padding="12,4"
-                            Background="#FFC107" Foreground="Black" BorderBrush="#FFC107"/>
-                    <Button x:Name="RefreshToolsButton" Content="刷新工具列表" Padding="12,4"
-                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"/>
+                    <Button x:Name="AuthorizeAllButton" Content="全部允许" Margin="0,0,10,0"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
+                    <Button x:Name="AskAllButton" Content="全部询问" Margin="0,0,10,0"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
+                    <Button x:Name="RefreshToolsButton" Content="刷新工具列表"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                 </StackPanel>
 
                 <!-- 工具权限数据网格 -->
@@ -154,7 +99,12 @@
                           CanUserAddRows="False"
                           CanUserDeleteRows="False"
                           GridLinesVisibility="Horizontal"
-                          HeadersVisibility="Column">
+                          HeadersVisibility="Column"
+                          Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
+                          Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                          RowBackground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                          AlternatingRowBackground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                          BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}" Width="*" IsReadOnly="True"/>
                         <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="1.5*" IsReadOnly="True"/>
@@ -174,16 +124,19 @@
 
                 <!-- 底部操作按钮 -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                    <Button x:Name="SavePermissionsButton" Content="保存权限配置" Margin="0,0,10,0" Padding="12,4"
-                            Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
-                    <Button x:Name="ReloadPermissionsButton" Content="重新加载" Padding="12,4"
-                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"/>
+                    <Button x:Name="SavePermissionsButton" Content="保存权限配置" Margin="0,0,10,0"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
+                    <Button x:Name="ReloadPermissionsButton" Content="重新加载"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
 
         <!-- MCP 服务管理 -->
-        <GroupBox Grid.Row="1" Header="MCP 服务状态" Margin="5" Padding="8">
+        <GroupBox Grid.Row="1" Header="MCP 服务状态" Margin="5" Padding="8"
+                  Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
+                  Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                  BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -191,16 +144,22 @@
                 </Grid.RowDefinitions>
 
                 <!-- 服务状态显示 -->
-                <Border Grid.Row="0" BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}" BorderThickness="1" Padding="10" Margin="0,0,0,8">
+                <Border Grid.Row="0"
+                        BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                        BorderThickness="1" Padding="10" Margin="0,0,0,8"
+                        Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Orientation="Vertical">
-                            <TextBlock Text="MCP 服务" FontWeight="Bold" FontSize="14"/>
-                            <TextBlock x:Name="ServiceStatusText" Text="状态: 已停止" Margin="0,2,0,0"/>
-                            <TextBlock x:Name="ServicePortText" Text="端口: 38080" Margin="0,2,0,0"/>
+                            <TextBlock Text="MCP 服务" FontWeight="Bold" FontSize="14"
+                                      Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                            <TextBlock x:Name="ServiceStatusText" Text="状态: 已停止" Margin="0,2,0,0"
+                                      Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                            <TextBlock x:Name="ServicePortText" Text="端口: 38080" Margin="0,2,0,0"
+                                      Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                         </StackPanel>
                         <ToggleButton x:Name="ServiceToggleButton" Grid.Column="1" Content="启动服务"
                                       Margin="10,0,0,0" Padding="16,8"
@@ -209,7 +168,8 @@
                 </Border>
 
                 <!-- 配置示例 -->
-                <TabControl Grid.Row="1">
+                <TabControl Grid.Row="1"
+                           Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
                     <TabItem Header="MCP JSON 配置">
                         <TextBox x:Name="McpJsonConfigTextBox"
                                  Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
@@ -237,7 +197,10 @@
         </GroupBox>
 
         <!-- ActivityLog 信息 -->
-        <GroupBox Grid.Row="2" Header="Visual Studio ActivityLog" Margin="5" Padding="8">
+        <GroupBox Grid.Row="2" Header="日志" Margin="5" Padding="8"
+                  Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
+                  Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                  BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -246,11 +209,11 @@
 
                 <!-- 操作按钮区域 -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,5">
-                    <Button x:Name="ClearLogButton" Content="清空日志" Margin="0,0,5,0" Padding="12,4"
-                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"/>
+                    <Button x:Name="ClearLogButton" Content="清空日志" Margin="0,0,5,0"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                     <Button x:Name="ViewActivityLogHelpButton"
-                            Content="如何查看文件日志" Padding="12,4"
-                            Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
+                            Content="如何查看文件日志"
+                            Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                 </StackPanel>
 
                 <!-- 日志数据网格 -->
@@ -263,7 +226,12 @@
                           GridLinesVisibility="Horizontal"
                           HeadersVisibility="Column"
                           FontFamily="Consolas"
-                          FontSize="11">
+                          FontSize="11"
+                          Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
+                          Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                          RowBackground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                          AlternatingRowBackground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                          BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="时间" Binding="{Binding Timestamp}" Width="120" IsReadOnly="True"/>
                         <DataGridTextColumn Header="级别" Binding="{Binding Level}" Width="60" IsReadOnly="True"/>
@@ -277,11 +245,14 @@
         <!-- 状态栏 -->
         <Border Grid.Row="3" Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" Padding="8,4">
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="StatusText" Text="就绪" VerticalAlignment="Center"/>
+                <TextBlock x:Name="StatusText" Text="就绪" VerticalAlignment="Center"
+                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Separator Margin="10,0"/>
-                <TextBlock x:Name="ToolCountText" Text="工具: 4" VerticalAlignment="Center"/>
+                <TextBlock x:Name="ToolCountText" Text="工具: 4" VerticalAlignment="Center"
+                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Separator Margin="10,0"/>
-                <TextBlock x:Name="ServiceCountText" Text="服务: 2" VerticalAlignment="Center"/>
+                <TextBlock x:Name="ServiceCountText" Text="服务: 2" VerticalAlignment="Center"
+                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
             </StackPanel>
         </Border>
     </Grid>
