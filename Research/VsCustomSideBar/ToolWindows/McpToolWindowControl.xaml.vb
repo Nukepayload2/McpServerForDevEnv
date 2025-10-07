@@ -1,4 +1,5 @@
 Imports System
+Imports System.Linq
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Data
@@ -7,7 +8,7 @@ Namespace ToolWindows
     ''' <summary>
     ''' McpToolWindowControl.xaml 的交互逻辑
     ''' </summary>
-    Public Partial Class McpToolWindowControl
+    Partial Public Class McpToolWindowControl
         Inherits UserControl
 
         Private _state As McpWindowState
@@ -145,12 +146,12 @@ Namespace ToolWindows
 
         Private Sub UpdateStatusBar()
             ' 更新工具计数
-            Dim authorizedCount = _state.Tools.Count(Function(t) t.IsAuthorized)
-            Dim enabledCount = _state.Tools.Count(Function(t) t.IsEnabled)
+            Dim authorizedCount = _state.Tools.Where(Function(t) t.IsAuthorized).Count
+            Dim enabledCount = _state.Tools.Where(Function(t) t.IsEnabled).Count
             ToolCountText.Text = $"工具: {_state.Tools.Count} (授权: {authorizedCount}, 启用: {enabledCount})"
 
             ' 更新服务计数
-            Dim runningCount = _state.Services.Count(Function(s) s.IsRunning)
+            Dim runningCount = _state.Services.Where(Function(s) s.IsRunning).Count
             ServiceCountText.Text = $"服务: {_state.Services.Count} (运行中: {runningCount})"
         End Sub
 
@@ -161,9 +162,9 @@ Namespace ToolWindows
                 .Interval = TimeSpan.FromSeconds(3)
             }
             AddHandler timer.Tick, Sub(s, args)
-                                      StatusText.Text = "就绪"
-                                      timer.Stop()
-                                  End Sub
+                                       StatusText.Text = "就绪"
+                                       timer.Stop()
+                                   End Sub
             timer.Start()
         End Sub
     End Class
