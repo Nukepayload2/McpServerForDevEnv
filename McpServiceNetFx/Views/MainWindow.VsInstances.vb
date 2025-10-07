@@ -73,7 +73,7 @@ Partial Public Class MainWindow
             End If
 
             ' 创建数据上下文并注册工具
-            _toolManager.CreateVsTools(_selectedVsInstance.DTE2, Dispatcher)
+            _toolManager.CreateVsTools(_selectedVsInstance.DTE2, New DispatcherService(Dispatcher))
 
             LogOperation(My.Resources.LogToolManager, My.Resources.LogCompleted, String.Format(My.Resources.LogInstanceAndToolCount, _selectedVsInstance.Caption, _toolManager.GetToolCount()))
 
