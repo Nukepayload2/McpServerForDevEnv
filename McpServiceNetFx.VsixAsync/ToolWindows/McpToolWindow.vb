@@ -17,13 +17,11 @@ Namespace ToolWindows
 
         Private _state As McpWindowState
 
-        Public Sub New()
+        Public Sub New(state As McpWindowState)
             MyBase.New()
             Caption = Title
             BitmapImageMoniker = KnownMonikers.Settings
-            _state = New ToolWindows.McpWindowState(Me.Package)
-
-            ' 创建WPF控件
+            _state = state
             Content = New McpToolWindowControl(_state)
         End Sub
 

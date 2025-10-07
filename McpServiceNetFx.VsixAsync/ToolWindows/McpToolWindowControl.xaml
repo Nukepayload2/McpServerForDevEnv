@@ -158,12 +158,10 @@
                 <!-- 操作按钮区域 -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,5">
                     <Button x:Name="ClearLogButton" Content="清空日志" Margin="0,0,5,0" Padding="12,4"
-                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"
-                            Click="ClearLogButton_Click"/>
+                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"/>
                     <Button x:Name="ViewActivityLogHelpButton"
                             Content="如何查看文件日志" Padding="12,4"
-                            Background="#007ACC" Foreground="White" BorderBrush="#007ACC"
-                            Click="ViewActivityLogHelpButton_Click"/>
+                            Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
                 </StackPanel>
 
                 <!-- 日志数据网格 -->

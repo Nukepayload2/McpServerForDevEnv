@@ -21,13 +21,14 @@ Namespace Commands
             End If
         End Function
 
-        Private Shared Sub Execute(package As AsyncPackage)
-            package.JoinableTaskFactory.RunAsync(Async Function()
+        Private Shared Async Sub Execute(package As AsyncPackage)
+            Await package.JoinableTaskFactory.RunAsync(
+            Async Function()
                 Await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync()
 
-                Dim window As ToolWindowPane = Await package.ShowToolWindowAsync(
+                Dim window = Await package.ShowToolWindowAsync(
                     GetType(ToolWindows.McpToolWindow),
-                    0,
+                     0,
                     create:=True,
                     cancellationToken:=package.DisposalToken)
 

@@ -7,10 +7,8 @@ Imports System.Linq
 Imports Microsoft.VisualStudio.Shell
 Imports Microsoft.VisualStudio.Shell.Interop
 Imports EnvDTE80
-Imports McpServiceNetFx.Mcp
-Imports McpServiceNetFx.Tools
-Imports McpServiceNetFx.Models
 Imports System.Threading.Tasks
+Imports System.Runtime.CompilerServices
 
 Namespace ToolWindows
     ''' <summary>
@@ -36,7 +34,9 @@ Namespace ToolWindows
             Set(value As PermissionLevel)
                 If _permissionLevel <> value Then
                     _permissionLevel = value
-                    OnPropertyChanged(NameOf(PermissionLevel))
+                    OnPropertyChanged()
+                    OnPropertyChanged(NameOf(IsAuthorized))
+                    OnPropertyChanged(NameOf(IsEnabled))
                 End If
             End Set
         End Property
@@ -61,11 +61,8 @@ Namespace ToolWindows
 
         Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
-        Protected Overridable Sub OnPropertyChanged(propertyName As String)
+        Protected Overridable Sub OnPropertyChanged(<CallerMemberName> Optional propertyName As String = Nothing)
             RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
-            ' 同时通知依赖属性的变化
-            OnPropertyChanged(NameOf(IsAuthorized))
-            OnPropertyChanged(NameOf(IsEnabled))
         End Sub
     End Class
 

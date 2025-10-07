@@ -4,6 +4,7 @@ Imports System.Threading
 Imports Microsoft.VisualStudio.Shell
 Imports Microsoft.VisualStudio.Shell.Interop
 Imports System.Threading.Tasks
+Imports McpServiceNetFx.VsixAsync.ToolWindows
 
 ''' <summary>
 ''' This is the class that implements the package exposed by this assembly.
@@ -70,7 +71,7 @@ Public NotInheritable Class McpServiceNetFx
         Await JoinableTaskFactory.SwitchToMainThreadAsync()
 
         If toolWindowType.Equals(GetType(ToolWindows.McpToolWindow)) Then
-            Return Me
+            Return New McpWindowState(Me)
         End If
 
         Return Nothing
