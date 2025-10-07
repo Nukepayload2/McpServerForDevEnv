@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 		README.zh-CN.md = README.zh-CN.md
 	EndProjectSection
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "McpServiceNetFx.Core", "McpServiceNetFx.Core\McpServiceNetFx.Core.vbproj", "{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,18 @@ Global
 		{2D12DEEF-1BF1-15E4-FE64-D4B2B25FAE2C}.Release|arm64.Build.0 = Release|Any CPU
 		{2D12DEEF-1BF1-15E4-FE64-D4B2B25FAE2C}.Release|x86.ActiveCfg = Release|Any CPU
 		{2D12DEEF-1BF1-15E4-FE64-D4B2B25FAE2C}.Release|x86.Build.0 = Release|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Debug|arm64.Build.0 = Debug|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Release|arm64.ActiveCfg = Release|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Release|arm64.Build.0 = Release|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D06FCDA-AA86-44D9-8C37-9943A3E9413D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
