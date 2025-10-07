@@ -46,15 +46,7 @@ Expose selected Visual Studio instances to AI programming tools through HTTP-bas
 
 ## Project Structure
 
-Main project
-```
-McpServiceNetFx/
-├── Helpers/           # Utility classes
-├── Mcp/              # MCP service core implementation
-├── Models/           # Data models
-├── Tools/            # Visual Studio tool integration
-└── Views/            # WPF interface components
-```
+Main project: McpServiceNetFx and McpServiceNetFx.Core
 
 Research projects are in the Research folder
 

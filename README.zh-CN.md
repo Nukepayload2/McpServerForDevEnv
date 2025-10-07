@@ -44,15 +44,7 @@ Visual Studio MCP 服务器 GUI，为 AI 助手提供与 Visual Studio 集成的
 
 ## 项目结构
 
-正式项目
-```
-McpServiceNetFx/
-├── Helpers/           # 辅助工具类
-├── Mcp/              # MCP 服务核心实现
-├── Models/           # 数据模型
-├── Tools/            # Visual Studio 工具集成
-└── Views/            # WPF 界面组件
-```
+正式项目：McpServiceNetFx 是独立的 WPF UI，McpServiceNetFx.Core 是底层 MCP 实现
 
 研究项目在 Research 里面
 
