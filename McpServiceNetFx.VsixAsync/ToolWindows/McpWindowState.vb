@@ -11,9 +11,10 @@ Imports System.Threading.Tasks
 Imports System.Runtime.CompilerServices
 Imports McpServiceNetFx.Models
 Imports McpServiceNetFx.VsixAsync.Helpers
+Imports System.ServiceModel
 
 Namespace ToolWindows
-  
+
     ''' <summary>
     ''' MCP 服务状态
     ''' </summary>
@@ -57,7 +58,6 @@ Namespace ToolWindows
         Private ReadOnly _dte2 As DTE2
         Private _mcpService As McpService
         Private _toolManager As VisualStudioToolManager
-        Private _permissionItems As New List(Of PermissionItem)()
         Private ReadOnly _settingsHelper As SettingsPersistenceHelper
 
         Public Sub New(package As AsyncPackage)
@@ -392,6 +392,35 @@ Namespace ToolWindows
 
                     LogServiceAction("StartService", "Success", $"MCP 服务已启动，端口: {service.Port}")
                 End If
+            Catch ex As AddressAccessDeniedException
+                ' 端口访问被拒绝异常
+                LogError("ServiceError", $"端口 {ServerConfiguration.Port} 访问被拒绝: {ex.Message}")
+                If Services.Count > 0 Then
+                    Services(0).Status = "端口访问被拒绝"
+                End If
+
+                ' 生成 netsh 命令
+                Dim command = $"netsh http add urlacl url=http://+:{ServerConfiguration.Port}/mcp/ user=""%USERDOMAIN%\%USERNAME%""{Environment.NewLine}" &
+                             $"netsh http add iplisten ipaddress=127.0.0.1:{ServerConfiguration.Port}"
+
+                ' 尝试复制到剪贴板
+                Dim clipboardSuccess = TryCopyToClipboard(command, "MCP服务")
+
+                ' 构建用户提示信息
+                Dim userMessage As String
+                If clipboardSuccess Then
+                    userMessage = $"端口 {ServerConfiguration.Port} 需要授权。已将命令复制到剪贴板，请以管理员身份运行命令提示符并粘贴执行："
+                Else
+                    userMessage = $"端口 {ServerConfiguration.Port} 需要授权。剪贴板操作失败，请手动执行以下命令："
+                End If
+
+                LogMcpRequest("MCP服务", "权限不足", userMessage)
+
+                ' 在UI线程显示弹出窗口
+                ShowUserMessageWindow("端口授权", userMessage, command)
+
+                Throw
+
             Catch ex As Exception
                 LogError("ServiceError", $"启动 MCP 服务失败: {ex.Message}")
                 If Services.Count > 0 Then
@@ -519,7 +548,7 @@ Namespace ToolWindows
         ''' 实现 IMcpPermissionHandler.CheckPermission
         ''' </summary>
         Public Function CheckPermission(featureName As String, operationDescription As String) As Boolean Implements IMcpPermissionHandler.CheckPermission
-            Dim permissionItem = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = featureName)
+            Dim permissionItem = Tools.FirstOrDefault(Function(p) p.FeatureName = featureName)
             If permissionItem Is Nothing Then
                 LogOperation("权限检查", "未找到", $"功能 {featureName} 的权限配置未找到，默认允许")
                 Return True ' 默认允许
@@ -534,9 +563,32 @@ Namespace ToolWindows
                     Return False
                 Case PermissionLevel.Ask
                     LogOperation(featureName, "询问", operationDescription)
-                    ' 在 VSIX 环境中，默认询问时允许
-                    LogInfo("权限询问", $"功能 {featureName} 请求执行 {operationDescription}，默认允许")
-                    Return True
+
+                    ' 使用 CustomMessageBox 询问用户是否允许
+                    Try
+                        Dim message = $"功能 '{featureName}' 请求执行操作：{operationDescription}{Environment.NewLine}{Environment.NewLine}是否允许此操作？"
+                        Dim result = CustomMessageBox.Show(
+                            Nothing,
+                            message,
+                            "权限确认",
+                            CustomMessageBox.MessageBoxType.Question,
+                            True,
+                            True
+                        )
+
+                        Select Case result
+                            Case CustomMessageBox.MessageBoxResult.Yes
+                                LogOperation(featureName, "用户允许", operationDescription)
+                                Return True
+                            Case CustomMessageBox.MessageBoxResult.No, CustomMessageBox.MessageBoxResult.None
+                                LogOperation(featureName, "用户拒绝", operationDescription)
+                                Return False
+                        End Select
+                    Catch ex As Exception
+                        LogError("权限确认", $"显示确认对话框失败: {ex.Message}，默认拒绝")
+                        Return False
+                    End Try
+
                 Case Else
                     LogOperation(featureName, "未知权限", $"权限级别: {permissionItem.Permission}")
                     Return False
@@ -547,7 +599,7 @@ Namespace ToolWindows
         ''' 获取工具权限
         ''' </summary>
         Public Function GetToolPermission(toolName As String) As PermissionLevel
-            Dim permissionItem = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = toolName)
+            Dim permissionItem = Tools.FirstOrDefault(Function(p) p.FeatureName = toolName)
             If permissionItem Is Nothing Then
                 Return PermissionLevel.Ask ' 默认询问
             End If
@@ -558,13 +610,13 @@ Namespace ToolWindows
         ''' 设置工具权限
         ''' </summary>
         Public Sub SetToolPermission(toolName As String, permissionLevel As PermissionLevel)
-            Dim permissionItem = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = toolName)
+            Dim permissionItem = Tools.FirstOrDefault(Function(p) p.FeatureName = toolName)
             If permissionItem IsNot Nothing Then
                 permissionItem.Permission = permissionLevel
                 LogOperation("权限设置", "成功", $"工具 {toolName} 权限设置为 {permissionLevel}")
             Else
                 ' 添加新的权限项
-                _permissionItems.Add(New PermissionItem With {
+                Tools.Add(New PermissionItem With {
                     .FeatureName = toolName,
                     .Description = $"工具 {toolName}",
                     .Permission = permissionLevel
@@ -616,6 +668,32 @@ Namespace ToolWindows
                 System.Diagnostics.Debug.WriteLine($"MCP ActivityLog Error: {ex.Message}")
             End Try
         End Sub
+
+        ''' <summary>
+        ''' 尝试复制文本到剪贴板
+        ''' </summary>
+        Private Function TryCopyToClipboard(text As String, Optional description As String = "") As Boolean
+            Try
+                System.Windows.Clipboard.SetText(text)
+                LogInfo("剪贴板", $"已复制{If(String.IsNullOrEmpty(description), "", $" {description}")}内容到剪贴板")
+                Return True
+            Catch ex As Exception
+                LogError("剪贴板", $"复制失败: {ex.Message}")
+                Return False
+            End Try
+        End Function
+
+        ''' <summary>
+        ''' 显示用户消息窗口
+        ''' </summary>
+        Private Sub ShowUserMessageWindow(title As String, message As String, command As String)
+            Try
+                Dim window As New UserMessageWindow(title, message, command)
+                window.Show()
+            Catch ex As Exception
+                LogError("UI错误", $"显示用户消息窗口失败: {ex.Message}")
+            End Try
+        End Sub
     End Class
 
     ''' <summary>
@@ -654,18 +732,57 @@ Namespace ToolWindows
     End Class
 
     ''' <summary>
-    ''' 交互服务 - 简化实现
+    ''' 交互服务 - 使用新的 UI 组件实现
     ''' </summary>
     Public Class InteractionService
         Implements IInteraction
 
         Public Sub ShowCopyCommandDialog(title As String, message As String, command As String) Implements IInteraction.ShowCopyCommandDialog
             Try
-                ' 在 VSIX 环境中使用 ActivityLog 记录，不显示对话框
-                System.Diagnostics.Debug.WriteLine($"{title}: {message}")
-                System.Diagnostics.Debug.WriteLine($"Command: {command}")
+                ' 尝试复制到剪贴板
+                Dim clipboardSuccess = TryCopyToClipboard(command, "命令")
+
+                ' 根据复制结果调整消息
+                Dim displayMessage As String
+                If clipboardSuccess Then
+                    displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}命令已复制到剪贴板，请查看下方的命令框。"
+                Else
+                    displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}剪贴板操作失败，请手动复制下方的命令。"
+                End If
+
+                ' 显示用户消息窗口
+                ShowUserMessageWindow(title, displayMessage, command)
             Catch ex As Exception
                 System.Diagnostics.Debug.WriteLine($"Interaction error: {ex.Message}")
+                ' 降级到简单的调试输出
+                System.Diagnostics.Debug.WriteLine($"{title}: {message}")
+                System.Diagnostics.Debug.WriteLine($"Command: {command}")
+            End Try
+        End Sub
+
+        ''' <summary>
+        ''' 尝试复制文本到剪贴板
+        ''' </summary>
+        Private Shared Function TryCopyToClipboard(text As String, Optional description As String = "") As Boolean
+            Try
+                System.Windows.Forms.Clipboard.SetText(text)
+                System.Diagnostics.Debug.WriteLine($"已复制{If(String.IsNullOrEmpty(description), "", $" {description}")}内容到剪贴板")
+                Return True
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"剪贴板复制失败: {ex.Message}")
+                Return False
+            End Try
+        End Function
+
+        ''' <summary>
+        ''' 显示用户消息窗口
+        ''' </summary>
+        Private Shared Sub ShowUserMessageWindow(title As String, message As String, command As String)
+            Try
+                Dim window As New UserMessageWindow(title, message, command)
+                window.Show()
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"显示用户消息窗口失败: {ex.Message}")
             End Try
         End Sub
     End Class

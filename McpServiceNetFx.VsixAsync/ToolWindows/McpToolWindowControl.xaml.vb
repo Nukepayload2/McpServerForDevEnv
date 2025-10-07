@@ -9,6 +9,7 @@ Imports System.Windows.Media
 Imports Microsoft.Win32
 Imports System.Globalization
 Imports McpServiceNetFx.Models
+Imports McpServiceNetFx.VsixAsync.Views
 
 Namespace ToolWindows
     ''' <summary>
@@ -202,7 +203,7 @@ Namespace ToolWindows
                 _state.LogInfo("HelpAction", "打开 ActivityLog 帮助文档")
             Catch ex As Exception
                 _state.LogError("HelpAction", $"无法打开帮助文档: {ex.Message}")
-                MessageBox.Show($"无法打开帮助文档: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error)
+                CustomMessageBox.Show(Nothing, $"无法打开帮助文档: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
 
@@ -213,7 +214,7 @@ Namespace ToolWindows
                 ShowStatusMessage("界面日志已清空")
             Catch ex As Exception
                 _state.LogError("UIAction", $"清空日志失败: {ex.Message}")
-                MessageBox.Show($"清空日志失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error)
+                CustomMessageBox.Show(Nothing, $"清空日志失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
 
@@ -224,7 +225,7 @@ Namespace ToolWindows
                     If newPort > 0 AndAlso newPort <= 65535 Then
                         ' 检查服务是否正在运行
                         If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
-                            MessageBox.Show("请先停止 MCP 服务，然后再修改端口号", "提示", MessageBoxButton.OK, MessageBoxImage.Information)
+                            CustomMessageBox.Show(Nothing, "请先停止 MCP 服务，然后再修改端口号", "提示", CustomMessageBox.MessageBoxType.Information)
                             PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                             Return
                         End If
@@ -243,16 +244,16 @@ Namespace ToolWindows
                         ShowStatusMessage($"端口号已保存为: {newPort}")
                         _state.LogInfo("Configuration", $"端口号已更新为: {newPort}")
                     Else
-                        MessageBox.Show("端口号必须在 1-65535 范围内", "错误", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        CustomMessageBox.Show(Nothing, "端口号必须在 1-65535 范围内", "错误", CustomMessageBox.MessageBoxType.Warning)
                         PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                     End If
                 Else
-                    MessageBox.Show("请输入有效的端口号", "错误", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    CustomMessageBox.Show(Nothing, "请输入有效的端口号", "错误", CustomMessageBox.MessageBoxType.Warning)
                     PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                 End If
             Catch ex As Exception
                 _state.LogError("Configuration", $"保存端口号失败: {ex.Message}")
-                MessageBox.Show($"保存端口号失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error)
+                CustomMessageBox.Show(Nothing, $"保存端口号失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
 
@@ -260,7 +261,7 @@ Namespace ToolWindows
             Try
                 ' 检查服务是否正在运行
                 If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
-                    MessageBox.Show("请先停止 MCP 服务，然后再重置端口号", "提示", MessageBoxButton.OK, MessageBoxImage.Information)
+                    CustomMessageBox.Show(Nothing, "请先停止 MCP 服务，然后再重置端口号", "提示", CustomMessageBox.MessageBoxType.Information)
                     Return
                 End If
 
@@ -282,7 +283,7 @@ Namespace ToolWindows
                 _state.LogInfo("Configuration", "端口号已重置为默认值: 38080")
             Catch ex As Exception
                 _state.LogError("Configuration", $"重置端口号失败: {ex.Message}")
-                MessageBox.Show($"重置端口号失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error)
+                CustomMessageBox.Show(Nothing, $"重置端口号失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
     End Class

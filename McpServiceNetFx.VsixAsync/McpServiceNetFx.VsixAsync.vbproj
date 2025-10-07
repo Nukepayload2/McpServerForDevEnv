@@ -72,9 +72,23 @@
     <Compile Include="ToolWindows\McpToolWindowControl.xaml.vb">
       <DependentUpon>McpToolWindowControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CustomMessageBox.xaml.vb">
+      <DependentUpon>CustomMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserMessageWindow.xaml.vb">
+      <DependentUpon>UserMessageWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="ToolWindows\McpToolWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CustomMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserMessageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
