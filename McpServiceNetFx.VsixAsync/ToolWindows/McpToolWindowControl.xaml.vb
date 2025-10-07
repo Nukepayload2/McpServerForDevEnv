@@ -1,15 +1,9 @@
 Imports System
 Imports System.Diagnostics
-Imports System.IO
-Imports System.Linq
-Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Data
 Imports System.Windows.Media
-Imports Microsoft.Win32
 Imports System.Globalization
-Imports McpServiceNetFx.Models
-Imports McpServiceNetFx.VsixAsync.Views
 
 Namespace ToolWindows
     ''' <summary>

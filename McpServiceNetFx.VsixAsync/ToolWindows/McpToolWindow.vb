@@ -1,5 +1,3 @@
-Imports System
-Imports System.Collections.Generic
 Imports System.Runtime.InteropServices
 Imports Microsoft.VisualStudio.Imaging
 Imports Microsoft.VisualStudio.Shell

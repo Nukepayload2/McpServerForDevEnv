@@ -1,17 +1,12 @@
 Imports System
 Imports System.Collections.ObjectModel
 Imports System.Collections.Generic
-Imports System.ComponentModel
-Imports System.IO
 Imports System.Linq
 Imports Microsoft.VisualStudio.Shell
 Imports Microsoft.VisualStudio.Shell.Interop
 Imports EnvDTE80
 Imports System.Threading.Tasks
-Imports System.Runtime.CompilerServices
-Imports McpServiceNetFx.Models
 Imports McpServiceNetFx.VsixAsync.Helpers
-Imports System.ServiceModel
 Imports Microsoft.VisualStudio.Threading
 
 Namespace ToolWindows
@@ -465,14 +460,6 @@ Namespace ToolWindows
         End Function
 
         ''' <summary>
-        ''' 检查工具权限
-        ''' </summary>
-        Public Function CheckToolPermission(toolName As String) As Boolean
-            Dim tool = Tools.FirstOrDefault(Function(t) t.FeatureName = toolName)
-            Return tool?.Permission <> PermissionLevel.Deny
-        End Function
-
-        ''' <summary>
         ''' 获取服务状态摘要
         ''' </summary>
         Public Function GetServiceSummary() As String
@@ -503,7 +490,6 @@ Namespace ToolWindows
             Return $"工具: {Tools.Count} (允许: {allowedCount}, 询问: {askCount}, 拒绝: {deniedCount})"
         End Function
 
-
         ''' <summary>
         ''' 实现 IMcpLogger.LogServiceAction
         ''' </summary>
@@ -525,12 +511,12 @@ Namespace ToolWindows
         ''' </summary>
         Public Function CheckPermission(featureName As String, operationDescription As String) As Boolean Implements IMcpPermissionHandler.CheckPermission
             Dim permissionItem = Tools.FirstOrDefault(Function(p) p.FeatureName = featureName)
-            If permissionItem Is Nothing Then
-                LogOperation("权限检查", "未找到", $"功能 {featureName} 的权限配置未找到，默认允许")
-                Return True ' 默认允许
+            Dim level = PermissionLevel.Ask
+            If permissionItem IsNot Nothing Then
+                level = permissionItem.Permission
             End If
 
-            Select Case permissionItem.Permission
+            Select Case level
                 Case PermissionLevel.Allow
                     LogOperation(featureName, "允许", operationDescription)
                     Return True
@@ -564,42 +550,9 @@ Namespace ToolWindows
                         LogError("权限确认", $"显示确认对话框失败: {ex.Message}，默认拒绝")
                         Return False
                     End Try
-
-                Case Else
-                    LogOperation(featureName, "未知权限", $"权限级别: {permissionItem.Permission}")
-                    Return False
             End Select
+            Return False
         End Function
-
-        ''' <summary>
-        ''' 获取工具权限
-        ''' </summary>
-        Public Function GetToolPermission(toolName As String) As PermissionLevel
-            Dim permissionItem = Tools.FirstOrDefault(Function(p) p.FeatureName = toolName)
-            If permissionItem Is Nothing Then
-                Return PermissionLevel.Ask ' 默认询问
-            End If
-            Return permissionItem.Permission
-        End Function
-
-        ''' <summary>
-        ''' 设置工具权限
-        ''' </summary>
-        Public Sub SetToolPermission(toolName As String, permissionLevel As PermissionLevel)
-            Dim permissionItem = Tools.FirstOrDefault(Function(p) p.FeatureName = toolName)
-            If permissionItem IsNot Nothing Then
-                permissionItem.Permission = permissionLevel
-                LogOperation("权限设置", "成功", $"工具 {toolName} 权限设置为 {permissionLevel}")
-            Else
-                ' 添加新的权限项
-                Tools.Add(New PermissionItem With {
-                    .FeatureName = toolName,
-                    .Description = $"工具 {toolName}",
-                    .Permission = permissionLevel
-                })
-                LogOperation("权限设置", "成功", $"为工具 {toolName} 添加权限配置: {permissionLevel}")
-            End If
-        End Sub
 
         ''' <summary>
         ''' 清空日志
@@ -645,31 +598,6 @@ Namespace ToolWindows
             End Try
         End Sub
 
-        ''' <summary>
-        ''' 尝试复制文本到剪贴板
-        ''' </summary>
-        Private Function TryCopyToClipboard(text As String, Optional description As String = "") As Boolean
-            Try
-                System.Windows.Clipboard.SetText(text)
-                LogInfo("剪贴板", $"已复制{If(String.IsNullOrEmpty(description), "", $" {description}")}内容到剪贴板")
-                Return True
-            Catch ex As Exception
-                LogError("剪贴板", $"复制失败: {ex.Message}")
-                Return False
-            End Try
-        End Function
-
-        ''' <summary>
-        ''' 显示用户消息窗口
-        ''' </summary>
-        Private Sub ShowUserMessageWindow(title As String, message As String, command As String)
-            Try
-                Dim window As New UserMessageWindow(title, message, command)
-                window.Show()
-            Catch ex As Exception
-                LogError("UI错误", $"显示用户消息窗口失败: {ex.Message}")
-            End Try
-        End Sub
     End Class
 
     ''' <summary>

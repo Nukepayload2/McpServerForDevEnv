@@ -1,8 +1,6 @@
 Imports System
 Imports System.ComponentModel.Design
-Imports System.Threading
 Imports Microsoft.VisualStudio.Shell
-Imports Microsoft.VisualStudio.Shell.Interop
 Imports Task = System.Threading.Tasks.Task
 
 Namespace Commands

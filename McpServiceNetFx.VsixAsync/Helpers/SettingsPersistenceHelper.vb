@@ -1,7 +1,5 @@
 Imports System
-Imports Microsoft.VisualStudio.Shell
 Imports Microsoft.VisualStudio.Shell.Settings
-Imports McpServiceNetFx.Models
 Imports System.Collections.Generic
 Imports Microsoft.VisualStudio.Settings
 
