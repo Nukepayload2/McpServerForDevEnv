@@ -68,7 +68,7 @@ Partial Public Class MainWindow
             End If
 
             ' 创建并启动 MCP 服务，传入工具管理器
-            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Me, Dispatcher, _toolManager)
+            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, Dispatcher, _toolManager)
             _mcpService.Start()
 
             ' 更新 UI 状态

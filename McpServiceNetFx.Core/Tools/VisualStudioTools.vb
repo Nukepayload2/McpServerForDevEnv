@@ -1,14 +1,13 @@
 Imports System.Text
-Imports System.Windows.Threading
 Imports EnvDTE80
 Imports VSLangProj
 
 Public Class VisualStudioTools
     Private ReadOnly _dte2 As DTE2
-    Private ReadOnly _dispatcher As Dispatcher
+    Private ReadOnly _dispatcher As IDispatcher
     Private ReadOnly _logger As IMcpLogger
 
-    Public Sub New(dte2 As DTE2, dispatcher As Dispatcher, logger As IMcpLogger)
+    Public Sub New(dte2 As DTE2, dispatcher As IDispatcher, logger As IMcpLogger)
         _dte2 = dte2
         _dispatcher = dispatcher
         _logger = logger
@@ -29,7 +28,7 @@ Public Class VisualStudioTools
 
         Try
             ' 在UI线程上执行DTE操作
-            Await UtilityModule.SafeInvokeAsync(_dispatcher,
+            Await _dispatcher.InvokeAsync(
             Async Function()
                 If _dte2.Solution Is Nothing Then
                     Throw New Exception("没有打开的解决方案")
@@ -86,7 +85,7 @@ Public Class VisualStudioTools
             Dim targetProject As EnvDTE.Project = Nothing
 
             ' 在UI线程上查找项目并启动构建
-            Await UtilityModule.SafeInvokeAsync(_dispatcher,
+            Await _dispatcher.InvokeAsync(
             Async Function()
                 If _dte2.Solution Is Nothing Then
                     Throw New Exception("没有打开的解决方案")
@@ -157,7 +156,7 @@ Public Class VisualStudioTools
         }
 
         ' 需要在UI线程上执行
-        UtilityModule.SafeInvoke(_dispatcher,
+        _dispatcher.Invoke(
         Sub()
             Try
                 ' 获取错误列表工具窗口
@@ -238,7 +237,7 @@ Public Class VisualStudioTools
     Public Function GetSolutionInformation() As SolutionInfoResponse
         Dim response As New SolutionInfoResponse()
 
-        UtilityModule.SafeInvoke(_dispatcher,
+        _dispatcher.Invoke(
         Sub()
             If _dte2.Solution IsNot Nothing Then
                 response.FullName = _dte2.Solution.FullName
@@ -283,7 +282,7 @@ Public Class VisualStudioTools
     Public Function GetActiveDocument() As ActiveDocumentResponse
         Dim documentPath As String = Nothing
 
-        UtilityModule.SafeInvoke(_dispatcher,
+        _dispatcher.Invoke(
         Sub()
             Try
                 ' 检查是否有活动文档
@@ -314,7 +313,7 @@ Public Class VisualStudioTools
     Public Function GetAllOpenDocuments() As OpenDocumentsResponse
         Dim documentsList As New List(Of DocumentInfo)
 
-        UtilityModule.SafeInvoke(_dispatcher,
+        _dispatcher.Invoke(
         Sub()
             Try
                 ' 遍历所有打开的文档
@@ -367,7 +366,7 @@ Public Class VisualStudioTools
                 Dim processedFiles As New List(Of String)
 
                 ' 在UI线程上执行DTE操作
-                UtilityModule.SafeInvoke(_dispatcher,
+                _dispatcher.Invoke(
                 Sub()
                     ' 查找指定项目
                     Dim targetProject As EnvDTE.Project = Nothing

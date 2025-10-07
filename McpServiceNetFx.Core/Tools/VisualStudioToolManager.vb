@@ -34,7 +34,7 @@ Public Class VisualStudioToolManager
     ''' </summary>
     ''' <param name="dte2">Visual Studio DTE2 实例</param>
     ''' <param name="dispatcher">UI 线程调度器</param>
-    Public Sub CreateVsTools(dte2 As EnvDTE80.DTE2, dispatcher As Threading.Dispatcher)
+    Public Sub CreateVsTools(dte2 As EnvDTE80.DTE2, dispatcher As IDispatcher)
         Try
             If _isInitialized Then
                 _logger?.LogMcpRequest("工具管理器", "数据上下文", "工具管理器已初始化，跳过重复创建")

@@ -1,0 +1,599 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>Visual Studio MCP 服务器</value>
+  </data>
+  <data name="TabServiceManagement" xml:space="preserve">
+    <value>服务管理</value>
+  </data>
+  <data name="TabMcpPermissions" xml:space="preserve">
+    <value>MCP 功能授权</value>
+  </data>
+  <data name="TabLogs" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="TabAbout" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="ButtonRefresh" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="ButtonStartService" xml:space="preserve">
+    <value>启动服务</value>
+  </data>
+  <data name="ButtonStopService" xml:space="preserve">
+    <value>停止服务</value>
+  </data>
+  <data name="ButtonAllowAll" xml:space="preserve">
+    <value>全部允许</value>
+  </data>
+  <data name="ButtonAskAll" xml:space="preserve">
+    <value>全部询问</value>
+  </data>
+  <data name="ButtonSaveConfig" xml:space="preserve">
+    <value>保存配置</value>
+  </data>
+  <data name="ButtonReload" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="ButtonClearLogs" xml:space="preserve">
+    <value>清空日志</value>
+  </data>
+  <data name="ButtonExportLogs" xml:space="preserve">
+    <value>导出日志</value>
+  </data>
+  <data name="HeaderWindowCaption" xml:space="preserve">
+    <value>窗口标题</value>
+  </data>
+  <data name="HeaderSolutionPath" xml:space="preserve">
+    <value>解决方案路径</value>
+  </data>
+  <data name="HeaderVersion" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="HeaderProcessId" xml:space="preserve">
+    <value>进程ID</value>
+  </data>
+  <data name="GroupServiceSettings" xml:space="preserve">
+    <value>服务设置</value>
+  </data>
+  <data name="LabelInstance" xml:space="preserve">
+    <value>实例:</value>
+  </data>
+  <data name="LabelPort" xml:space="preserve">
+    <value>端口号:</value>
+  </data>
+  <data name="LabelStatus" xml:space="preserve">
+    <value>状态:</value>
+  </data>
+  <data name="LabelClientConfig" xml:space="preserve">
+    <value>客户端配置:</value>
+  </data>
+  <data name="TextSelectInstance" xml:space="preserve">
+    <value>请在上方列表中选择实例</value>
+  </data>
+  <data name="TextServiceNotStarted" xml:space="preserve">
+    <value>服务未启动</value>
+  </data>
+  <data name="TabJsonConfig" xml:space="preserve">
+    <value>JSON 配置</value>
+  </data>
+  <data name="TabClaudeConfig" xml:space="preserve">
+    <value>Claude CLI 配置</value>
+  </data>
+  <data name="TextJsonConfigHint" xml:space="preserve">
+    <value>将此配置添加到您的 MCP 客户端配置文件中</value>
+  </data>
+  <data name="TextClaudeConfigHint" xml:space="preserve">
+    <value>运行此命令添加 MCP 服务器到 Claude Desktop</value>
+  </data>
+  <data name="HeaderFeatureName" xml:space="preserve">
+    <value>功能名称</value>
+  </data>
+  <data name="HeaderDescription" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="HeaderPermission" xml:space="preserve">
+    <value>权限</value>
+  </data>
+  <data name="HeaderTime" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="HeaderOperation" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="HeaderResult" xml:space="preserve">
+    <value>结果</value>
+  </data>
+  <data name="HeaderDetails" xml:space="preserve">
+    <value>详情</value>
+  </data>
+  <data name="TextAboutTitle" xml:space="preserve">
+    <value>关于本软件</value>
+  </data>
+  <data name="TextAboutContent" xml:space="preserve">
+    <value>© 2025 Nukepayload2
+本软件在 Apache License 2.0 下分发，永久免费。
+本软件受到中国和国际版权保护，倒卖将面临法律制裁。
+隐私协议：本软件收集你的 Microsoft Visual Studio 项目信息用于支撑基本功能，并且信息仅保存在本地。
+本软件不支持信息远程传输，仅能将信息在本地网络回环传输。</value>
+  </data>
+  <data name="UserMessageTitle" xml:space="preserve">
+    <value>用户消息</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>提示信息:</value>
+  </data>
+  <data name="ButtonClose" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="CustomMessageBoxTitle" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="ButtonYes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="ButtonNo" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="ButtonOK" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="MsgConfirmClearLogs" xml:space="preserve">
+    <value>确定要清空所有日志吗？此操作不可撤销。</value>
+  </data>
+  <data name="TitleConfirmClear" xml:space="preserve">
+    <value>确认清空</value>
+  </data>
+  <data name="MsgLogsCleared" xml:space="preserve">
+    <value>日志已清空</value>
+  </data>
+  <data name="TitleOperationSuccess" xml:space="preserve">
+    <value>操作成功</value>
+  </data>
+  <data name="MsgClearLogsFailed" xml:space="preserve">
+    <value>清空日志失败: {0}</value>
+  </data>
+  <data name="MsgNoLogsToExport" xml:space="preserve">
+    <value>没有日志可以导出</value>
+  </data>
+  <data name="TitleHint" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="FilterXmlFiles" xml:space="preserve">
+    <value>XML 文件 (*.xml)|*.xml|所有文件 (*.*)|*.*</value>
+  </data>
+  <data name="TitleExportLogs" xml:space="preserve">
+    <value>导出日志</value>
+  </data>
+  <data name="MsgLogsExported" xml:space="preserve">
+    <value>日志已导出到: {0}</value>
+  </data>
+  <data name="TitleExportSuccess" xml:space="preserve">
+    <value>导出成功</value>
+  </data>
+  <data name="MsgExportLogsFailed" xml:space="preserve">
+    <value>导出日志失败: {0}</value>
+  </data>
+  <data name="MsgServiceAlreadyRunning" xml:space="preserve">
+    <value>服务已经在运行中</value>
+  </data>
+  <data name="MsgSelectVsInstance" xml:space="preserve">
+    <value>请先选择一个 Visual Studio 实例</value>
+  </data>
+  <data name="MsgServiceNotRunning" xml:space="preserve">
+    <value>服务未运行</value>
+  </data>
+  <data name="MsgStartServiceFailed" xml:space="preserve">
+    <value>启动服务失败: {0}</value>
+  </data>
+  <data name="MsgStopServiceFailed" xml:space="preserve">
+    <value>停止服务失败: {0}</value>
+  </data>
+  <data name="MsgVsInstanceExited" xml:space="preserve">
+    <value>关联的 Visual Studio 实例已退出，MCP 服务已自动停止</value>
+  </data>
+  <data name="TitleInstanceExited" xml:space="preserve">
+    <value>实例退出</value>
+  </data>
+  <data name="MsgVsInstanceClosing" xml:space="preserve">
+    <value>关联的 Visual Studio 实例正在关闭，MCP 服务已自动停止</value>
+  </data>
+  <data name="TitleInstanceClosing" xml:space="preserve">
+    <value>实例关闭</value>
+  </data>
+  <data name="StatusServiceRunning" xml:space="preserve">
+    <value>服务运行中 - 端口: {0}</value>
+  </data>
+  <data name="MsgLoadPermissionsFailed" xml:space="preserve">
+    <value>加载权限配置失败: {0}</value>
+  </data>
+  <data name="MsgSavePermissionsSuccess" xml:space="preserve">
+    <value>权限配置已保存</value>
+  </data>
+  <data name="TitleSaveSuccess" xml:space="preserve">
+    <value>保存成功</value>
+  </data>
+  <data name="MsgSavePermissionsFailed" xml:space="preserve">
+    <value>保存权限配置失败: {0}</value>
+  </data>
+  <data name="MsgPermissionRequest" xml:space="preserve">
+    <value>是否允许执行以下操作？{0}{0}功能: {1}{0}描述: {2}</value>
+  </data>
+  <data name="TitlePermissionConfirm" xml:space="preserve">
+    <value>权限确认</value>
+  </data>
+  <data name="MsgRefreshVsInstancesFailed" xml:space="preserve">
+    <value>刷新 Visual Studio 实例列表失败: {0}</value>
+  </data>
+  <data name="MsgCreateToolManagerContextFailed" xml:space="preserve">
+    <value>创建工具管理器数据上下文失败: {0}</value>
+  </data>
+  <data name="MsgNoInstanceSelected" xml:space="preserve">
+    <value>未选择实例</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="TitleWarning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="TitleInfo" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="TitleConfirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="FileNoFile" xml:space="preserve">
+    <value>无文件</value>
+  </data>
+
+  <!-- Log operation common strings -->
+  <data name="LogToolManager" xml:space="preserve">
+    <value>工具管理器</value>
+  </data>
+  <data name="LogPermissions" xml:space="preserve">
+    <value>权限管理</value>
+  </data>
+  <data name="LogPermissionCheck" xml:space="preserve">
+    <value>权限检查</value>
+  </data>
+  <data name="LogGetToolManager" xml:space="preserve">
+    <value>获取工具管理器</value>
+  </data>
+  <data name="LogBuildSolution" xml:space="preserve">
+    <value>构建解决方案</value>
+  </data>
+  <data name="LogBuildProject" xml:space="preserve">
+    <value>构建项目</value>
+  </data>
+  <data name="LogGetAllOpenDocuments" xml:space="preserve">
+    <value>获取所有打开文档</value>
+  </data>
+  <data name="LogGetActiveDocument" xml:space="preserve">
+    <value>获取活动文档</value>
+  </data>
+  <data name="LogGetSolutionInfo" xml:space="preserve">
+    <value>获取解决方案信息</value>
+  </data>
+  <data name="LogGetErrorList" xml:space="preserve">
+    <value>获取错误列表</value>
+  </data>
+  <data name="LogRunProjectCustomTools" xml:space="preserve">
+    <value>运行项目自定义工具</value>
+  </data>
+
+  <!-- Log operation results -->
+  <data name="LogSuccess" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="LogFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="LogCompleted" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="LogSkipped" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="LogStarted" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="LogAllowed" xml:space="preserve">
+    <value>已允许</value>
+  </data>
+  <data name="LogDenied" xml:space="preserve">
+    <value>已拒绝</value>
+  </data>
+  <data name="LogAskUser" xml:space="preserve">
+    <value>询问用户</value>
+  </data>
+  <data name="LogUserAllowed" xml:space="preserve">
+    <value>用户允许</value>
+  </data>
+  <data name="LogUserDenied" xml:space="preserve">
+    <value>用户拒绝</value>
+  </data>
+  <data name="LogUnknownPermission" xml:space="preserve">
+    <value>未知权限</value>
+  </data>
+
+  <!-- Log operation details -->
+  <data name="LogFrameworkCreated" xml:space="preserve">
+    <value>工具管理器框架已创建，等待数据上下文</value>
+  </data>
+  <data name="LogFrameworkCreateFailed" xml:space="preserve">
+    <value>工具管理器框架创建失败</value>
+  </data>
+  <data name="LogInstanceCanceled" xml:space="preserve">
+    <value>取消选择 Visual Studio 实例</value>
+  </data>
+  <data name="LogDataContextCreated" xml:space="preserve">
+    <value>数据上下文创建成功</value>
+  </data>
+  <data name="LogDataContextCreateFailed" xml:space="preserve">
+    <value>数据上下文创建失败</value>
+  </data>
+  <data name="LogPermissionsLoaded" xml:space="preserve">
+    <value>权限配置加载完成</value>
+  </data>
+  <data name="LogPermissionSync" xml:space="preserve">
+    <value>权限同步</value>
+  </data>
+  <data name="LogPermissionSet" xml:space="preserve">
+    <value>权限批量设置</value>
+  </data>
+  <data name="LogPermissionConfigNotFound" xml:space="preserve">
+    <value>未找到权限配置，使用默认权限: 询问</value>
+  </data>
+  <data name="LogPermissionConfigFound" xml:space="preserve">
+    <value>找到权限配置</value>
+  </data>
+  <data name="LogGetPermission" xml:space="preserve">
+    <value>获取权限</value>
+  </data>
+  <data name="LogToolManagerNotInitialized" xml:space="preserve">
+    <value>工具管理器尚未初始化</value>
+  </data>
+  <data name="LogNoPermissionConfig" xml:space="preserve">
+    <value>工具管理器中没有权限配置</value>
+  </data>
+  <data name="LogBatchSetCompleted" xml:space="preserve">
+    <value>所有权限已设置为: {0}</value>
+  </data>
+  <data name="LogAddedNewToolPermissions" xml:space="preserve">
+    <value>添加了 {0} 个新工具权限项</value>
+  </data>
+  <data name="LogMcpRequest" xml:space="preserve">
+    <value>MCP请求 - {0}</value>
+  </data>
+  <data name="LogServiceStarted" xml:space="preserve">
+    <value>服务启动</value>
+  </data>
+  <data name="LogServiceStopped" xml:space="preserve">
+    <value>服务停止</value>
+  </data>
+  <data name="LogVsExited" xml:space="preserve">
+    <value>Visual Studio 退出</value>
+  </data>
+  <data name="LogVsShutdown" xml:space="preserve">
+    <value>Visual Studio 关闭</value>
+  </data>
+  <data name="LogExecutionException" xml:space="preserve">
+    <value>执行异常</value>
+  </data>
+  <data name="LogParameterConversionFailed" xml:space="preserve">
+    <value>参数转换失败</value>
+  </data>
+
+  <!-- Tool log details -->
+  <data name="LogBuildStart" xml:space="preserve">
+    <value>开始构建</value>
+  </data>
+  <data name="LogWithConfiguration" xml:space="preserve">
+    <value>配置: {0}</value>
+  </data>
+  <data name="LogProjectAndConfig" xml:space="preserve">
+    <value>项目: {0}, 配置: {1}</value>
+  </data>
+  <data name="LogGetAllOpenDocsStart" xml:space="preserve">
+    <value>获取所有打开文档信息</value>
+  </data>
+  <data name="LogFoundOpenDocs" xml:space="preserve">
+    <value>共找到 {0} 个打开的文档</value>
+  </data>
+  <data name="LogNoOpenDocs" xml:space="preserve">
+    <value>没有找到打开的文档</value>
+  </data>
+  <data name="LogGetActiveDocStart" xml:space="preserve">
+    <value>获取当前活动文档信息</value>
+  </data>
+  <data name="LogActiveDocPath" xml:space="preserve">
+    <value>文档路径: {0}</value>
+  </data>
+  <data name="LogNoActiveDoc" xml:space="preserve">
+    <value>没有活动文档</value>
+  </data>
+  <data name="LogGetSolutionInfoStart" xml:space="preserve">
+    <value>获取解决方案详细信息</value>
+  </data>
+  <data name="LogProjectCount" xml:space="preserve">
+    <value>项目数: {0}</value>
+  </data>
+  <data name="LogGetErrorListStart" xml:space="preserve">
+    <value>获取错误列表，过滤级别: {0}</value>
+  </data>
+  <data name="LogErrorListCounts" xml:space="preserve">
+    <value>错误数: {0}, 警告数: {1}</value>
+  </data>
+  <data name="LogRunCustomToolsStart" xml:space="preserve">
+    <value>运行项目自定义工具，项目: {0}</value>
+  </data>
+  <data name="LogParameterConversionFailure" xml:space="preserve">
+    <value>参数 {0} 转换失败: {1}</value>
+  </data>
+  <data name="LogInstanceAndToolCount" xml:space="preserve">
+    <value>实例: {0}, 工具数量: {1}</value>
+  </data>
+  <data name="LogServiceStartedWithDetails" xml:space="preserve">
+    <value>端口: {0}, 实例: {1}, 工具数量: {2}</value>
+  </data>
+  <data name="LogUserStopped" xml:space="preserve">
+    <value>用户手动停止</value>
+  </data>
+  <data name="LogVsInstanceServiceStop" xml:space="preserve">
+    <value>关联的 Visual Studio 实例已退出，服务将自动停止</value>
+  </data>
+  <data name="LogVsInstanceServiceStopClosing" xml:space="preserve">
+    <value>关联的 Visual Studio 实例正在关闭，服务将自动停止</value>
+  </data>
+  <data name="LogFeaturePermission" xml:space="preserve">
+    <value>功能: {0}, 权限: {1}</value>
+  </data>
+  <data name="LogFeaturePermissionValue" xml:space="preserve">
+    <value>功能: {0}, 权限值: {1}</value>
+  </data>
+  <data name="LogPermissionRequestDetails" xml:space="preserve">
+    <value>功能: {0}, 描述: {1}</value>
+  </data>
+  <data name="LogPermissionValueDetails" xml:space="preserve">
+    <value>权限值: {0}</value>
+  </data>
+
+  <!-- Additional log strings for missing patterns -->
+  <data name="LogToolExecutionFailed" xml:space="preserve">
+    <value>工具执行失败: {0}</value>
+  </data>
+  <data name="LogParameterCannotBeNull" xml:space="preserve">
+    <value>参数不能为空</value>
+  </data>
+  <data name="LogMissingRequiredParameter" xml:space="preserve">
+    <value>缺少必需参数: {0}</value>
+  </data>
+  <data name="LogToolDataContextNotSet" xml:space="preserve">
+    <value>工具数据上下文未设置，无法执行工具</value>
+  </data>
+  <data name="LogPermissionCheckException" xml:space="preserve">
+    <value>权限检查</value>
+  </data>
+  <data name="LogException" xml:space="preserve">
+    <value>异常</value>
+  </data>
+</root>

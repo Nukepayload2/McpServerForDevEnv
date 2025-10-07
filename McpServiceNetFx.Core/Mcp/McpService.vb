@@ -1,6 +1,4 @@
 Imports EnvDTE80
-Imports System.Windows.Threading
-Imports System.Windows
 Imports System.ServiceModel
 Imports System.ServiceModel.Description
 Imports System.ServiceModel.Web
@@ -17,19 +15,21 @@ Public Class McpService
     Private ReadOnly _dte2 As DTE2
     Private ReadOnly _port As Integer
     Private ReadOnly _logger As IMcpLogger
-    Private ReadOnly _permissionHandler As IMcpPermissionHandler
-    Private ReadOnly _dispatcher As Dispatcher
+    Private ReadOnly _dispatcher As IDispatcher
     Private _serviceHost As ServiceHost
     Private _isRunning As Boolean = False
-    Private _toolManager As VisualStudioToolManager
+    Private ReadOnly _toolManager As VisualStudioToolManager
+    Private ReadOnly _clipboard As IClipboard
+    Private ReadOnly _interaction As IInteraction
 
-    Sub New(dte2 As DTE2, port As Integer, logger As IMcpLogger, permissionHandler As IMcpPermissionHandler, dispatcher As Dispatcher, toolManager As VisualStudioToolManager)
+    Sub New(dte2 As DTE2, port As Integer, logger As IMcpLogger, dispatcher As IDispatcher, toolManager As VisualStudioToolManager, clipboard As IClipboard, interaction As IInteraction)
         _dte2 = dte2
         _port = port
         _logger = logger
-        _permissionHandler = permissionHandler
         _dispatcher = dispatcher
         _toolManager = toolManager
+        _clipboard = clipboard
+        _interaction = interaction
     End Sub
 
     ''' <summary>
@@ -170,12 +170,11 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
 
     Private Sub ShowUserMessageWindow(title As String, message As String, command As String)
         Try
-            SafeInvoke(_dispatcher,
+            _dispatcher.Invoke(
             Sub()
                 Try
-                    Dim messageWindow As New UserMessageWindow(title, message, command)
-                    My.Computer.Audio.PlaySystemSound(System.Media.SystemSounds.Exclamation)
-                    messageWindow.ShowDialog()
+                    System.Media.SystemSounds.Exclamation.Play()
+                    _interaction.ShowCopyCommandDialog(title, message, command)
                 Catch ex As Exception
                     _logger?.LogMcpRequest("MCP服务", "显示消息窗口失败", ex.Message)
                 End Try
@@ -193,7 +192,7 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
 
             For retry = 1 To maxRetries
                 Try
-                    Clipboard.SetDataObject(command, True)
+                    _clipboard.SetText(command)
                     _logger?.LogMcpRequest(operation, "剪贴板操作", "命令已成功复制到剪贴板")
                     Return True
                 Catch clipboardEx As Exception
