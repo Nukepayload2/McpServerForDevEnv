@@ -35,8 +35,8 @@ Public Class GetActiveDocumentTool
 
             LogOperation("获取活动文档", "开始", "获取当前活动文档信息")
 
-            ' 使用 Task.Run 确保异步执行
-            Dim result = Await Task.Run(Function() _vsTools.GetActiveDocument())
+            ' 使用异步方法
+            Dim result = Await _vsTools.GetActiveDocumentAsync()
 
             If result.HasActiveDocument Then
                 LogOperation("获取活动文档", "完成", $"文档路径: {result.Path}")

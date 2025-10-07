@@ -35,8 +35,8 @@ Public Class GetSolutionInfoTool
 
             LogOperation("获取解决方案信息", "开始", "获取解决方案详细信息")
 
-            ' 使用 Task.Run 确保异步执行
-            Dim result = Await Task.Run(Function() _vsTools.GetSolutionInformation())
+            ' 使用异步方法
+            Dim result = Await _vsTools.GetSolutionInformationAsync()
 
             LogOperation("获取解决方案信息", "完成", $"项目数: {result.Count}")
 

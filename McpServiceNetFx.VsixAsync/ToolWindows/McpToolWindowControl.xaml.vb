@@ -124,8 +124,8 @@ Namespace ToolWindows
             ShowStatusMessage("工具列表已刷新")
         End Sub
 
-        Private Sub ServiceToggleButton_Checked() Handles ServiceToggleButton.Checked
-            _state.StartService()
+        Private Async Sub ServiceToggleButton_Checked() Handles ServiceToggleButton.Checked
+            Await _state.StartServiceAsync()
             UpdateServiceStatusDisplay()
             UpdateStatusBar()
             ShowStatusMessage("MCP 服务已启动")

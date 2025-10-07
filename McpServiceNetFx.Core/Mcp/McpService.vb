@@ -42,14 +42,14 @@ Public Class McpService
         End Get
     End Property
 
-    Public Sub Start()
+    Public Async Function StartAsync() As Task
         If _isRunning Then
             Throw New InvalidOperationException("服务已经在运行中")
         End If
 
         Try
             ' 启动 WCF HTTP 服务
-            StartWcfService()
+            Await StartWcfServiceAsync()
 
             _isRunning = True
 
@@ -63,9 +63,10 @@ Public Class McpService
                 Throw
             End If
         End Try
-    End Sub
+    End Function
 
-    Private Sub StartWcfService()
+    Private Async Function StartWcfServiceAsync() As Task
+        Dim userPromptErr As AddressAccessDeniedException = Nothing
         Try
             Dim baseAddress As New Uri($"http://localhost:{_port}/")
 
@@ -115,6 +116,12 @@ Public Class McpService
             _serviceHost.Open()
 
         Catch ex As AddressAccessDeniedException
+            userPromptErr = ex
+        Catch ex As Exception
+            Throw New Exception($"启动 WCF 服务失败: {ex.Message}", ex)
+        End Try
+
+        If userPromptErr IsNot Nothing Then
             ' 生成 netsh 命令
             Dim command = $"netsh http add urlacl url=http://+:{_port}/mcp/ user=""%USERDOMAIN%\%USERNAME%""
 netsh http add iplisten ipaddress=127.0.0.1:{_port}"
@@ -133,13 +140,10 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
             _logger?.LogMcpRequest("MCP服务", "权限不足", userMessage)
 
             ' 在UI线程显示弹出窗口
-            ShowUserMessageWindow("端口授权", userMessage, command)
-
-            Throw
-        Catch ex As Exception
-            Throw New Exception($"启动 WCF 服务失败: {ex.Message}", ex)
-        End Try
-    End Sub
+            Await ShowUserMessageWindowAsync("端口授权", userMessage, command)
+            Throw userPromptErr
+        End If
+    End Function
 
     Public Sub [Stop]()
         If Not _isRunning Then
@@ -168,9 +172,9 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
         End Get
     End Property
 
-    Private Sub ShowUserMessageWindow(title As String, message As String, command As String)
+    Private Async Function ShowUserMessageWindowAsync(title As String, message As String, command As String) As Task
         Try
-            _dispatcher.Invoke(
+            Await _dispatcher.InvokeAsync(
             Sub()
                 Try
                     System.Media.SystemSounds.Exclamation.Play()
@@ -182,7 +186,7 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
         Catch ex As Exception
             _logger?.LogMcpRequest("MCP服务", "调用UI线程失败", ex.Message)
         End Try
-    End Sub
+    End Function
 
     Private Function TryCopyToClipboard(command As String, operation As String) As Boolean
         Try

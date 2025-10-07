@@ -75,16 +75,16 @@ Public Class VisualStudioMcpTools
     ''' <summary>
     ''' 获取当前的错误和警告列表
     ''' </summary>
-    Public Function GetErrorList(
+    Public Async Function GetErrorListAsync(
         <Description("过滤级别 (Error/Warning/Message/All)")> Optional severity As String = "All"
-    ) As ErrorListResponse
+    ) As Task(Of ErrorListResponse)
         Try
             ' 检查权限
             If Not CheckPermission("get_error_list", "获取错误列表") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
-            Dim result = _vsTools.GetErrorList(severity)
+            Dim result = Await _vsTools.GetErrorListAsync(severity)
 
             Return New ErrorListResponse With {
                 .Errors = result.Errors.ToArray(),
@@ -101,14 +101,14 @@ Public Class VisualStudioMcpTools
     ''' <summary>
     ''' 获取当前解决方案信息
     ''' </summary>
-    Public Function GetSolutionInfo() As SolutionInfoResponse
+    Public Async Function GetSolutionInfoAsync() As Task(Of SolutionInfoResponse)
         Try
             ' 检查权限
             If Not CheckPermission("get_solution_info", "获取解决方案信息") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
-            Return _vsTools.GetSolutionInformation()
+            Return Await _vsTools.GetSolutionInformationAsync()
 
         Catch ex As Exception
             _logger?.LogMcpRequest("获取解决方案信息", "失败", ex.Message)
@@ -119,14 +119,14 @@ Public Class VisualStudioMcpTools
     ''' <summary>
     ''' 获取当前活动文档的信息
     ''' </summary>
-    Public Function GetActiveDocument() As ActiveDocumentResponse
+    Public Async Function GetActiveDocumentAsync() As Task(Of ActiveDocumentResponse)
         Try
             ' 检查权限
             If Not CheckPermission("get_active_document", "获取活动文档") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
-            Return _vsTools.GetActiveDocument()
+            Return Await _vsTools.GetActiveDocumentAsync()
 
         Catch ex As Exception
             _logger?.LogMcpRequest("获取活动文档", "失败", ex.Message)

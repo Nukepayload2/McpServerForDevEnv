@@ -366,7 +366,7 @@ Namespace ToolWindows
         ''' <summary>
         ''' 启动 MCP 服务
         ''' </summary>
-        Public Sub StartService()
+        Public Async Function StartServiceAsync() As Task
             Try
                 If Services.Count > 0 Then
                     Dim service = Services(0)
@@ -388,7 +388,7 @@ Namespace ToolWindows
                     _mcpService = New McpService(_dte2, service.Port, Me,
                                                  New DispatcherService(_joinableTaskFactory),
                                                  _toolManager, New ClipboardService(), New InteractionService())
-                    _mcpService.Start()
+                    Await _mcpService.StartAsync()
 
                     ' 更新服务状态
                     service.IsRunning = True
@@ -397,42 +397,13 @@ Namespace ToolWindows
 
                     LogServiceAction("StartService", "Success", $"MCP 服务已启动，端口: {service.Port}")
                 End If
-            Catch ex As AddressAccessDeniedException
-                ' 端口访问被拒绝异常
-                LogError("ServiceError", $"端口 {ServerConfiguration.Port} 访问被拒绝: {ex.Message}")
-                If Services.Count > 0 Then
-                    Services(0).Status = "端口访问被拒绝"
-                End If
-
-                ' 生成 netsh 命令
-                Dim command = $"netsh http add urlacl url=http://+:{ServerConfiguration.Port}/mcp/ user=""%USERDOMAIN%\%USERNAME%""{Environment.NewLine}" &
-                             $"netsh http add iplisten ipaddress=127.0.0.1:{ServerConfiguration.Port}"
-
-                ' 尝试复制到剪贴板
-                Dim clipboardSuccess = TryCopyToClipboard(command, "MCP服务")
-
-                ' 构建用户提示信息
-                Dim userMessage As String
-                If clipboardSuccess Then
-                    userMessage = $"端口 {ServerConfiguration.Port} 需要授权。已将命令复制到剪贴板，请以管理员身份运行命令提示符并粘贴执行："
-                Else
-                    userMessage = $"端口 {ServerConfiguration.Port} 需要授权。剪贴板操作失败，请手动执行以下命令："
-                End If
-
-                LogMcpRequest("MCP服务", "权限不足", userMessage)
-
-                ' 在UI线程显示弹出窗口
-                ShowUserMessageWindow("端口授权", userMessage, command)
-
-                Throw
-
             Catch ex As Exception
                 LogError("ServiceError", $"启动 MCP 服务失败: {ex.Message}")
                 If Services.Count > 0 Then
                     Services(0).Status = "启动失败"
                 End If
             End Try
-        End Sub
+        End Function
 
         ''' <summary>
         ''' 停止 MCP 服务
@@ -713,10 +684,6 @@ Namespace ToolWindows
             _joinableTaskFactory = joinableTaskFactory
         End Sub
 
-        Public Sub Invoke(job As Action) Implements IDispatcher.Invoke
-            job()
-        End Sub
-
         Public Async Function InvokeAsync(job As Func(Of Task)) As Task Implements IDispatcher.InvokeAsync
             Await _joinableTaskFactory.SwitchToMainThreadAsync
             Await job()
@@ -724,7 +691,7 @@ Namespace ToolWindows
 
         Public Async Function InvokeAsync(job As Action) As Task Implements IDispatcher.InvokeAsync
             Await _joinableTaskFactory.SwitchToMainThreadAsync
-            Await System.Threading.Tasks.Task.Run(job)
+            job()
         End Function
     End Class
 

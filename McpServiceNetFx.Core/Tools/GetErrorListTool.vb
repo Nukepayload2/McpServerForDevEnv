@@ -44,8 +44,8 @@ Public Class GetErrorListTool
 
             LogOperation("获取错误列表", "开始", $"过滤级别: {severity}")
 
-            ' 使用 Task.Run 确保异步执行
-            Dim result = Await Task.Run(Function() _vsTools.GetErrorList(severity))
+            ' 使用异步方法
+            Dim result = Await _vsTools.GetErrorListAsync(severity)
 
             LogOperation("获取错误列表", "完成", $"错误数: {result.Errors.Count}, 警告数: {result.Warnings.Count}")
 

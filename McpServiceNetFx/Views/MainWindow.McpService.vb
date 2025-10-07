@@ -16,7 +16,7 @@ Partial Public Class MainWindow
         End Try
     End Sub
 
-    Private Sub BtnStartService_Click() Handles BtnStartService.Click
+    Private Async Sub BtnStartService_Click() Handles BtnStartService.Click
         If _isServiceRunning Then
             UtilityModule.ShowWarning(Me, My.Resources.MsgServiceAlreadyRunning, My.Resources.TitleHint)
             Return
@@ -31,7 +31,7 @@ Partial Public Class MainWindow
         TxtPort.Text = port.ToString()
 
         Try
-            StartMcpService(port)
+            Await StartMcpService(port)
         Catch ex As Exception
             If TypeOf ex IsNot AddressAccessDeniedException Then
                 UtilityModule.ShowError(Me, String.Format(My.Resources.MsgStartServiceFailed, ex.Message))
@@ -78,10 +78,6 @@ Partial Public Class MainWindow
             _dispatcher = dispatcher
         End Sub
 
-        Public Sub Invoke(job As Action) Implements IDispatcher.Invoke
-            _dispatcher.Invoke(job)
-        End Sub
-
         Public Async Function InvokeAsync(job As Func(Of Task)) As Task Implements IDispatcher.InvokeAsync
             Dim tcs As New TaskCompletionSource(Of Boolean)
             Dim unused = _dispatcher.BeginInvoke(
@@ -101,7 +97,7 @@ Partial Public Class MainWindow
         End Function
     End Class
 
-    Private Sub StartMcpService(port As Integer)
+    Private Async Function StartMcpService(port As Integer) As Task
         Try
             ' 创建 Visual Studio 监控器
             _vsMonitor = New VisualStudioMonitor(_selectedVsInstance.DTE2)
@@ -119,7 +115,7 @@ Partial Public Class MainWindow
 
             ' 创建并启动 MCP 服务，传入工具管理器
             _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, New DispatcherService(Dispatcher), _toolManager, New ClipboardService, New InteractionService)
-            _mcpService.Start()
+            Await _mcpService.StartAsync()
 
             ' 更新 UI 状态
             _isServiceRunning = True
@@ -136,7 +132,7 @@ Partial Public Class MainWindow
             CleanupService()
             Throw
         End Try
-    End Sub
+    End Function
 
     Private Sub StopMcpService()
         Try

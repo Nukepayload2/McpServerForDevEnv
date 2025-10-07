@@ -50,7 +50,7 @@ Public Class VisualStudioTools
             End Function)
 
             ' 收集错误和警告（需要在UI线程上执行）
-            Dim allErrors = CollectErrorsFromToolWindow()
+            Dim allErrors = Await CollectErrorsFromToolWindowAsync()
             result.Errors = allErrors.Errors
             result.Warnings = allErrors.Warnings
             result.Success = result.Errors.Count = 0
@@ -116,7 +116,7 @@ Public Class VisualStudioTools
             End Function)
 
             ' 收集错误和警告
-            Dim allErrors = CollectErrorsFromToolWindow()
+            Dim allErrors = Await CollectErrorsFromToolWindowAsync()
             result.Errors = allErrors.Errors
             result.Warnings = allErrors.Warnings
             result.Success = result.Errors.Count = 0
@@ -134,14 +134,14 @@ Public Class VisualStudioTools
         Return result
     End Function
 
-    Public Function GetErrorList(Optional severityFilter As String = "All") As BuildResult
+    Public Async Function GetErrorListAsync(Optional severityFilter As String = "All") As Task(Of BuildResult)
         Dim result As New BuildResult With {
             .Errors = New List(Of CompilationError)(),
             .Warnings = New List(Of CompilationError)()
         }
 
         Try
-            result = CollectErrorsFromToolWindow(severityFilter)
+            result = Await CollectErrorsFromToolWindowAsync(severityFilter)
         Catch ex As Exception
             _logger?.LogMcpRequest("收集错误", "警告", ex.Message)
         End Try
@@ -149,15 +149,15 @@ Public Class VisualStudioTools
         Return result
     End Function
 
-    Private Function CollectErrorsFromToolWindow(Optional severityFilter As String = "All") As BuildResult
+    Private Async Function CollectErrorsFromToolWindowAsync(Optional severityFilter As String = "All") As Task(Of BuildResult)
         Dim result As New BuildResult With {
             .Errors = New List(Of CompilationError)(),
             .Warnings = New List(Of CompilationError)()
         }
 
         ' 需要在UI线程上执行
-        _dispatcher.Invoke(
-        Sub()
+        Await _dispatcher.InvokeAsync(
+        Async Function()
             Try
                 ' 获取错误列表工具窗口
                 Dim errorList = _dte2.ToolWindows.ErrorList
@@ -229,16 +229,16 @@ Public Class VisualStudioTools
                 ' 记录错误但不抛出异常
                 _logger?.LogMcpRequest("收集错误", "警告", ex.Message)
             End Try
-        End Sub)
+        End Function)
 
         Return result
     End Function
 
-    Public Function GetSolutionInformation() As SolutionInfoResponse
+    Public Async Function GetSolutionInformationAsync() As Task(Of SolutionInfoResponse)
         Dim response As New SolutionInfoResponse()
 
-        _dispatcher.Invoke(
-        Sub()
+        Await _dispatcher.InvokeAsync(
+        Async Function()
             If _dte2.Solution IsNot Nothing Then
                 response.FullName = _dte2.Solution.FullName
                 response.Count = _dte2.Solution.Count
@@ -270,7 +270,7 @@ Public Class VisualStudioTools
                     }
                 End If
             End If
-        End Sub)
+        End Function)
 
         Return response
     End Function
@@ -279,11 +279,11 @@ Public Class VisualStudioTools
     ''' 获取当前活动文档的信息
     ''' </summary>
     ''' <returns>包含活动文档信息的 ActiveDocumentResponse 对象</returns>
-    Public Function GetActiveDocument() As ActiveDocumentResponse
+    Public Async Function GetActiveDocumentAsync() As Task(Of ActiveDocumentResponse)
         Dim documentPath As String = Nothing
 
-        _dispatcher.Invoke(
-        Sub()
+        Await _dispatcher.InvokeAsync(
+        Async Function()
             Try
                 ' 检查是否有活动文档
                 If _dte2.ActiveDocument IsNot Nothing Then
@@ -292,7 +292,7 @@ Public Class VisualStudioTools
             Catch ex As Exception
                 _logger?.LogMcpRequest("获取活动文档", "警告", ex.Message)
             End Try
-        End Sub)
+        End Function)
 
         ' 创建响应对象
         Dim response As New ActiveDocumentResponse With {
@@ -310,11 +310,11 @@ Public Class VisualStudioTools
     ''' 获取所有打开文档的信息
     ''' </summary>
     ''' <returns>包含所有打开文档信息的 OpenDocumentsResponse 对象</returns>
-    Public Function GetAllOpenDocuments() As OpenDocumentsResponse
+    Public Async Function GetAllOpenDocumentsAsync() As Task(Of OpenDocumentsResponse)
         Dim documentsList As New List(Of DocumentInfo)
 
-        _dispatcher.Invoke(
-        Sub()
+        Await _dispatcher.InvokeAsync(
+        Async Function()
             Try
                 ' 遍历所有打开的文档
                 For Each document As EnvDTE.Document In _dte2.Documents
@@ -342,7 +342,7 @@ Public Class VisualStudioTools
             Catch ex As Exception
                 _logger?.LogMcpRequest("获取所有打开文档", "警告", ex.Message)
             End Try
-        End Sub)
+        End Function)
 
         ' 创建响应对象
         Dim response As New OpenDocumentsResponse With {
@@ -360,14 +360,14 @@ Public Class VisualStudioTools
     ''' <returns>执行结果</returns>
     Public Async Function RunProjectCustomToolsAsync(projectName As String) As Task(Of RunCustomToolsResult)
         Return Await Task.Run(
-        Function()
+        Async Function()
             Try
                 Dim errors As New StringBuilder()
                 Dim processedFiles As New List(Of String)
 
                 ' 在UI线程上执行DTE操作
-                _dispatcher.Invoke(
-                Sub()
+                Await _dispatcher.InvokeAsync(
+                Async Function()
                     ' 查找指定项目
                     Dim targetProject As EnvDTE.Project = Nothing
                     For Each project As EnvDTE.Project In _dte2.Solution.Projects
@@ -382,7 +382,7 @@ Public Class VisualStudioTools
                     Else
                         errors.AppendLine($"未找到项目: {projectName}")
                     End If
-                End Sub)
+                End Function)
 
                 Return New RunCustomToolsResult With {
                     .Success = errors.Length = 0,

@@ -35,8 +35,8 @@ Public Class GetAllOpenDocumentsTool
 
             LogOperation("获取所有打开文档", "开始", "获取所有打开文档信息")
 
-            ' 使用 Task.Run 确保异步执行
-            Dim result = Await Task.Run(Function() _vsTools.GetAllOpenDocuments())
+            ' 使用异步方法
+            Dim result = Await _vsTools.GetAllOpenDocumentsAsync()
 
             If result.TotalCount > 0 Then
                 LogOperation("获取所有打开文档", "完成", $"共找到 {result.TotalCount} 个打开的文档")
