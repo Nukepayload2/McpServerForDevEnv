@@ -14,6 +14,10 @@
 
   <!--The VSCT section is here.-->
 
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <Include href="KnownImageIds.vsct"/>
+
   <Commands package="guidVsCustomSideBarPackage">
 
     <!-- Inside this section we have different sub-sections: one for the appearance definition,
