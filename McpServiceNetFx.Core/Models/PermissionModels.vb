@@ -45,3 +45,7 @@ Public Class LogEntry
     Public Property Result As String
     Public Property Details As String
 End Class
+
+Public Class ServerConfiguration
+    Public Property Port As Integer = 38080
+End Class

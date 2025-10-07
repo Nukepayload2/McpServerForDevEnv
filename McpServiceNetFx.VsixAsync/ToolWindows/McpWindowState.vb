@@ -51,6 +51,7 @@ Namespace ToolWindows
         Public Property Tools As New List(Of PermissionItem)
         Public Property Services As New List(Of McpServiceState)
         Public Property LogItems As New ObservableCollection(Of ActivityLogItem)
+        Public Property ServerConfiguration As New ServerConfiguration()
 
         Private ReadOnly _activityLog As IVsActivityLog
         Private ReadOnly _dte2 As DTE2
@@ -91,6 +92,9 @@ Namespace ToolWindows
             Catch ex As Exception
                 LogError("ServiceError", $"无法创建工具管理器: {ex.Message}")
             End Try
+
+            ' 加载服务器配置
+            LoadServerConfiguration()
 
             InitializeTools()
             InitializeServices()
@@ -209,10 +213,10 @@ Namespace ToolWindows
         End Sub
 
         Private Sub InitializeServices()
-            ' 初始化单个MCP服务
+            ' 初始化单个MCP服务，使用配置的端口
             Services.Add(New McpServiceState With {
                 .IsRunning = False,
-                .Port = 38080,
+                .Port = ServerConfiguration.Port,
                 .Status = "已停止",
                 .StartTime = Nothing
             })
@@ -331,6 +335,32 @@ Namespace ToolWindows
         End Sub
 
         ''' <summary>
+        ''' 加载服务器配置
+        ''' </summary>
+        Private Sub LoadServerConfiguration()
+            Try
+                ServerConfiguration = _settingsHelper.LoadServerConfiguration()
+                LogServiceAction("配置加载", "成功", $"加载服务器配置，端口: {ServerConfiguration.Port}")
+            Catch ex As Exception
+                LogError("配置加载", $"加载服务器配置失败: {ex.Message}")
+                ServerConfiguration = New ServerConfiguration()
+            End Try
+        End Sub
+
+        ''' <summary>
+        ''' 保存服务器配置
+        ''' </summary>
+        Public Sub SaveServerConfiguration()
+            Try
+                _settingsHelper.SaveServerConfiguration(ServerConfiguration)
+                LogServiceAction("配置保存", "成功", $"保存服务器配置，端口: {ServerConfiguration.Port}")
+            Catch ex As Exception
+                LogError("配置保存", $"保存服务器配置失败: {ex.Message}")
+                Throw
+            End Try
+        End Sub
+
+        ''' <summary>
         ''' 启动 MCP 服务
         ''' </summary>
         Public Sub StartService()
@@ -347,6 +377,9 @@ Namespace ToolWindows
                         LogServiceAction("StartService", "Failed", "MCP 服务已在运行中")
                         Return
                     End If
+
+                    ' 确保服务使用当前配置的端口
+                    service.Port = ServerConfiguration.Port
 
                     ' 创建并启动真实的 MCP 服务
                     _mcpService = New McpService(_dte2, service.Port, Me, New DispatcherService(), _toolManager, New ClipboardService(), New InteractionService())
@@ -396,23 +429,17 @@ Namespace ToolWindows
         ''' </summary>
         Public Function GetMcpJsonConfig() As String
             Try
-                If Services.Count > 0 Then
-                    Dim service = Services(0)
-                    Dim serverName = "@nukepayload2/devenv.wrapper"
-                    Dim port = service.Port
+                Dim serverName = "@nukepayload2/devenv.wrapper"
+                Dim port = ServerConfiguration.Port
 
-                    ' 生成 JSON 配置
-                    Return $"{{
+                ' 生成 JSON 配置
+                Return $"{{
   ""mcpServers"": {{
     ""{serverName}"": {{
       ""type"": ""http"",
       ""url"": ""http://localhost:{port}/mcp/""
     }}
-  }}""
-}}"
-                Else
-                    Return "// 服务未启动，无法生成配置"
-                End If
+  }}"""
             Catch ex As Exception
                 Return $"// 生成配置失败: {ex.Message}"
             End Try
@@ -423,15 +450,10 @@ Namespace ToolWindows
         ''' </summary>
         Public Function GetClaudeCliConfig() As String
             Try
-                If Services.Count > 0 Then
-                    Dim service = Services(0)
-                    Dim port = service.Port
+                Dim port = ServerConfiguration.Port
 
-                    ' 生成 Claude CLI 配置
-                    Return $"claude mcp add --transport http devenv ""http://localhost:{port}/mcp/"""
-                Else
-                    Return "# 服务未启动，无法生成配置"
-                End If
+                ' 生成 Claude CLI 配置
+                Return $"claude mcp add --transport http devenv ""http://localhost:{port}/mcp/"""
             Catch ex As Exception
                 Return $"# 生成配置失败: {ex.Message}"
             End Try

@@ -149,21 +149,53 @@
                         BorderThickness="1" Padding="10" Margin="0,0,0,8"
                         Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Orientation="Vertical">
-                            <TextBlock Text="MCP 服务" FontWeight="Bold" FontSize="14"
-                                      Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                            <TextBlock x:Name="ServiceStatusText" Text="状态: 已停止" Margin="0,2,0,0"
-                                      Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                            <TextBlock x:Name="ServicePortText" Text="端口: 38080" Margin="0,2,0,0"
-                                      Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                        </StackPanel>
-                        <ToggleButton x:Name="ServiceToggleButton" Grid.Column="1" Content="启动服务"
-                                      Margin="10,0,0,0" Padding="16,8"
-                                      Background="#28A745" Foreground="White" BorderBrush="#28A745"/>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 服务控制区域 -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <TextBlock Text="MCP 服务" FontWeight="Bold" FontSize="14"
+                                          Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                                <TextBlock x:Name="ServiceStatusText" Text="状态: 已停止" Margin="0,2,0,0"
+                                          Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                                <TextBlock x:Name="ServicePortText" Text="端口: 38080" Margin="0,2,0,0"
+                                          Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                            </StackPanel>
+                            <ToggleButton x:Name="ServiceToggleButton" Grid.Column="1" Content="启动服务"
+                                          Margin="10,0,0,0" Padding="16,8"
+                                          Background="#28A745" Foreground="White" BorderBrush="#28A745"/>
+                        </Grid>
+
+                        <!-- 端口配置区域 -->
+                        <Border Grid.Row="1" BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                                BorderThickness="1" Padding="8" Margin="0,8,0,0"
+                                Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="端口号:" VerticalAlignment="Center" Margin="0,0,8,0"
+                                          Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                                <TextBox x:Name="PortNumberTextBox" Grid.Column="1"
+                                         Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
+                                         Margin="0,0,8,0" Width="100" HorizontalAlignment="Left"
+                                         Text="38080"/>
+                                <Button x:Name="SavePortButton" Grid.Column="2" Content="保存" Margin="0,0,8,0"
+                                        Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
+                                <Button x:Name="ResetPortButton" Grid.Column="3" Content="重置为默认"
+                                        Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
+                            </Grid>
+                        </Border>
                     </Grid>
                 </Border>
 
