@@ -1,4 +1,5 @@
 Imports System
+Imports System.Diagnostics
 Imports System.IO
 Imports System.Linq
 Imports System.Windows
@@ -6,8 +7,51 @@ Imports System.Windows.Controls
 Imports System.Windows.Data
 Imports System.Windows.Media
 Imports Microsoft.Win32
+Imports System.Globalization
+Imports McpServiceNetFx.Models
 
 Namespace ToolWindows
+    ''' <summary>
+    ''' PermissionLevel 值转换器
+    ''' </summary>
+    Public Class PermissionLevelConverter
+        Implements IValueConverter
+
+        Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.Convert
+            If TypeOf value Is PermissionLevel Then
+                Dim permissionLevel = CType(value, PermissionLevel)
+                Select Case permissionLevel
+                    Case PermissionLevel.Allow
+                        Return "Allow"
+                    Case PermissionLevel.Ask
+                        Return "Ask"
+                    Case PermissionLevel.Deny
+                        Return "Deny"
+                    Case Else
+                        Return "Ask"
+                End Select
+            End If
+            Return "Ask"
+        End Function
+
+        Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.ConvertBack
+            If TypeOf value Is String Then
+                Dim stringValue = CStr(value)
+                Select Case stringValue
+                    Case "Allow"
+                        Return PermissionLevel.Allow
+                    Case "Ask"
+                        Return PermissionLevel.Ask
+                    Case "Deny"
+                        Return PermissionLevel.Deny
+                    Case Else
+                        Return PermissionLevel.Ask
+                End Select
+            End If
+            Return PermissionLevel.Ask
+        End Function
+    End Class
+
     ''' <summary>
     ''' McpToolWindowControl.xaml 的交互逻辑
     ''' </summary>
@@ -23,9 +67,6 @@ Namespace ToolWindows
             ' 初始化数据绑定
             InitializeDataBindings()
 
-            ' 设置事件处理程序
-            SetupEventHandlers()
-
             ' 记录初始化日志
             _state.LogInfo("System", "MCP 服务管理器已启动")
         End Sub
@@ -33,6 +74,9 @@ Namespace ToolWindows
         Private Sub InitializeDataBindings()
             ' 绑定工具数据
             ToolsDataGrid.ItemsSource = _state.Tools
+
+            ' 绑定日志数据
+            ActivityLogDataGrid.ItemsSource = _state.LogItems
 
             ' 初始化配置示例
             McpJsonConfigTextBox.Text = _state.GetMcpJsonConfig()
@@ -45,47 +89,45 @@ Namespace ToolWindows
             UpdateStatusBar()
         End Sub
 
-        Private Sub SetupEventHandlers()
-            ' 工具管理按钮事件
-            AddHandler AuthorizeAllButton.Click, AddressOf AuthorizeAll_Click
-            AddHandler RevokeAllButton.Click, AddressOf RevokeAll_Click
-            AddHandler RefreshToolsButton.Click, AddressOf RefreshTools_Click
-
-            ' 服务开关事件
-            AddHandler ServiceToggleButton.Checked, AddressOf ServiceToggleButton_Checked
-            AddHandler ServiceToggleButton.Unchecked, AddressOf ServiceToggleButton_Unchecked
-
-            ' 数据变更事件
-            AddHandler ToolsDataGrid.CurrentCellChanged, AddressOf ToolsDataGrid_CurrentCellChanged
-        End Sub
-
-        Private Sub AuthorizeAll_Click(sender As Object, e As RoutedEventArgs)
-            _state.AuthorizeAllTools()
+        Private Sub AuthorizeAll_Click() Handles AuthorizeAllButton.Click
+            _state.SetAllPermissions(PermissionLevel.Allow)
             UpdateStatusBar()
-            ShowStatusMessage("所有工具已授权")
+            ShowStatusMessage("所有工具权限已设置为允许")
         End Sub
 
-        Private Sub RevokeAll_Click(sender As Object, e As RoutedEventArgs)
-            _state.RevokeAllToolAuthorization()
+        Private Sub AskAll_Click() Handles AskAllButton.Click
+            _state.SetAllPermissions(PermissionLevel.Ask)
             UpdateStatusBar()
-            ShowStatusMessage("所有工具授权已撤销")
+            ShowStatusMessage("所有工具权限已设置为询问")
         End Sub
 
-        Private Sub RefreshTools_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub SavePermissions_Click() Handles SavePermissionsButton.Click
+            _state.SavePermissions()
+            ShowStatusMessage("权限配置已保存")
+        End Sub
+
+        Private Sub ReloadPermissions_Click() Handles ReloadPermissionsButton.Click
+            _state.ReloadPermissions()
+            ToolsDataGrid.Items.Refresh()
+            UpdateStatusBar()
+            ShowStatusMessage("权限配置已重新加载")
+        End Sub
+
+        Private Sub RefreshTools_Click() Handles RefreshToolsButton.Click
             ' 模拟刷新数据
             ToolsDataGrid.Items.Refresh()
             _state.LogInfo("ToolOperation", "工具列表已刷新")
             ShowStatusMessage("工具列表已刷新")
         End Sub
 
-        Private Sub ServiceToggleButton_Checked(sender As Object, e As RoutedEventArgs)
+        Private Sub ServiceToggleButton_Checked() Handles ServiceToggleButton.Checked
             _state.StartService()
             UpdateServiceStatusDisplay()
             UpdateStatusBar()
             ShowStatusMessage("MCP 服务已启动")
         End Sub
 
-        Private Sub ServiceToggleButton_Unchecked(sender As Object, e As RoutedEventArgs)
+        Private Sub ServiceToggleButton_Unchecked() Handles ServiceToggleButton.Unchecked
             _state.StopService()
             UpdateServiceStatusDisplay()
             UpdateStatusBar()
@@ -110,26 +152,18 @@ Namespace ToolWindows
             End If
         End Sub
 
-
-        Private Sub ToolsDataGrid_CurrentCellChanged(sender As Object, e As EventArgs)
-            ' 工具状态变更时的处理
+        Private Sub ToolsDataGrid_CurrentCellChanged() Handles ToolsDataGrid.CurrentCellChanged
+            ' 工具权限变更时的处理
             If ToolsDataGrid.SelectedItem IsNot Nothing Then
                 Dim tool = CType(ToolsDataGrid.SelectedItem, McpToolState)
                 If tool IsNot Nothing Then
-                    ' 确保未授权的工具不能启用
-                    If Not tool.IsAuthorized AndAlso tool.IsEnabled Then
-                        tool.IsEnabled = False
-                        _state.LogWarning("ToolPermission", $"工具 {tool.ToolName} 必须先授权才能启用")
-                        ShowStatusMessage("工具必须先授权才能启用")
-                    Else
-                        ' 记录工具状态变更
-                        _state.LogToolOperation("UpdateToolStatus", "Success", $"工具 {tool.ToolName} 状态已更新 - 授权: {tool.IsAuthorized}, 启用: {tool.IsEnabled}")
+                    ' 记录工具权限变更
+                    _state.LogToolOperation("UpdateToolPermission", "Success", $"工具 {tool.ToolName} 权限已更新为: {tool.PermissionLevel}")
 
-                        ' 更新使用次数
-                        If tool.IsEnabled Then
-                            tool.LastUsed = DateTime.Now
-                            tool.UsageCount += 1
-                        End If
+                    ' 更新使用次数（仅在工具被允许时）
+                    If tool.PermissionLevel = PermissionLevel.Allow Then
+                        tool.LastUsed = DateTime.Now
+                        tool.UsageCount += 1
                     End If
                 End If
             End If
@@ -159,6 +193,31 @@ Namespace ToolWindows
                                        timer.Stop()
                                    End Sub
             timer.Start()
+        End Sub
+
+        Private Sub ViewActivityLogHelpButton_Click() Handles ViewActivityLogHelpButton.Click
+            Try
+                Dim helpUrl = "https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log"
+                System.Diagnostics.Process.Start(New ProcessStartInfo With {
+                    .FileName = helpUrl,
+                    .UseShellExecute = True
+                })
+                _state.LogInfo("HelpAction", "打开 ActivityLog 帮助文档")
+            Catch ex As Exception
+                _state.LogError("HelpAction", $"无法打开帮助文档: {ex.Message}")
+                MessageBox.Show($"无法打开帮助文档: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Private Sub ClearLogButton_Click() Handles ClearLogButton.Click
+            Try
+                _state.ClearLogItems()
+                ActivityLogDataGrid.Items.Refresh()
+                ShowStatusMessage("界面日志已清空")
+            Catch ex As Exception
+                _state.LogError("UIAction", $"清空日志失败: {ex.Message}")
+                MessageBox.Show($"清空日志失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
     End Class
 End Namespace

@@ -3,8 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:McpServiceNetFx.VsixAsync.ToolWindows"
              mc:Ignorable="d"
              d:DesignHeight="700" d:DesignWidth="350">
+    <UserControl.Resources>
+        <local:PermissionLevelConverter x:Key="PermissionLevelConverter"/>
+    </UserControl.Resources>
+
     <Grid Background="#F5F5F5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,12 +31,24 @@
         <GroupBox Grid.Row="1" Header="MCP 工具授权" Margin="5" Padding="8">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!-- 批量操作按钮 -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                    <Button x:Name="AuthorizeAllButton" Content="全部允许" Margin="0,0,10,0" Padding="12,4"
+                            Background="#28A745" Foreground="White" BorderBrush="#28A745"/>
+                    <Button x:Name="AskAllButton" Content="全部询问" Margin="0,0,10,0" Padding="12,4"
+                            Background="#FFC107" Foreground="Black" BorderBrush="#FFC107"/>
+                    <Button x:Name="RefreshToolsButton" Content="刷新工具列表" Padding="12,4"
+                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"/>
+                </StackPanel>
+
+                <!-- 工具权限数据网格 -->
                 <DataGrid x:Name="ToolsDataGrid"
-                          Grid.Row="0"
+                          Grid.Row="1"
                           AutoGenerateColumns="False"
                           CanUserAddRows="False"
                           CanUserDeleteRows="False"
@@ -41,19 +58,32 @@
                           RowBackground="White"
                           AlternatingRowBackground="#F9F9F9">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="工具名称" Binding="{Binding ToolName}" Width="*" IsReadOnly="True"/>
-                        <DataGridCheckBoxColumn Header="授权" Binding="{Binding IsAuthorized}" Width="60"/>
-                        <DataGridCheckBoxColumn Header="启用" Binding="{Binding IsEnabled}" Width="60"/>
-                        <DataGridTextColumn Header="使用次数" Binding="{Binding UsageCount}" Width="70" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="功能名称" Binding="{Binding ToolName}" Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="1.5*" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="权限级别" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox SelectedValue="{Binding PermissionLevel, Converter={StaticResource PermissionLevelConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              IsEditable="False"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              Margin="2">
+                                        <ComboBoxItem Content="允许" Tag="Allow"/>
+                                        <ComboBoxItem Content="询问" Tag="Ask"/>
+                                        <ComboBoxItem Content="拒绝" Tag="Deny"/>
+                                    </ComboBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="使用次数" Binding="{Binding UsageCount}" Width="80" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                    <Button x:Name="AuthorizeAllButton" Content="全部授权" Width="70" Height="24" Margin="0,0,5,0"
+                <!-- 底部操作按钮 -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button x:Name="SavePermissionsButton" Content="保存权限配置" Margin="0,0,10,0" Padding="12,4"
                             Background="#007ACC" Foreground="White" BorderBrush="#007ACC"/>
-                    <Button x:Name="RevokeAllButton" Content="撤销授权" Width="70" Height="24" Margin="0,0,5,0"
-                            Background="#DC3545" Foreground="White" BorderBrush="#DC3545"/>
-                    <Button x:Name="RefreshToolsButton" Content="刷新" Width="50" Height="24"
+                    <Button x:Name="ReloadPermissionsButton" Content="重新加载" Padding="12,4"
                             Background="#6C757D" Foreground="White" BorderBrush="#6C757D"/>
                 </StackPanel>
             </Grid>
@@ -77,10 +107,10 @@
                         <StackPanel Grid.Column="0" Orientation="Vertical">
                             <TextBlock Text="MCP 服务" FontWeight="Bold" FontSize="14"/>
                             <TextBlock x:Name="ServiceStatusText" Text="状态: 已停止" Margin="0,2,0,0"/>
-                            <TextBlock x:Name="ServicePortText" Text="端口: 3000" Margin="0,2,0,0"/>
+                            <TextBlock x:Name="ServicePortText" Text="端口: 38080" Margin="0,2,0,0"/>
                         </StackPanel>
                         <ToggleButton x:Name="ServiceToggleButton" Grid.Column="1" Content="启动服务"
-                                      Width="80" Height="30" Margin="10,0,0,0"
+                                      Margin="10,0,0,0" Padding="16,8"
                                       Background="#28A745" Foreground="White" BorderBrush="#28A745"/>
                     </Grid>
                 </Border>
@@ -119,20 +149,45 @@
 
         <!-- ActivityLog 信息 -->
         <GroupBox Grid.Row="3" Header="Visual Studio ActivityLog" Margin="5" Padding="8">
-            <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1" Padding="10">
-                <StackPanel>
-                    <TextBlock Text="所有操作日志已记录到 Visual Studio ActivityLog"
-                               FontWeight="Bold" Margin="0,0,0,5"/>
-                    <TextBlock Text="查看 ActivityLog 的方法：" Margin="0,0,0,5"/>
-                    <TextBlock Text="1. 帮助 → Visual Studio ActivityLog" Margin="10,0,0,3"/>
-                    <TextBlock Text="2. 或按 Ctrl+Alt+L 快捷键" Margin="10,0,0,3"/>
-                    <TextBlock Text="3. 日志文件位置: %APPDATA%\Microsoft\VisualStudio\17.0_*\ActivityLog.xml"
-                               Margin="10,0,0,3" TextWrapping="Wrap"/>
-                    <Separator Margin="0,8,0,8"/>
-                    <TextBlock Text="当前 MCP 服务管理器的所有操作（服务启动/停止、工具授权等）"
-                               TextWrapping="Wrap" Foreground="#666666"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 操作按钮区域 -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,5">
+                    <Button x:Name="ClearLogButton" Content="清空日志" Margin="0,0,5,0" Padding="12,4"
+                            Background="#6C757D" Foreground="White" BorderBrush="#6C757D"
+                            Click="ClearLogButton_Click"/>
+                    <Button x:Name="ViewActivityLogHelpButton"
+                            Content="如何查看文件日志" Padding="12,4"
+                            Background="#007ACC" Foreground="White" BorderBrush="#007ACC"
+                            Click="ViewActivityLogHelpButton_Click"/>
                 </StackPanel>
-            </Border>
+
+                <!-- 日志数据网格 -->
+                <DataGrid x:Name="ActivityLogDataGrid"
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="True"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          RowBackground="White"
+                          AlternatingRowBackground="#F9F9F9"
+                          FontFamily="Consolas"
+                          FontSize="11">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="时间" Binding="{Binding Timestamp}" Width="120" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="级别" Binding="{Binding Level}" Width="60" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="分类" Binding="{Binding Category}" Width="80" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="消息" Binding="{Binding Message}" Width="*" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
         </GroupBox>
 
         <!-- 状态栏 -->

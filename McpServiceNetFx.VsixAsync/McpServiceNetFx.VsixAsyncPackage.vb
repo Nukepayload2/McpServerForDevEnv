@@ -53,7 +53,7 @@ Public NotInheritable Class McpServiceNetFx
         Await JoinableTaskFactory.SwitchToMainThreadAsync()
 
         ' 初始化 MCP 窗口状态
-        _mcpWindowState = New ToolWindows.McpWindowState()
+        _mcpWindowState = New ToolWindows.McpWindowState(Me)
 
         ' 初始化我们的命令
         Await Commands.ShowMcpToolWindowCommand.InitializeAsync(Me)

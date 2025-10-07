@@ -21,7 +21,7 @@ Namespace ToolWindows
             MyBase.New()
             Caption = Title
             BitmapImageMoniker = KnownMonikers.Settings
-            _state = New ToolWindows.McpWindowState()
+            _state = New ToolWindows.McpWindowState(Me.Package)
 
             ' 创建WPF控件
             Content = New McpToolWindowControl(_state)
