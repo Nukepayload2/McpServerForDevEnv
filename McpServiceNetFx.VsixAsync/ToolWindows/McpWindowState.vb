@@ -12,6 +12,7 @@ Imports System.Runtime.CompilerServices
 Imports McpServiceNetFx.Models
 Imports McpServiceNetFx.VsixAsync.Helpers
 Imports System.ServiceModel
+Imports Microsoft.VisualStudio.Threading
 
 Namespace ToolWindows
 
@@ -60,6 +61,8 @@ Namespace ToolWindows
         Private _toolManager As VisualStudioToolManager
         Private ReadOnly _settingsHelper As SettingsPersistenceHelper
 
+        Private ReadOnly _joinableTaskFactory As JoinableTaskFactory
+
         Public Sub New(package As AsyncPackage)
             ' 初始化设置持久化辅助类
             _settingsHelper = New SettingsPersistenceHelper(package)
@@ -77,14 +80,14 @@ Namespace ToolWindows
             Catch ex As Exception
                 LogError("ServiceError", $"无法获取 DTE2 服务: {ex.Message}")
             End Try
-
+            _joinableTaskFactory = package.JoinableTaskFactory
             ' 创建工具管理器（简化版本）
             Try
                 _toolManager = New VisualStudioToolManager(Me, Me)
 
                 ' 初始化工具管理器，传入 DTE2 和调度器
                 If _dte2 IsNot Nothing Then
-                    _toolManager.CreateVsTools(_dte2, New DispatcherService())
+                    _toolManager.CreateVsTools(_dte2, New DispatcherService(_joinableTaskFactory))
                     LogInfo("工具管理器", "Visual Studio 工具管理器已初始化")
                 Else
                     LogError("工具管理器", "无法初始化工具管理器：DTE2 服务未获取")
@@ -382,7 +385,9 @@ Namespace ToolWindows
                     service.Port = ServerConfiguration.Port
 
                     ' 创建并启动真实的 MCP 服务
-                    _mcpService = New McpService(_dte2, service.Port, Me, New DispatcherService(), _toolManager, New ClipboardService(), New InteractionService())
+                    _mcpService = New McpService(_dte2, service.Port, Me,
+                                                 New DispatcherService(_joinableTaskFactory),
+                                                 _toolManager, New ClipboardService(), New InteractionService())
                     _mcpService.Start()
 
                     ' 更新服务状态
@@ -702,16 +707,23 @@ Namespace ToolWindows
     Public Class DispatcherService
         Implements IDispatcher
 
+        Private ReadOnly _joinableTaskFactory As JoinableTaskFactory
+
+        Sub New(joinableTaskFactory As JoinableTaskFactory)
+            _joinableTaskFactory = joinableTaskFactory
+        End Sub
+
         Public Sub Invoke(job As Action) Implements IDispatcher.Invoke
-            ' 在 VSIX 环境中直接同步执行
             job()
         End Sub
 
         Public Async Function InvokeAsync(job As Func(Of Task)) As Task Implements IDispatcher.InvokeAsync
+            Await _joinableTaskFactory.SwitchToMainThreadAsync
             Await job()
         End Function
 
         Public Async Function InvokeAsync(job As Action) As Task Implements IDispatcher.InvokeAsync
+            Await _joinableTaskFactory.SwitchToMainThreadAsync
             Await System.Threading.Tasks.Task.Run(job)
         End Function
     End Class
