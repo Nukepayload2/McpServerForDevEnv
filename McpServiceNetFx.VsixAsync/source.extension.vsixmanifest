@@ -2,8 +2,9 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="McpServiceNetFx.VsixAsync.32e23e46-a6bd-4334-b19e-5466d2094f44" Version="1.0" Language="en-US" Publisher="李钰琦" />
-    <DisplayName>McpServiceNetFx.VsixAsync</DisplayName>
-    <Description>Empty VSIX Project.</Description>
+    <DisplayName>MCP Service Manager for Visual Studio</DisplayName>
+    <Description>MCP (Model Context Protocol) 服务管理器，提供服务开关、权限控制和日志记录功能。</Description>
+    <Tags>mcp, service, manager, tool window</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">

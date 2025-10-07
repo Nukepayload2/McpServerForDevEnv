@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!--  This is the file that defines the actual layout and type of the commands.
+        It is divided in different sections (e.g. command definition, command
+        placement, ...), with each defining a specific set of properties.
+        See the comment before each section for more details about how to
+        use it. -->
+
+  <!--  The VSCT compiler (vsct.exe) can be used to compile this file into
+        a binary .cto file, which can be used in a resource file.
+        The XML and C# source files are also useful to understand the structure
+        of the command table. -->
+
+  <!--The VSCT section is here.-->
+
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <Include href="KnownImageIds.vsct"/>
+
+  <Commands package="guidMcpServiceNetFxVsixAsyncPackage">
+
+    <!-- Inside this section we have different sub-sections: one for the appearance definition,
+         one to define commands that are placed inside menus and another for the
+         placement (the visibility) of the commands inside some menus. -->
+
+    <!-- Menu definition section -->
+
+    <!-- In this section we can define new menu items. Each menu item has a command guid, id,
+         a parent guid and id and a display name. -->
+
+    <!-- Command definition section. -->
+    <!--This section defines the commands the user can invoke. -->
+
+    <Buttons>
+      <!--The definition of the menu item that launches the tool window.-->
+      <Button guid="guidMcpServiceNetFxVsixAsyncCmdSet" id="ShowMcpToolWindowId" priority="0x0100" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+        <Icon guid="ImageCatalogGuid" id="Settings"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>MCP服务管理器</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
+    <!--The bitmaps section defines the bitmaps that are used for the commands.-->
+
+  </Commands>
+
+  <!--The Symbols section is where we put a GUID and an identifier for each element in the VSCT file.
+      The GUID and ID pairs defined in this section are used as references in the rest of the VSCT file
+      to refer to a specific menu, command, group, bitmap, etc. without having to repeat the GUID and ID values. -->
+
+  <Symbols>
+    <!-- This is the package guid. -->
+    <GuidSymbol name="guidMcpServiceNetFxVsixAsyncPackage" value="{0e98d43d-5e0d-4bab-9224-33788cbe6a88}" />
+
+    <!-- This is the guid used to group the menu commands together -->
+    <GuidSymbol name="guidMcpServiceNetFxVsixAsyncCmdSet" value="{9cc1062b-4c82-46d2-adcb-f5c17d55fb86}">
+      <IDSymbol name="ShowMcpToolWindowId" value="0x0100" />
+    </GuidSymbol>
+
+    <!-- The moniker used for the command icon. -->
+    <GuidSymbol name="ImageCatalogGuid" value="{ae27a6b0-e345-4288-96df-5eaf394ee369}">
+      <IDSymbol name="Settings" value="30001" />
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>
