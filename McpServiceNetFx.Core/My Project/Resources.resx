@@ -487,10 +487,7 @@ This software does not support remote information transmission, only local netwo
   <data name="LogServiceStarted" xml:space="preserve">
     <value>Service Started</value>
   </data>
-  <data name="LogServiceStopped" xml:space="preserve">
-    <value>Service Stopped</value>
-  </data>
-  <data name="LogVsExited" xml:space="preserve">
+    <data name="LogVsExited" xml:space="preserve">
     <value>Visual Studio Exited</value>
   </data>
   <data name="LogVsShutdown" xml:space="preserve">
@@ -817,5 +814,109 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="CopyCommandFailed" xml:space="preserve">
     <value>Clipboard operation failed, please manually copy the command below.</value>
+  </data>
+
+  <!-- Additional McpWindow 本地化资源 -->
+  <data name="LogCannotGetActivityLog" xml:space="preserve">
+    <value>Cannot get ActivityLog service: {0}</value>
+  </data>
+  <data name="LogCannotGetDte2" xml:space="preserve">
+    <value>Cannot get DTE2 service: {0}</value>
+  </data>
+  <data name="LogCannotCreateToolManager" xml:space="preserve">
+    <value>Cannot create tool manager: {0}</value>
+  </data>
+  <data name="LogLoadPermissionsFailed" xml:space="preserve">
+    <value>Failed to load permission configuration: {0}</value>
+  </data>
+  <data name="LogGetDefaultPermissionsFailed" xml:space="preserve">
+    <value>Failed to get default permissions: {0}</value>
+  </data>
+  <data name="DefaultToolSolutionInfo" xml:space="preserve">
+    <value>Solution Information</value>
+  </data>
+  <data name="DefaultToolSolutionInfoDesc" xml:space="preserve">
+    <value>Get current solution information</value>
+  </data>
+  <data name="DefaultToolProjectBuild" xml:space="preserve">
+    <value>Project Build</value>
+  </data>
+  <data name="DefaultToolProjectBuildDesc" xml:space="preserve">
+    <value>Build current project or solution</value>
+  </data>
+  <data name="DefaultToolErrorList" xml:space="preserve">
+    <value>Error List</value>
+  </data>
+  <data name="DefaultToolErrorListDesc" xml:space="preserve">
+    <value>Get current error list</value>
+  </data>
+  <data name="DefaultToolDocumentOps" xml:space="preserve">
+    <value>Document Operations</value>
+  </data>
+  <data name="DefaultToolDocumentOpsDesc" xml:space="preserve">
+    <value>Read and edit current documents</value>
+  </data>
+  <data name="LogBatchSetPermissions" xml:space="preserve">
+    <value>Batch set all tool permissions to: {0}</value>
+  </data>
+  <data name="LogPermissionsSaved" xml:space="preserve">
+    <value>Saved {0} permission configurations</value>
+  </data>
+  <data name="LogSavePermissionsFailed" xml:space="preserve">
+    <value>Failed to save permission configuration: {0}</value>
+  </data>
+  <data name="LogPermissionsReloaded" xml:space="preserve">
+    <value>Reloaded {0} tool permissions</value>
+  </data>
+  <data name="LogServerConfigLoaded" xml:space="preserve">
+    <value>Loaded server configuration, port: {0}</value>
+  </data>
+  <data name="LogLoadServerConfigFailed" xml:space="preserve">
+    <value>Failed to load server configuration: {0}</value>
+  </data>
+  <data name="LogServerConfigSaved" xml:space="preserve">
+    <value>Saved server configuration, port: {0}</value>
+  </data>
+  <data name="LogSaveServerConfigFailed" xml:space="preserve">
+    <value>Failed to save server configuration: {0}</value>
+  </data>
+  <data name="LogServiceAlreadyRunning" xml:space="preserve">
+    <value>MCP service is already running</value>
+  </data>
+  <data name="LogStartServiceFailed" xml:space="preserve">
+    <value>Failed to start MCP service: {0}</value>
+  </data>
+  <data name="LogServiceStopped" xml:space="preserve">
+    <value>MCP service stopped</value>
+  </data>
+  <data name="LogStopServiceFailed" xml:space="preserve">
+    <value>Failed to stop MCP service: {0}</value>
+  </data>
+  <data name="PermissionAllowed" xml:space="preserve">
+    <value>Allowed</value>
+  </data>
+  <data name="PermissionDenied" xml:space="preserve">
+    <value>Denied</value>
+  </data>
+  <data name="PermissionAsk" xml:space="preserve">
+    <value>Ask</value>
+  </data>
+  <data name="PermissionUserAllowed" xml:space="preserve">
+    <value>User Allowed</value>
+  </data>
+  <data name="PermissionUserDenied" xml:space="preserve">
+    <value>User Denied</value>
+  </data>
+  <data name="LogPermissionDialogFailed" xml:space="preserve">
+    <value>Failed to show confirmation dialog: {0}, default denied</value>
+  </data>
+  <data name="LogUICleared" xml:space="preserve">
+    <value>UI log cleared</value>
+  </data>
+  <data name="LogConfigGenerationFailed" xml:space="preserve">
+    <value>Failed to generate configuration: {0}</value>
+  </data>
+  <data name="CommandDescription" xml:space="preserve">
+    <value>Command</value>
   </data>
 </root>

@@ -67,14 +67,14 @@ Namespace ToolWindows
             Try
                 _activityLog = package.GetService(Of SVsActivityLog, IVsActivityLog)()
             Catch ex As Exception
-                System.Diagnostics.Debug.WriteLine($"无法获取 ActivityLog 服务: {ex.Message}")
+                System.Diagnostics.Debug.WriteLine(String.Format(SR.LogCannotGetActivityLog, ex.Message))
             End Try
 
             ' 获取 DTE2 服务（简化版本）
             Try
                 _dte2 = package.GetService(Of SDTE, DTE2)()
             Catch ex As Exception
-                LogError("ServiceError", $"无法获取 DTE2 服务: {ex.Message}")
+                LogError("ServiceError", String.Format(SR.LogCannotGetDte2, ex.Message))
             End Try
             _joinableTaskFactory = package.JoinableTaskFactory
             ' 创建工具管理器（简化版本）
@@ -89,7 +89,7 @@ Namespace ToolWindows
                     LogError("工具管理器", SR.LogToolManagerInitFailed)
                 End If
             Catch ex As Exception
-                LogError("ServiceError", $"无法创建工具管理器: {ex.Message}")
+                LogError("ServiceError", String.Format(SR.LogCannotCreateToolManager, ex.Message))
             End Try
 
             ' 加载服务器配置
@@ -162,7 +162,7 @@ Namespace ToolWindows
                     End If
                 End If
             Catch ex As Exception
-                LogError("权限错误", $"加载权限配置失败: {ex.Message}")
+                LogError("权限错误", String.Format(SR.LogLoadPermissionsFailed, ex.Message))
                 AddDefaultTools()
             End Try
         End Sub
@@ -175,7 +175,7 @@ Namespace ToolWindows
                 Try
                     Return _toolManager.GetDefaultPermissions()
                 Catch ex As Exception
-                    LogError("工具管理器错误", $"获取默认权限失败: {ex.Message}")
+                    LogError("工具管理器错误", String.Format(SR.LogGetDefaultPermissionsFailed, ex.Message))
                 End Try
             End If
             Return New List(Of PermissionItem)()
@@ -188,23 +188,23 @@ Namespace ToolWindows
             Tools.Clear()
             Tools.AddRange(New PermissionItem() {
                 New PermissionItem With {
-                    .FeatureName = "解决方案信息",
-                    .Description = "获取当前解决方案的信息",
+                    .FeatureName = SR.DefaultToolSolutionInfo,
+                    .Description = SR.DefaultToolSolutionInfoDesc,
                     .Permission = PermissionLevel.Allow
                 },
                 New PermissionItem With {
-                    .FeatureName = "项目构建",
-                    .Description = "构建当前项目或解决方案",
+                    .FeatureName = SR.DefaultToolProjectBuild,
+                    .Description = SR.DefaultToolProjectBuildDesc,
                     .Permission = PermissionLevel.Allow
                 },
                 New PermissionItem With {
-                    .FeatureName = "错误列表",
-                    .Description = "获取当前错误列表",
+                    .FeatureName = SR.DefaultToolErrorList,
+                    .Description = SR.DefaultToolErrorListDesc,
                     .Permission = PermissionLevel.Allow
                 },
                 New PermissionItem With {
-                    .FeatureName = "文档操作",
-                    .Description = "读取和编辑当前文档",
+                    .FeatureName = SR.DefaultToolDocumentOps,
+                    .Description = SR.DefaultToolDocumentOpsDesc,
                     .Permission = PermissionLevel.Ask
                 }
             })
@@ -308,7 +308,7 @@ Namespace ToolWindows
             For Each tool In Tools
                 tool.Permission = permission
             Next
-            LogToolOperation("SetAllPermissions", "Success", $"批量设置所有工具权限为: {permission}")
+            LogToolOperation("SetAllPermissions", "Success", String.Format(SR.LogBatchSetPermissions, permission))
         End Sub
 
         ''' <summary>
@@ -318,9 +318,9 @@ Namespace ToolWindows
             Try
                 ' 使用Visual Studio设置保存权限配置
                 _settingsHelper.SavePermissions(Tools)
-                LogServiceAction("权限保存", "成功", $"保存了 {Tools.Count} 个权限配置")
+                LogServiceAction("权限保存", "成功", String.Format(SR.LogPermissionsSaved, Tools.Count))
             Catch ex As Exception
-                LogError("权限保存", $"保存权限配置失败: {ex.Message}")
+                LogError("权限保存", String.Format(SR.LogSavePermissionsFailed, ex.Message))
                 Throw
             End Try
         End Sub
@@ -330,7 +330,7 @@ Namespace ToolWindows
         ''' </summary>
         Public Sub ReloadPermissions()
             LoadPermissions()
-            LogServiceAction("权限重新加载", "成功", $"重新加载了 {Tools.Count} 个工具权限")
+            LogServiceAction("权限重新加载", "成功", String.Format(SR.LogPermissionsReloaded, Tools.Count))
         End Sub
 
         ''' <summary>
@@ -339,9 +339,9 @@ Namespace ToolWindows
         Private Sub LoadServerConfiguration()
             Try
                 ServerConfiguration = _settingsHelper.LoadServerConfiguration()
-                LogServiceAction("配置加载", "成功", $"加载服务器配置，端口: {ServerConfiguration.Port}")
+                LogServiceAction("配置加载", "成功", String.Format(SR.LogServerConfigLoaded, ServerConfiguration.Port))
             Catch ex As Exception
-                LogError("配置加载", $"加载服务器配置失败: {ex.Message}")
+                LogError("配置加载", String.Format(SR.LogLoadServerConfigFailed, ex.Message))
                 ServerConfiguration = New ServerConfiguration()
             End Try
         End Sub
@@ -352,9 +352,9 @@ Namespace ToolWindows
         Public Sub SaveServerConfiguration()
             Try
                 _settingsHelper.SaveServerConfiguration(ServerConfiguration)
-                LogServiceAction("配置保存", "成功", $"保存服务器配置，端口: {ServerConfiguration.Port}")
+                LogServiceAction("配置保存", "成功", String.Format(SR.LogServerConfigSaved, ServerConfiguration.Port))
             Catch ex As Exception
-                LogError("配置保存", $"保存服务器配置失败: {ex.Message}")
+                LogError("配置保存", String.Format(SR.LogSaveServerConfigFailed, ex.Message))
                 Throw
             End Try
         End Sub
@@ -368,12 +368,12 @@ Namespace ToolWindows
                     Dim service = Services(0)
 
                     If _dte2 Is Nothing Then
-                        LogError("ServiceError", "无法获取 DTE2 服务")
+                        LogError("ServiceError", SR.LogCannotGetDte2)
                         Return
                     End If
 
                     If _mcpService IsNot Nothing AndAlso _mcpService.IsRunning Then
-                        LogServiceAction("StartService", "Failed", "MCP 服务已在运行中")
+                        LogServiceAction("StartService", "Failed", SR.LogServiceAlreadyRunning)
                         Return
                     End If
 
@@ -391,10 +391,10 @@ Namespace ToolWindows
                     service.Status = SR.StatusRunning
                     service.StartTime = DateTime.Now
 
-                    LogServiceAction("StartService", "Success", $"MCP 服务已启动，端口: {service.Port}")
+                    LogServiceAction("StartService", "Success", String.Format(SR.LogServiceStarted, service.Port))
                 End If
             Catch ex As Exception
-                LogError("ServiceError", $"启动 MCP 服务失败: {ex.Message}")
+                LogError("ServiceError", String.Format(SR.LogStartServiceFailed, ex.Message))
                 If Services.Count > 0 Then
                     Services(0).Status = SR.StatusStartFailed
                 End If
@@ -419,9 +419,9 @@ Namespace ToolWindows
                     service.StartTime = Nothing
                 End If
 
-                LogServiceAction("StopService", "Success", "MCP 服务已停止")
+                LogServiceAction("StopService", "Success", SR.LogServiceStopped)
             Catch ex As Exception
-                LogError("ServiceError", $"停止 MCP 服务失败: {ex.Message}")
+                LogError("ServiceError", String.Format(SR.LogStopServiceFailed, ex.Message))
             End Try
         End Sub
 
@@ -442,7 +442,7 @@ Namespace ToolWindows
     }}
   }}"""
             Catch ex As Exception
-                Return $"// 生成配置失败: {ex.Message}"
+                Return $"// {String.Format(SR.LogConfigGenerationFailed, ex.Message)}"
             End Try
         End Function
 
@@ -456,7 +456,7 @@ Namespace ToolWindows
                 ' 生成 Claude CLI 配置
                 Return $"claude mcp add --transport http devenv ""http://localhost:{port}/mcp/"""
             Catch ex As Exception
-                Return $"# 生成配置失败: {ex.Message}"
+                Return $"# {String.Format(SR.LogConfigGenerationFailed, ex.Message)}"
             End Try
         End Function
 
@@ -519,13 +519,13 @@ Namespace ToolWindows
 
             Select Case level
                 Case PermissionLevel.Allow
-                    LogOperation(featureName, "允许", operationDescription)
+                    LogOperation(featureName, SR.PermissionAllowed, operationDescription)
                     Return True
                 Case PermissionLevel.Deny
-                    LogOperation(featureName, "拒绝", operationDescription)
+                    LogOperation(featureName, SR.PermissionDenied, operationDescription)
                     Return False
                 Case PermissionLevel.Ask
-                    LogOperation(featureName, "询问", operationDescription)
+                    LogOperation(featureName, SR.PermissionAsk, operationDescription)
 
                     ' 使用 CustomMessageBox 询问用户是否允许
                     Try
@@ -541,14 +541,14 @@ Namespace ToolWindows
 
                         Select Case result
                             Case CustomMessageBox.MessageBoxResult.Yes
-                                LogOperation(featureName, "用户允许", operationDescription)
+                                LogOperation(featureName, SR.PermissionUserAllowed, operationDescription)
                                 Return True
                             Case CustomMessageBox.MessageBoxResult.No, CustomMessageBox.MessageBoxResult.None
-                                LogOperation(featureName, "用户拒绝", operationDescription)
+                                LogOperation(featureName, SR.PermissionUserDenied, operationDescription)
                                 Return False
                         End Select
                     Catch ex As Exception
-                        LogError("权限确认", $"显示确认对话框失败: {ex.Message}，默认拒绝")
+                        LogError("Permission", String.Format(SR.LogPermissionDialogFailed, ex.Message))
                         Return False
                     End Try
             End Select
@@ -560,7 +560,7 @@ Namespace ToolWindows
         ''' </summary>
         Public Sub ClearLogItems()
             LogItems.Clear()
-            LogInfo("UIAction", "界面日志已清空")
+            LogInfo("UIAction", SR.LogUICleared)
         End Sub
 
         ''' <summary>
@@ -648,7 +648,7 @@ Namespace ToolWindows
         Public Sub ShowCopyCommandDialog(title As String, message As String, command As String) Implements IInteraction.ShowCopyCommandDialog
             Try
                 ' 尝试复制到剪贴板
-                Dim clipboardSuccess = TryCopyToClipboard(command, "命令")
+                Dim clipboardSuccess = TryCopyToClipboard(command, SR.CommandDescription)
 
                 ' 根据复制结果调整消息
                 Dim displayMessage As String
@@ -661,10 +661,6 @@ Namespace ToolWindows
                 ' 显示用户消息窗口
                 ShowUserMessageWindow(title, displayMessage, command)
             Catch ex As Exception
-                System.Diagnostics.Debug.WriteLine($"Interaction error: {ex.Message}")
-                ' 降级到简单的调试输出
-                System.Diagnostics.Debug.WriteLine($"{title}: {message}")
-                System.Diagnostics.Debug.WriteLine($"Command: {command}")
             End Try
         End Sub
 
@@ -674,10 +670,8 @@ Namespace ToolWindows
         Private Shared Function TryCopyToClipboard(text As String, Optional description As String = "") As Boolean
             Try
                 System.Windows.Forms.Clipboard.SetText(text)
-                System.Diagnostics.Debug.WriteLine($"已复制{If(String.IsNullOrEmpty(description), "", $" {description}")}内容到剪贴板")
                 Return True
             Catch ex As Exception
-                System.Diagnostics.Debug.WriteLine($"剪贴板复制失败: {ex.Message}")
                 Return False
             End Try
         End Function
@@ -693,7 +687,6 @@ Namespace ToolWindows
                 }
                 window.Show()
             Catch ex As Exception
-                System.Diagnostics.Debug.WriteLine($"显示用户消息窗口失败: {ex.Message}")
             End Try
         End Sub
     End Class

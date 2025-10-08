@@ -487,10 +487,7 @@
   <data name="LogServiceStarted" xml:space="preserve">
     <value>服务启动</value>
   </data>
-  <data name="LogServiceStopped" xml:space="preserve">
-    <value>服务停止</value>
-  </data>
-  <data name="LogVsExited" xml:space="preserve">
+    <data name="LogVsExited" xml:space="preserve">
     <value>Visual Studio 退出</value>
   </data>
   <data name="LogVsShutdown" xml:space="preserve">
@@ -818,5 +815,109 @@
   </data>
   <data name="CopyCommandFailed" xml:space="preserve">
     <value>剪贴板操作失败，请手动复制下方的命令。</value>
+  </data>
+
+  <!-- Additional McpWindow 本地化资源 -->
+  <data name="LogCannotGetActivityLog" xml:space="preserve">
+    <value>无法获取 ActivityLog 服务: {0}</value>
+  </data>
+  <data name="LogCannotGetDte2" xml:space="preserve">
+    <value>无法获取 DTE2 服务: {0}</value>
+  </data>
+  <data name="LogCannotCreateToolManager" xml:space="preserve">
+    <value>无法创建工具管理器: {0}</value>
+  </data>
+  <data name="LogLoadPermissionsFailed" xml:space="preserve">
+    <value>加载权限配置失败: {0}</value>
+  </data>
+  <data name="LogGetDefaultPermissionsFailed" xml:space="preserve">
+    <value>获取默认权限失败: {0}</value>
+  </data>
+  <data name="DefaultToolSolutionInfo" xml:space="preserve">
+    <value>解决方案信息</value>
+  </data>
+  <data name="DefaultToolSolutionInfoDesc" xml:space="preserve">
+    <value>获取当前解决方案的信息</value>
+  </data>
+  <data name="DefaultToolProjectBuild" xml:space="preserve">
+    <value>项目构建</value>
+  </data>
+  <data name="DefaultToolProjectBuildDesc" xml:space="preserve">
+    <value>构建当前项目或解决方案</value>
+  </data>
+  <data name="DefaultToolErrorList" xml:space="preserve">
+    <value>错误列表</value>
+  </data>
+  <data name="DefaultToolErrorListDesc" xml:space="preserve">
+    <value>获取当前错误列表</value>
+  </data>
+  <data name="DefaultToolDocumentOps" xml:space="preserve">
+    <value>文档操作</value>
+  </data>
+  <data name="DefaultToolDocumentOpsDesc" xml:space="preserve">
+    <value>读取和编辑当前文档</value>
+  </data>
+  <data name="LogBatchSetPermissions" xml:space="preserve">
+    <value>批量设置所有工具权限为: {0}</value>
+  </data>
+  <data name="LogPermissionsSaved" xml:space="preserve">
+    <value>保存了 {0} 个权限配置</value>
+  </data>
+  <data name="LogSavePermissionsFailed" xml:space="preserve">
+    <value>保存权限配置失败: {0}</value>
+  </data>
+  <data name="LogPermissionsReloaded" xml:space="preserve">
+    <value>重新加载了 {0} 个工具权限</value>
+  </data>
+  <data name="LogServerConfigLoaded" xml:space="preserve">
+    <value>加载服务器配置，端口: {0}</value>
+  </data>
+  <data name="LogLoadServerConfigFailed" xml:space="preserve">
+    <value>加载服务器配置失败: {0}</value>
+  </data>
+  <data name="LogServerConfigSaved" xml:space="preserve">
+    <value>保存服务器配置，端口: {0}</value>
+  </data>
+  <data name="LogSaveServerConfigFailed" xml:space="preserve">
+    <value>保存服务器配置失败: {0}</value>
+  </data>
+  <data name="LogServiceAlreadyRunning" xml:space="preserve">
+    <value>MCP 服务已在运行中</value>
+  </data>
+  <data name="LogStartServiceFailed" xml:space="preserve">
+    <value>启动 MCP 服务失败: {0}</value>
+  </data>
+  <data name="LogServiceStopped" xml:space="preserve">
+    <value>MCP 服务已停止</value>
+  </data>
+  <data name="LogStopServiceFailed" xml:space="preserve">
+    <value>停止 MCP 服务失败: {0}</value>
+  </data>
+  <data name="PermissionAllowed" xml:space="preserve">
+    <value>允许</value>
+  </data>
+  <data name="PermissionDenied" xml:space="preserve">
+    <value>拒绝</value>
+  </data>
+  <data name="PermissionAsk" xml:space="preserve">
+    <value>询问</value>
+  </data>
+  <data name="PermissionUserAllowed" xml:space="preserve">
+    <value>用户允许</value>
+  </data>
+  <data name="PermissionUserDenied" xml:space="preserve">
+    <value>用户拒绝</value>
+  </data>
+  <data name="LogPermissionDialogFailed" xml:space="preserve">
+    <value>显示确认对话框失败: {0}，默认拒绝</value>
+  </data>
+  <data name="LogUICleared" xml:space="preserve">
+    <value>界面日志已清空</value>
+  </data>
+  <data name="LogConfigGenerationFailed" xml:space="preserve">
+    <value>生成配置失败: {0}</value>
+  </data>
+  <data name="CommandDescription" xml:space="preserve">
+    <value>命令</value>
   </data>
 </root>
