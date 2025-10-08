@@ -13,7 +13,7 @@ Public Class RunProjectCustomToolsTool
 
     Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
         .Name = "run_project_custom_tools",
-        .Description = "运行指定项目的自定义工具",
+        .Description = "运行指定项目的自定义工具，能重新生成 resx 和 settings 文件的 designer 代码文件，建议在修改 resx 或 settings 文件后运行",
         .InputSchema = New InputSchema With {
             .Type = "object",
             .Properties = New Dictionary(Of String, PropertyDefinition) From {
