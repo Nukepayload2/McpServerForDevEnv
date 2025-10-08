@@ -39,7 +39,10 @@
         <Icon guid="ImageCatalogGuid" id="Settings"/>
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
-          <ButtonText>MCP服务管理器</ButtonText>
+          <ButtonText>MCP Service Manager</ButtonText>
+        </Strings>
+        <Strings language="zh-CN">
+          <ButtonText>MCP 服务管理器</ButtonText>
         </Strings>
       </Button>
     </Buttons>
