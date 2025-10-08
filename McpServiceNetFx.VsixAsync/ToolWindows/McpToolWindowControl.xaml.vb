@@ -18,27 +18,27 @@ Namespace ToolWindows
                 Dim permissionLevel = CType(value, PermissionLevel)
                 Select Case permissionLevel
                     Case PermissionLevel.Allow
-                        Return "Allow"
+                        Return SR.TextPermissionAllow
                     Case PermissionLevel.Ask
-                        Return "Ask"
+                        Return SR.TextPermissionAsk
                     Case PermissionLevel.Deny
-                        Return "Deny"
+                        Return SR.TextPermissionDeny
                     Case Else
-                        Return "Ask"
+                        Return SR.TextPermissionAsk
                 End Select
             End If
-            Return "Ask"
+            Return SR.TextPermissionAsk
         End Function
 
         Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.ConvertBack
             If TypeOf value Is String Then
                 Dim stringValue = CStr(value)
                 Select Case stringValue
-                    Case "Allow"
+                    Case SR.TextPermissionAllow
                         Return PermissionLevel.Allow
-                    Case "Ask"
+                    Case SR.TextPermissionAsk
                         Return PermissionLevel.Ask
-                    Case "Deny"
+                    Case SR.TextPermissionDeny
                         Return PermissionLevel.Deny
                     Case Else
                         Return PermissionLevel.Ask
@@ -64,7 +64,7 @@ Namespace ToolWindows
             InitializeDataBindings()
 
             ' 记录初始化日志
-            _state.LogInfo("System", "MCP 服务管理器已启动")
+            _state.LogInfo("System", SR.LogMcpServiceManagerStarted)
         End Sub
 
         Private Sub InitializeDataBindings()
@@ -129,7 +129,7 @@ Namespace ToolWindows
         Private Sub UpdateServiceStatusDisplay()
             If _state.Services.Count > 0 Then
                 Dim service = _state.Services(0)
-                ServiceStatusText.Text = $"状态: {service.Status}"
+                ServiceStatusText.Text = String.Format(SR.textStatusWithColon, service.Status)
 
                 If service.IsRunning Then
                     ServiceToggleButton.IsChecked = True
@@ -155,7 +155,7 @@ Namespace ToolWindows
                 Dim tool = CType(ToolsDataGrid.SelectedItem, PermissionItem)
                 If tool IsNot Nothing Then
                     ' 记录工具权限变更
-                    _state.LogToolOperation("UpdateToolPermission", "Success", $"工具 {tool.FeatureName} 权限已更新为: {tool.Permission}")
+                    _state.LogToolOperation("UpdateToolPermission", "Success", String.Format(SR.LogToolPermissionUpdated, tool.FeatureName, tool.Permission))
                 End If
             End If
 
@@ -188,14 +188,14 @@ Namespace ToolWindows
 
         Private Sub ViewActivityLogHelpButton_Click() Handles ViewActivityLogHelpButton.Click
             Try
-                Dim helpUrl = "https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log"
+                Dim helpUrl = SR.HelpActivityLogUrl
                 System.Diagnostics.Process.Start(New ProcessStartInfo With {
                     .FileName = helpUrl,
                     .UseShellExecute = True
                 })
-                _state.LogInfo("HelpAction", "打开 ActivityLog 帮助文档")
+                _state.LogInfo("HelpAction", SR.LogOpenedActivityLogHelp)
             Catch ex As Exception
-                _state.LogError("HelpAction", $"无法打开帮助文档: {ex.Message}")
+                _state.LogError("HelpAction", String.Format(SR.LogCannotOpenHelpDoc, ex.Message))
                 CustomMessageBox.Show(Nothing, String.Format(SR.MsgCannotOpenHelpDoc, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
@@ -206,7 +206,7 @@ Namespace ToolWindows
                 ActivityLogDataGrid.Items.Refresh()
                 ShowStatusMessage(SR.MsgInterfaceLogCleared)
             Catch ex As Exception
-                _state.LogError("UIAction", $"清空日志失败: {ex.Message}")
+                _state.LogError("UIAction", String.Format(SR.LogClearLogFailed, ex.Message))
                 CustomMessageBox.Show(Nothing, String.Format(SR.MsgClearLogFailed, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
@@ -240,7 +240,7 @@ Namespace ToolWindows
                         UpdateServiceStatusDisplay()
 
                         ShowStatusMessage(String.Format(SR.MsgPortNumberSaved, newPort))
-                        _state.LogInfo("Configuration", $"端口号已自动保存为: {newPort}")
+                        _state.LogInfo("Configuration", String.Format(SR.LogPortNumberAutoSaved, newPort))
                     Else
                         CustomMessageBox.Show(Nothing, SR.MsgPortNumberRange, SR.TitleWarning, CustomMessageBox.MessageBoxType.Warning)
                         PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
@@ -250,7 +250,7 @@ Namespace ToolWindows
                     PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                 End If
             Catch ex As Exception
-                _state.LogError("Configuration", $"自动保存端口号失败: {ex.Message}")
+                _state.LogError("Configuration", String.Format(SR.MsgAutoSavePortFailed, ex.Message))
                 CustomMessageBox.Show(Nothing, String.Format(SR.MsgAutoSavePortFailed, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
                 PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
             End Try
@@ -279,9 +279,9 @@ Namespace ToolWindows
                 UpdateServiceStatusDisplay()
 
                 ShowStatusMessage(String.Format(SR.MsgPortNumberReset, 38080))
-                _state.LogInfo("Configuration", "端口号已重置为默认值: 38080")
+                _state.LogInfo("Configuration", SR.LogPortNumberResetToDefault)
             Catch ex As Exception
-                _state.LogError("Configuration", $"重置端口号失败: {ex.Message}")
+                _state.LogError("Configuration", String.Format(SR.LogResetPortFailed, ex.Message))
                 CustomMessageBox.Show(Nothing, String.Format(SR.MsgResetPortFailed, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub

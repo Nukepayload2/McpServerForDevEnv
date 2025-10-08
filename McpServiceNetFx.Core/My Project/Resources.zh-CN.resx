@@ -596,4 +596,232 @@
   <data name="LogException" xml:space="preserve">
     <value>异常</value>
   </data>
+
+  <!-- VsixAsync 项目本地化资源 -->
+  <data name="LogMcpServiceManagerStarted" xml:space="preserve">
+    <value>MCP 服务管理器已启动</value>
+  </data>
+  <data name="textStatusWithColon" xml:space="preserve">
+    <value>状态: {0}</value>
+  </data>
+  <data name="LogToolPermissionUpdated" xml:space="preserve">
+    <value>工具 {0} 权限已更新为: {1}</value>
+  </data>
+  <data name="HelpActivityLogUrl" xml:space="preserve">
+    <value>https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log</value>
+  </data>
+  <data name="LogOpenedActivityLogHelp" xml:space="preserve">
+    <value>已打开 ActivityLog 帮助文档</value>
+  </data>
+  <data name="LogCannotOpenHelpDoc" xml:space="preserve">
+    <value>无法打开帮助文档: {0}</value>
+  </data>
+  <data name="LogClearLogFailed" xml:space="preserve">
+    <value>清空日志失败: {0}</value>
+  </data>
+  <data name="LogPortNumberAutoSaved" xml:space="preserve">
+    <value>端口号已自动保存为: {0}</value>
+  </data>
+  <data name="LogPortNumberResetToDefault" xml:space="preserve">
+    <value>端口号已重置为默认值: 38080</value>
+  </data>
+  <data name="LogResetPortFailed" xml:space="preserve">
+    <value>重置端口号失败: {0}</value>
+  </data>
+  <data name="TextPermissionAllow" xml:space="preserve">
+    <value>允许</value>
+  </data>
+  <data name="TextPermissionAsk" xml:space="preserve">
+    <value>询问</value>
+  </data>
+  <data name="TextPermissionDeny" xml:space="preserve">
+    <value>拒绝</value>
+  </data>
+  <data name="IconInformation" xml:space="preserve">
+    <value>i</value>
+  </data>
+  <data name="IconWarning" xml:space="preserve">
+    <value>!</value>
+  </data>
+  <data name="IconError" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="IconQuestion" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <data name="DefaultPortNumber" xml:space="preserve">
+    <value>38080</value>
+  </data>
+
+  <!-- VsixAsync ToolWindow Resources -->
+  <data name="GroupBoxMcpToolAuthorization" xml:space="preserve">
+    <value>MCP 工具授权</value>
+  </data>
+  <data name="ButtonAuthorizeAll" xml:space="preserve">
+    <value>全部允许</value>
+  </data>
+  <data name="HeaderPermissionLevel" xml:space="preserve">
+    <value>权限级别</value>
+  </data>
+  <data name="ButtonSavePermissions" xml:space="preserve">
+    <value>保存权限</value>
+  </data>
+  <data name="ButtonReloadPermissions" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="GroupBoxMcpServiceStatus" xml:space="preserve">
+    <value>MCP 服务状态</value>
+  </data>
+  <data name="TextMcpService" xml:space="preserve">
+    <value>MCP 服务</value>
+  </data>
+  <data name="TextStatusStopped" xml:space="preserve">
+    <value>状态: 已停止</value>
+  </data>
+  <data name="TextPortNumber" xml:space="preserve">
+    <value>端口:</value>
+  </data>
+  <data name="ButtonResetToDefault" xml:space="preserve">
+    <value>重置为默认值</value>
+  </data>
+  <data name="TabMcpJsonConfig" xml:space="preserve">
+    <value>MCP JSON 配置</value>
+  </data>
+  <data name="TabClaudeCliConfig" xml:space="preserve">
+    <value>Claude CLI 配置</value>
+  </data>
+  <data name="GroupBoxLogs" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="ButtonClearLog" xml:space="preserve">
+    <value>清空日志</value>
+  </data>
+  <data name="ButtonViewActivityLogHelp" xml:space="preserve">
+    <value>查看文件日志帮助</value>
+  </data>
+  <data name="HeaderLevel" xml:space="preserve">
+    <value>级别</value>
+  </data>
+  <data name="HeaderCategory" xml:space="preserve">
+    <value>类别</value>
+  </data>
+  <data name="HeaderMessage" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="TextReady" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="TextToolsCount" xml:space="preserve">
+    <value>工具: {0}</value>
+  </data>
+  <data name="TextServicesCount" xml:space="preserve">
+    <value>服务: {0}</value>
+  </data>
+  <data name="MsgAllPermissionsAllowed" xml:space="preserve">
+    <value>所有工具权限已设置为允许</value>
+  </data>
+  <data name="MsgAllPermissionsAsked" xml:space="preserve">
+    <value>所有工具权限已设置为询问</value>
+  </data>
+  <data name="MsgPermissionsSaved" xml:space="preserve">
+    <value>权限配置已保存</value>
+  </data>
+  <data name="MsgPermissionsReloaded" xml:space="preserve">
+    <value>权限配置已重新加载</value>
+  </data>
+  <data name="MsgToolsListRefreshed" xml:space="preserve">
+    <value>工具列表已刷新</value>
+  </data>
+  <data name="MsgMcpServiceStarted" xml:space="preserve">
+    <value>MCP 服务已启动</value>
+  </data>
+  <data name="MsgMcpServiceStopped" xml:space="preserve">
+    <value>MCP 服务已停止</value>
+  </data>
+  <data name="MsgInterfaceLogCleared" xml:space="preserve">
+    <value>界面日志已清空</value>
+  </data>
+  <data name="MsgPortNumberSaved" xml:space="preserve">
+    <value>端口号已自动保存为: {0}</value>
+  </data>
+  <data name="MsgPortNumberReset" xml:space="preserve">
+    <value>端口号已重置为默认值: {0}</value>
+  </data>
+  <data name="MsgStopServiceBeforePortChange" xml:space="preserve">
+    <value>请在更改端口号之前停止 MCP 服务</value>
+  </data>
+  <data name="MsgPortNumberRange" xml:space="preserve">
+    <value>端口号必须在 1-65535 范围内</value>
+  </data>
+  <data name="MsgValidPortNumber" xml:space="preserve">
+    <value>请输入有效的端口号</value>
+  </data>
+  <data name="MsgAutoSavePortFailed" xml:space="preserve">
+    <value>自动保存端口号失败: {0}</value>
+  </data>
+  <data name="MsgResetPortFailed" xml:space="preserve">
+    <value>重置端口号失败: {0}</value>
+  </data>
+  <data name="MsgClearLogFailed" xml:space="preserve">
+    <value>清空日志失败: {0}</value>
+  </data>
+  <data name="MsgCannotOpenHelpDoc" xml:space="preserve">
+    <value>无法打开帮助文档: {0}</value>
+  </data>
+  <data name="TitleServiceRunning" xml:space="preserve">
+    <value>服务运行中 - 端口: {0}</value>
+  </data>
+
+  <!-- Additional resources for VsixAsync localization -->
+  <data name="LogMcpServiceManagerStarted" xml:space="preserve">
+    <value>MCP 服务管理器已启动</value>
+  </data>
+  <data name="textStatusWithColon" xml:space="preserve">
+    <value>状态: {0}</value>
+  </data>
+  <data name="LogToolPermissionUpdated" xml:space="preserve">
+    <value>工具 {0} 权限已更新为: {1}</value>
+  </data>
+  <data name="HelpActivityLogUrl" xml:space="preserve">
+    <value>https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log</value>
+  </data>
+  <data name="LogOpenedActivityLogHelp" xml:space="preserve">
+    <value>已打开 ActivityLog 帮助文档</value>
+  </data>
+  <data name="LogCannotOpenHelpDoc" xml:space="preserve">
+    <value>无法打开帮助文档: {0}</value>
+  </data>
+  <data name="LogClearLogFailed" xml:space="preserve">
+    <value>清空日志失败: {0}</value>
+  </data>
+  <data name="LogPortNumberAutoSaved" xml:space="preserve">
+    <value>端口号已自动保存为: {0}</value>
+  </data>
+  <data name="LogPortNumberResetToDefault" xml:space="preserve">
+    <value>端口号已重置为默认值: 38080</value>
+  </data>
+  <data name="LogResetPortFailed" xml:space="preserve">
+    <value>重置端口号失败: {0}</value>
+  </data>
+  <data name="TextPermissionAllow" xml:space="preserve">
+    <value>允许</value>
+  </data>
+  <data name="TextPermissionAsk" xml:space="preserve">
+    <value>询问</value>
+  </data>
+  <data name="TextPermissionDeny" xml:space="preserve">
+    <value>拒绝</value>
+  </data>
+  <data name="IconInformation" xml:space="preserve">
+    <value>i</value>
+  </data>
+  <data name="IconWarning" xml:space="preserve">
+    <value>!</value>
+  </data>
+  <data name="IconError" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="IconQuestion" xml:space="preserve">
+    <value>?</value>
+  </data>
 </root>

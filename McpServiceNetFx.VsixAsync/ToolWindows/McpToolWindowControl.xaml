@@ -185,7 +185,7 @@
                                 <TextBox x:Name="PortNumberTextBox" Grid.Column="1"
                                          Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
                                          Margin="0,0,8,0" Width="100" HorizontalAlignment="Left"
-                                         Text="38080"
+                                         Text="{x:Static res:Resources.DefaultPortNumber}"
                                          LostFocus="PortNumberTextBox_LostFocus"/>
                                 <Button x:Name="ResetPortButton" Grid.Column="2" Content="{x:Static res:Resources.ButtonResetToDefault}"
                                         Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>

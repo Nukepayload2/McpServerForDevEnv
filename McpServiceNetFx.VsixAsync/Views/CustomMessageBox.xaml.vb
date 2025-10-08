@@ -1,5 +1,6 @@
 Imports System.Windows
 Imports System.Windows.Media
+Imports SR = McpServiceNetFx.My.Resources.Resources
 
 Partial Public Class CustomMessageBox
 
@@ -46,16 +47,16 @@ Partial Public Class CustomMessageBox
         ' Set icon and message text
         Select Case type
             Case MessageBoxType.Information
-                IconTextBlock.Text = "i"
+                IconTextBlock.Text = SR.IconInformation
                 IconBorder.Background = Brushes.Blue
             Case MessageBoxType.Warning
-                IconTextBlock.Text = "!"
+                IconTextBlock.Text = SR.IconWarning
                 IconBorder.Background = Brushes.Orange
             Case MessageBoxType.Error
-                IconTextBlock.Text = "X"
+                IconTextBlock.Text = SR.IconError
                 IconBorder.Background = Brushes.Red
             Case MessageBoxType.Question
-                IconTextBlock.Text = "?"
+                IconTextBlock.Text = SR.IconQuestion
                 IconBorder.Background = Brushes.Blue
         End Select
 

@@ -604,16 +604,7 @@ This software does not support remote information transmission, only local netwo
   <data name="ButtonAuthorizeAll" xml:space="preserve">
     <value>Allow All</value>
   </data>
-  <data name="ButtonAskAll" xml:space="preserve">
-    <value>Ask All</value>
-  </data>
-  <data name="HeaderFeatureName" xml:space="preserve">
-    <value>Feature Name</value>
-  </data>
-  <data name="HeaderDescription" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="HeaderPermissionLevel" xml:space="preserve">
+    <data name="HeaderPermissionLevel" xml:space="preserve">
     <value>Permission Level</value>
   </data>
   <data name="ButtonSavePermissions" xml:space="preserve">
@@ -630,12 +621,6 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="TextStatusStopped" xml:space="preserve">
     <value>Status: Stopped</value>
-  </data>
-  <data name="ButtonStartService" xml:space="preserve">
-    <value>Start Service</value>
-  </data>
-  <data name="ButtonStopService" xml:space="preserve">
-    <value>Stop Service</value>
   </data>
   <data name="TextPortNumber" xml:space="preserve">
     <value>Port:</value>
@@ -657,9 +642,6 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="ButtonViewActivityLogHelp" xml:space="preserve">
     <value>View File Log Help</value>
-  </data>
-  <data name="HeaderTime" xml:space="preserve">
-    <value>Time</value>
   </data>
   <data name="HeaderLevel" xml:space="preserve">
     <value>Level</value>
@@ -732,5 +714,61 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="TitleServiceRunning" xml:space="preserve">
     <value>Service Running - Port: {0}</value>
+  </data>
+
+  <!-- Additional resources for VsixAsync localization -->
+  <data name="LogMcpServiceManagerStarted" xml:space="preserve">
+    <value>MCP service manager started</value>
+  </data>
+  <data name="textStatusWithColon" xml:space="preserve">
+    <value>Status: {0}</value>
+  </data>
+  <data name="LogToolPermissionUpdated" xml:space="preserve">
+    <value>Tool {0} permission updated to: {1}</value>
+  </data>
+  <data name="HelpActivityLogUrl" xml:space="preserve">
+    <value>https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log</value>
+  </data>
+  <data name="LogOpenedActivityLogHelp" xml:space="preserve">
+    <value>Opened ActivityLog help documentation</value>
+  </data>
+  <data name="LogCannotOpenHelpDoc" xml:space="preserve">
+    <value>Cannot open help documentation: {0}</value>
+  </data>
+  <data name="LogClearLogFailed" xml:space="preserve">
+    <value>Failed to clear log: {0}</value>
+  </data>
+  <data name="LogPortNumberAutoSaved" xml:space="preserve">
+    <value>Port number automatically saved as: {0}</value>
+  </data>
+  <data name="LogPortNumberResetToDefault" xml:space="preserve">
+    <value>Port number reset to default: 38080</value>
+  </data>
+  <data name="LogResetPortFailed" xml:space="preserve">
+    <value>Failed to reset port number: {0}</value>
+  </data>
+  <data name="TextPermissionAllow" xml:space="preserve">
+    <value>Allow</value>
+  </data>
+  <data name="TextPermissionAsk" xml:space="preserve">
+    <value>Ask</value>
+  </data>
+  <data name="TextPermissionDeny" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="IconInformation" xml:space="preserve">
+    <value>i</value>
+  </data>
+  <data name="IconWarning" xml:space="preserve">
+    <value>!</value>
+  </data>
+  <data name="IconError" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="IconQuestion" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <data name="DefaultPortNumber" xml:space="preserve">
+    <value>38080</value>
   </data>
 </root>
