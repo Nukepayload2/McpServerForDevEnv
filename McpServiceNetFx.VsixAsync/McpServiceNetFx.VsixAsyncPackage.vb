@@ -60,7 +60,7 @@ Public NotInheritable Class McpServiceNetFx
         Await Commands.ShowMcpToolWindowCommand.InitializeAsync(Me)
 
         ' 记录包初始化日志
-        _mcpWindowState.LogInfo("Package", "MCP Service NetFx VSIX 包已初始化")
+        _mcpWindowState.LogInfo("Package", "MCP Service Init")
     End Function
 
     Public Overrides Function GetAsyncToolWindowFactory(toolWindowType As Guid) As IVsAsyncToolWindowFactory
@@ -80,7 +80,7 @@ Public NotInheritable Class McpServiceNetFx
     Protected Overrides Sub Dispose(disposing As Boolean)
         If Not _isDisposed AndAlso disposing Then
             If _mcpWindowState IsNot Nothing Then
-                _mcpWindowState.LogInfo("Package", "MCP Service NetFx VSIX 包正在关闭")
+                _mcpWindowState.LogInfo("Package", "MCP Service Unload")
                 _mcpWindowState.StopService()
             End If
             _isDisposed = True

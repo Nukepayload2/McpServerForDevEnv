@@ -241,6 +241,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Clipboard operation failed, please manually copy the command below. 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property CopyCommandFailed() As String
+            Get
+                Return ResourceManager.GetString("CopyCommandFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Command copied to clipboard, please check the command box below. 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property CopyCommandSuccess() As String
+            Get
+                Return ResourceManager.GetString("CopyCommandSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Message 的本地化字符串。
         '''</summary>
         Public ReadOnly Property CustomMessageBoxTitle() As String
@@ -646,6 +664,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Added {0} default tool permissions 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogDefaultToolsAdded() As String
+            Get
+                Return ResourceManager.GetString("LogDefaultToolsAdded", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Denied 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LogDenied() As String
@@ -1006,6 +1033,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Loaded {0} tool permissions from Visual Studio settings 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogPermissionsLoadedFromSettings() As String
+            Get
+                Return ResourceManager.GetString("LogPermissionsLoadedFromSettings", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Loaded {0} tool permissions from Tool Manager 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogPermissionsLoadedFromToolManager() As String
+            Get
+                Return ResourceManager.GetString("LogPermissionsLoadedFromToolManager", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Permission synchronization 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LogPermissionSync() As String
@@ -1164,6 +1209,24 @@ Namespace My.Resources
         Public ReadOnly Property LogToolManager() As String
             Get
                 Return ResourceManager.GetString("LogToolManager", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to initialize Tool Manager: DTE2 service not obtained 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogToolManagerInitFailed() As String
+            Get
+                Return ResourceManager.GetString("LogToolManagerInitFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Visual Studio Tool Manager initialized 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogToolManagerInitialized() As String
+            Get
+                Return ResourceManager.GetString("LogToolManagerInitialized", resourceCulture)
             End Get
         End Property
         
@@ -1609,11 +1672,65 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Feature &apos;{0}&apos; requests operation: {1}{2}{2}Do you want to allow this operation? 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirmMessage() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirmMessage", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission Confirmation 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirmTitle() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirmTitle", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Services: {0} (Running: {1}) 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ServiceSummaryFormat() As String
+            Get
+                Return ResourceManager.GetString("ServiceSummaryFormat", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Running 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property StatusRunning() As String
+            Get
+                Return ResourceManager.GetString("StatusRunning", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Service Running - Port: {0} 的本地化字符串。
         '''</summary>
         Public ReadOnly Property StatusServiceRunning() As String
             Get
                 Return ResourceManager.GetString("StatusServiceRunning", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Start Failed 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property StatusStartFailed() As String
+            Get
+                Return ResourceManager.GetString("StatusStartFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Stopped 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property StatusStopped() As String
+            Get
+                Return ResourceManager.GetString("StatusStopped", resourceCulture)
             End Get
         End Property
         
@@ -1964,11 +2081,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Tools: {0} (Allow: {1}, Ask: {2}, Deny: {3}) 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ToolSummaryFormat() As String
+            Get
+                Return ResourceManager.GetString("ToolSummaryFormat", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 User Message 的本地化字符串。
         '''</summary>
         Public ReadOnly Property UserMessageTitle() As String
             Get
                 Return ResourceManager.GetString("UserMessageTitle", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 MCP Service Manager 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property WindowTitle() As String
+            Get
+                Return ResourceManager.GetString("WindowTitle", resourceCulture)
             End Get
         End Property
     End Module

@@ -772,56 +772,51 @@
     <value>服务运行中 - 端口: {0}</value>
   </data>
 
-  <!-- Additional resources for VsixAsync localization -->
-  <data name="LogMcpServiceManagerStarted" xml:space="preserve">
-    <value>MCP 服务管理器已启动</value>
+  
+  <!-- McpWindow 本地化资源 -->
+  <data name="WindowTitle" xml:space="preserve">
+    <value>MCP 服务管理器</value>
   </data>
-  <data name="textStatusWithColon" xml:space="preserve">
-    <value>状态: {0}</value>
+  <data name="LogToolManagerInitialized" xml:space="preserve">
+    <value>Visual Studio 工具管理器已初始化</value>
   </data>
-  <data name="LogToolPermissionUpdated" xml:space="preserve">
-    <value>工具 {0} 权限已更新为: {1}</value>
+  <data name="LogToolManagerInitFailed" xml:space="preserve">
+    <value>无法初始化工具管理器：DTE2 服务未获取</value>
   </data>
-  <data name="HelpActivityLogUrl" xml:space="preserve">
-    <value>https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log</value>
+  <data name="LogPermissionsLoadedFromSettings" xml:space="preserve">
+    <value>从Visual Studio设置加载了 {0} 个工具权限</value>
   </data>
-  <data name="LogOpenedActivityLogHelp" xml:space="preserve">
-    <value>已打开 ActivityLog 帮助文档</value>
+  <data name="LogPermissionsLoadedFromToolManager" xml:space="preserve">
+    <value>从工具管理器加载了 {0} 个工具权限</value>
   </data>
-  <data name="LogCannotOpenHelpDoc" xml:space="preserve">
-    <value>无法打开帮助文档: {0}</value>
+  <data name="LogDefaultToolsAdded" xml:space="preserve">
+    <value>添加了 {0} 个默认工具权限</value>
   </data>
-  <data name="LogClearLogFailed" xml:space="preserve">
-    <value>清空日志失败: {0}</value>
+  <data name="StatusStopped" xml:space="preserve">
+    <value>已停止</value>
   </data>
-  <data name="LogPortNumberAutoSaved" xml:space="preserve">
-    <value>端口号已自动保存为: {0}</value>
+  <data name="StatusRunning" xml:space="preserve">
+    <value>运行中</value>
   </data>
-  <data name="LogPortNumberResetToDefault" xml:space="preserve">
-    <value>端口号已重置为默认值: 38080</value>
+  <data name="StatusStartFailed" xml:space="preserve">
+    <value>启动失败</value>
   </data>
-  <data name="LogResetPortFailed" xml:space="preserve">
-    <value>重置端口号失败: {0}</value>
+  <data name="ServiceSummaryFormat" xml:space="preserve">
+    <value>服务: {0} (运行中: {1})</value>
   </data>
-  <data name="TextPermissionAllow" xml:space="preserve">
-    <value>允许</value>
+  <data name="ToolSummaryFormat" xml:space="preserve">
+    <value>工具: {0} (允许: {1}, 询问: {2}, 拒绝: {3})</value>
   </data>
-  <data name="TextPermissionAsk" xml:space="preserve">
-    <value>询问</value>
+  <data name="PermissionConfirmTitle" xml:space="preserve">
+    <value>权限确认</value>
   </data>
-  <data name="TextPermissionDeny" xml:space="preserve">
-    <value>拒绝</value>
+  <data name="PermissionConfirmMessage" xml:space="preserve">
+    <value>功能 '{0}' 请求执行操作：{1}{2}{2}是否允许此操作？</value>
   </data>
-  <data name="IconInformation" xml:space="preserve">
-    <value>i</value>
+  <data name="CopyCommandSuccess" xml:space="preserve">
+    <value>命令已复制到剪贴板，请查看下方的命令框。</value>
   </data>
-  <data name="IconWarning" xml:space="preserve">
-    <value>!</value>
-  </data>
-  <data name="IconError" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="IconQuestion" xml:space="preserve">
-    <value>?</value>
+  <data name="CopyCommandFailed" xml:space="preserve">
+    <value>剪贴板操作失败，请手动复制下方的命令。</value>
   </data>
 </root>

@@ -771,4 +771,51 @@ This software does not support remote information transmission, only local netwo
   <data name="DefaultPortNumber" xml:space="preserve">
     <value>38080</value>
   </data>
+
+  <!-- McpWindow 本地化资源 -->
+  <data name="WindowTitle" xml:space="preserve">
+    <value>MCP Service Manager</value>
+  </data>
+  <data name="LogToolManagerInitialized" xml:space="preserve">
+    <value>Visual Studio Tool Manager initialized</value>
+  </data>
+  <data name="LogToolManagerInitFailed" xml:space="preserve">
+    <value>Failed to initialize Tool Manager: DTE2 service not obtained</value>
+  </data>
+  <data name="LogPermissionsLoadedFromSettings" xml:space="preserve">
+    <value>Loaded {0} tool permissions from Visual Studio settings</value>
+  </data>
+  <data name="LogPermissionsLoadedFromToolManager" xml:space="preserve">
+    <value>Loaded {0} tool permissions from Tool Manager</value>
+  </data>
+  <data name="LogDefaultToolsAdded" xml:space="preserve">
+    <value>Added {0} default tool permissions</value>
+  </data>
+  <data name="StatusStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="StatusRunning" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="StatusStartFailed" xml:space="preserve">
+    <value>Start Failed</value>
+  </data>
+  <data name="ServiceSummaryFormat" xml:space="preserve">
+    <value>Services: {0} (Running: {1})</value>
+  </data>
+  <data name="ToolSummaryFormat" xml:space="preserve">
+    <value>Tools: {0} (Allow: {1}, Ask: {2}, Deny: {3})</value>
+  </data>
+  <data name="PermissionConfirmTitle" xml:space="preserve">
+    <value>Permission Confirmation</value>
+  </data>
+  <data name="PermissionConfirmMessage" xml:space="preserve">
+    <value>Feature '{0}' requests operation: {1}{2}{2}Do you want to allow this operation?</value>
+  </data>
+  <data name="CopyCommandSuccess" xml:space="preserve">
+    <value>Command copied to clipboard, please check the command box below.</value>
+  </data>
+  <data name="CopyCommandFailed" xml:space="preserve">
+    <value>Clipboard operation failed, please manually copy the command below.</value>
+  </data>
 </root>

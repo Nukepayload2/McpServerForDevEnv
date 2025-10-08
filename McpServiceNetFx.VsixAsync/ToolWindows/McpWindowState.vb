@@ -8,6 +8,7 @@ Imports EnvDTE80
 Imports System.Threading.Tasks
 Imports McpServiceNetFx.VsixAsync.Helpers
 Imports Microsoft.VisualStudio.Threading
+Imports SR = McpServiceNetFx.My.Resources.Resources
 
 Namespace ToolWindows
 
@@ -83,9 +84,9 @@ Namespace ToolWindows
                 ' 初始化工具管理器，传入 DTE2 和调度器
                 If _dte2 IsNot Nothing Then
                     _toolManager.CreateVsTools(_dte2, New DispatcherService(_joinableTaskFactory))
-                    LogInfo("工具管理器", "Visual Studio 工具管理器已初始化")
+                    LogInfo("工具管理器", SR.LogToolManagerInitialized)
                 Else
-                    LogError("工具管理器", "无法初始化工具管理器：DTE2 服务未获取")
+                    LogError("工具管理器", SR.LogToolManagerInitFailed)
                 End If
             Catch ex As Exception
                 LogError("ServiceError", $"无法创建工具管理器: {ex.Message}")
@@ -148,14 +149,14 @@ Namespace ToolWindows
                         End If
                     Next
 
-                    LogServiceAction("权限加载", "成功", $"从Visual Studio设置加载了 {Tools.Count} 个工具权限")
+                    LogServiceAction("权限加载", "成功", String.Format(SR.LogPermissionsLoadedFromSettings, Tools.Count))
                 Else
                     ' 如果没有保存的配置，从工具管理器加载默认权限
                     Dim defaultPermissions = GetDefaultPermissionsFromToolManager()
                     If defaultPermissions.Any() Then
                         Tools.Clear()
                         Tools.AddRange(defaultPermissions)
-                        LogServiceAction("权限加载", "成功", $"从工具管理器加载了 {Tools.Count} 个工具权限")
+                        LogServiceAction("权限加载", "成功", String.Format(SR.LogPermissionsLoadedFromToolManager, Tools.Count))
                     Else
                         AddDefaultTools()
                     End If
@@ -207,7 +208,7 @@ Namespace ToolWindows
                     .Permission = PermissionLevel.Ask
                 }
             })
-            LogServiceAction("权限加载", "部分成功", $"添加了 {Tools.Count} 个默认工具权限")
+            LogServiceAction("权限加载", "部分成功", String.Format(SR.LogDefaultToolsAdded, Tools.Count))
         End Sub
 
         Private Sub InitializeServices()
@@ -215,7 +216,7 @@ Namespace ToolWindows
             Services.Add(New McpServiceState With {
                 .IsRunning = False,
                 .Port = ServerConfiguration.Port,
-                .Status = "已停止",
+                .Status = SR.StatusStopped,
                 .StartTime = Nothing
             })
         End Sub
@@ -387,7 +388,7 @@ Namespace ToolWindows
 
                     ' 更新服务状态
                     service.IsRunning = True
-                    service.Status = "运行中"
+                    service.Status = SR.StatusRunning
                     service.StartTime = DateTime.Now
 
                     LogServiceAction("StartService", "Success", $"MCP 服务已启动，端口: {service.Port}")
@@ -395,7 +396,7 @@ Namespace ToolWindows
             Catch ex As Exception
                 LogError("ServiceError", $"启动 MCP 服务失败: {ex.Message}")
                 If Services.Count > 0 Then
-                    Services(0).Status = "启动失败"
+                    Services(0).Status = SR.StatusStartFailed
                 End If
             End Try
         End Function
@@ -414,7 +415,7 @@ Namespace ToolWindows
                 If Services.Count > 0 Then
                     Dim service = Services(0)
                     service.IsRunning = False
-                    service.Status = "已停止"
+                    service.Status = SR.StatusStopped
                     service.StartTime = Nothing
                 End If
 
@@ -467,7 +468,7 @@ Namespace ToolWindows
             For Each service In Services
                 If service.IsRunning Then runningCount += 1
             Next
-            Return $"服务: {Services.Count} (运行中: {runningCount})"
+            Return String.Format(SR.ServiceSummaryFormat, Services.Count, runningCount)
         End Function
 
         ''' <summary>
@@ -487,7 +488,7 @@ Namespace ToolWindows
                         deniedCount += 1
                 End Select
             Next
-            Return $"工具: {Tools.Count} (允许: {allowedCount}, 询问: {askCount}, 拒绝: {deniedCount})"
+            Return String.Format(SR.ToolSummaryFormat, Tools.Count, allowedCount, askCount, deniedCount)
         End Function
 
         ''' <summary>
@@ -528,11 +529,11 @@ Namespace ToolWindows
 
                     ' 使用 CustomMessageBox 询问用户是否允许
                     Try
-                        Dim message = $"功能 '{featureName}' 请求执行操作：{operationDescription}{Environment.NewLine}{Environment.NewLine}是否允许此操作？"
+                        Dim message = String.Format(SR.PermissionConfirmMessage, featureName, operationDescription, Environment.NewLine)
                         Dim result = CustomMessageBox.Show(
                             Nothing,
                             message,
-                            "权限确认",
+                            SR.PermissionConfirmTitle,
                             CustomMessageBox.MessageBoxType.Question,
                             True,
                             True
@@ -652,9 +653,9 @@ Namespace ToolWindows
                 ' 根据复制结果调整消息
                 Dim displayMessage As String
                 If clipboardSuccess Then
-                    displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}命令已复制到剪贴板，请查看下方的命令框。"
+                    displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}{SR.CopyCommandSuccess}"
                 Else
-                    displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}剪贴板操作失败，请手动复制下方的命令。"
+                    displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}{SR.CopyCommandFailed}"
                 End If
 
                 ' 显示用户消息窗口
