@@ -74,7 +74,7 @@ Namespace ToolWindows
             Try
                 _dte2 = package.GetService(Of SDTE, DTE2)()
             Catch ex As Exception
-                LogError("ServiceError", String.Format(SR.LogCannotGetDte2, ex.Message))
+                LogError(SR.LogCategoryServiceError, String.Format(SR.LogCannotGetDte2, ex.Message))
             End Try
             _joinableTaskFactory = package.JoinableTaskFactory
             ' 创建工具管理器（简化版本）
@@ -84,12 +84,12 @@ Namespace ToolWindows
                 ' 初始化工具管理器，传入 DTE2 和调度器
                 If _dte2 IsNot Nothing Then
                     _toolManager.CreateVsTools(_dte2, New DispatcherService(_joinableTaskFactory))
-                    LogInfo("工具管理器", SR.LogToolManagerInitialized)
+                    LogInfo(SR.LogCategoryToolManager, SR.LogToolManagerInitialized)
                 Else
-                    LogError("工具管理器", SR.LogToolManagerInitFailed)
+                    LogError(SR.LogCategoryToolManager, SR.LogToolManagerInitFailed)
                 End If
             Catch ex As Exception
-                LogError("ServiceError", String.Format(SR.LogCannotCreateToolManager, ex.Message))
+                LogError(SR.LogCategoryServiceError, String.Format(SR.LogCannotCreateToolManager, ex.Message))
             End Try
 
             ' 加载服务器配置
@@ -149,20 +149,20 @@ Namespace ToolWindows
                         End If
                     Next
 
-                    LogServiceAction("权限加载", "成功", String.Format(SR.LogPermissionsLoadedFromSettings, Tools.Count))
+                    LogServiceAction(SR.LogCategoryPermissionLoad, SR.LogResultSuccess, String.Format(SR.LogPermissionsLoadedFromSettings, Tools.Count))
                 Else
                     ' 如果没有保存的配置，从工具管理器加载默认权限
                     Dim defaultPermissions = GetDefaultPermissionsFromToolManager()
                     If defaultPermissions.Any() Then
                         Tools.Clear()
                         Tools.AddRange(defaultPermissions)
-                        LogServiceAction("权限加载", "成功", String.Format(SR.LogPermissionsLoadedFromToolManager, Tools.Count))
+                        LogServiceAction(SR.LogCategoryPermissionLoad, SR.LogResultSuccess, String.Format(SR.LogPermissionsLoadedFromToolManager, Tools.Count))
                     Else
                         AddDefaultTools()
                     End If
                 End If
             Catch ex As Exception
-                LogError("权限错误", String.Format(SR.LogLoadPermissionsFailed, ex.Message))
+                LogError(SR.LogCategoryPermissionError, String.Format(SR.LogLoadPermissionsFailed, ex.Message))
                 AddDefaultTools()
             End Try
         End Sub
@@ -175,7 +175,7 @@ Namespace ToolWindows
                 Try
                     Return _toolManager.GetDefaultPermissions()
                 Catch ex As Exception
-                    LogError("工具管理器错误", String.Format(SR.LogGetDefaultPermissionsFailed, ex.Message))
+                    LogError(SR.LogCategoryToolManagerError, String.Format(SR.LogGetDefaultPermissionsFailed, ex.Message))
                 End Try
             End If
             Return New List(Of PermissionItem)()
@@ -208,7 +208,7 @@ Namespace ToolWindows
                     .Permission = PermissionLevel.Ask
                 }
             })
-            LogServiceAction("权限加载", "部分成功", String.Format(SR.LogDefaultToolsAdded, Tools.Count))
+            LogServiceAction(SR.LogCategoryPermissionLoad, SR.LogResultPartialSuccess, String.Format(SR.LogDefaultToolsAdded, Tools.Count))
         End Sub
 
         Private Sub InitializeServices()
@@ -308,7 +308,7 @@ Namespace ToolWindows
             For Each tool In Tools
                 tool.Permission = permission
             Next
-            LogToolOperation("SetAllPermissions", "Success", String.Format(SR.LogBatchSetPermissions, permission))
+            LogToolOperation(SR.LogOperationSetAllPermissions, SR.LogResultSuccess, String.Format(SR.LogBatchSetPermissions, permission))
         End Sub
 
         ''' <summary>
@@ -318,9 +318,9 @@ Namespace ToolWindows
             Try
                 ' 使用Visual Studio设置保存权限配置
                 _settingsHelper.SavePermissions(Tools)
-                LogServiceAction("权限保存", "成功", String.Format(SR.LogPermissionsSaved, Tools.Count))
+                LogServiceAction(SR.LogCategoryPermissionSave, SR.LogResultSuccess, String.Format(SR.LogPermissionsSaved, Tools.Count))
             Catch ex As Exception
-                LogError("权限保存", String.Format(SR.LogSavePermissionsFailed, ex.Message))
+                LogError(SR.LogCategoryPermissionSave, String.Format(SR.LogSavePermissionsFailed, ex.Message))
                 Throw
             End Try
         End Sub
@@ -330,7 +330,7 @@ Namespace ToolWindows
         ''' </summary>
         Public Sub ReloadPermissions()
             LoadPermissions()
-            LogServiceAction("权限重新加载", "成功", String.Format(SR.LogPermissionsReloaded, Tools.Count))
+            LogServiceAction(SR.LogCategoryPermissionLoad, SR.LogResultSuccess, String.Format(SR.LogPermissionsReloaded, Tools.Count))
         End Sub
 
         ''' <summary>
@@ -339,9 +339,9 @@ Namespace ToolWindows
         Private Sub LoadServerConfiguration()
             Try
                 ServerConfiguration = _settingsHelper.LoadServerConfiguration()
-                LogServiceAction("配置加载", "成功", String.Format(SR.LogServerConfigLoaded, ServerConfiguration.Port))
+                LogServiceAction(SR.LogCategoryConfigLoad, SR.LogResultSuccess, String.Format(SR.LogServerConfigLoaded, ServerConfiguration.Port))
             Catch ex As Exception
-                LogError("配置加载", String.Format(SR.LogLoadServerConfigFailed, ex.Message))
+                LogError(SR.LogCategoryConfigLoad, String.Format(SR.LogLoadServerConfigFailed, ex.Message))
                 ServerConfiguration = New ServerConfiguration()
             End Try
         End Sub
@@ -352,9 +352,9 @@ Namespace ToolWindows
         Public Sub SaveServerConfiguration()
             Try
                 _settingsHelper.SaveServerConfiguration(ServerConfiguration)
-                LogServiceAction("配置保存", "成功", String.Format(SR.LogServerConfigSaved, ServerConfiguration.Port))
+                LogServiceAction(SR.LogCategoryConfigSave, SR.LogResultSuccess, String.Format(SR.LogServerConfigSaved, ServerConfiguration.Port))
             Catch ex As Exception
-                LogError("配置保存", String.Format(SR.LogSaveServerConfigFailed, ex.Message))
+                LogError(SR.LogCategoryConfigSave, String.Format(SR.LogSaveServerConfigFailed, ex.Message))
                 Throw
             End Try
         End Sub
@@ -368,12 +368,12 @@ Namespace ToolWindows
                     Dim service = Services(0)
 
                     If _dte2 Is Nothing Then
-                        LogError("ServiceError", SR.LogCannotGetDte2)
+                        LogError(SR.LogCategoryServiceError, SR.LogCannotGetDte2)
                         Return
                     End If
 
                     If _mcpService IsNot Nothing AndAlso _mcpService.IsRunning Then
-                        LogServiceAction("StartService", "Failed", SR.LogServiceAlreadyRunning)
+                        LogServiceAction(SR.LogOperationStartService, SR.LogResultFailed, SR.LogServiceAlreadyRunning)
                         Return
                     End If
 
@@ -391,10 +391,10 @@ Namespace ToolWindows
                     service.Status = SR.StatusRunning
                     service.StartTime = DateTime.Now
 
-                    LogServiceAction("StartService", "Success", String.Format(SR.LogServiceStarted, service.Port))
+                    LogServiceAction(SR.LogOperationStartService, SR.LogResultSuccess, String.Format(SR.LogServiceStarted, service.Port))
                 End If
             Catch ex As Exception
-                LogError("ServiceError", String.Format(SR.LogStartServiceFailed, ex.Message))
+                LogError(SR.LogCategoryServiceError, String.Format(SR.LogStartServiceFailed, ex.Message))
                 If Services.Count > 0 Then
                     Services(0).Status = SR.StatusStartFailed
                 End If
@@ -419,9 +419,9 @@ Namespace ToolWindows
                     service.StartTime = Nothing
                 End If
 
-                LogServiceAction("StopService", "Success", SR.LogServiceStopped)
+                LogServiceAction(SR.LogOperationStopService, SR.LogResultSuccess, SR.LogServiceStopped)
             Catch ex As Exception
-                LogError("ServiceError", String.Format(SR.LogStopServiceFailed, ex.Message))
+                LogError(SR.LogCategoryServiceError, String.Format(SR.LogStopServiceFailed, ex.Message))
             End Try
         End Sub
 
@@ -548,7 +548,7 @@ Namespace ToolWindows
                                 Return False
                         End Select
                     Catch ex As Exception
-                        LogError("Permission", String.Format(SR.LogPermissionDialogFailed, ex.Message))
+                        LogError(SR.LogCategoryPermission, String.Format(SR.LogPermissionDialogFailed, ex.Message))
                         Return False
                     End Try
             End Select
@@ -560,7 +560,7 @@ Namespace ToolWindows
         ''' </summary>
         Public Sub ClearLogItems()
             LogItems.Clear()
-            LogInfo("UIAction", SR.LogUICleared)
+            LogInfo(SR.LogCategoryUIAction, SR.LogUICleared)
         End Sub
 
         ''' <summary>

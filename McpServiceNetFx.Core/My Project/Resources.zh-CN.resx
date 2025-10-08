@@ -920,4 +920,54 @@
   <data name="CommandDescription" xml:space="preserve">
     <value>命令</value>
   </data>
+
+  <!-- 日志分类和结果描述 -->
+  <data name="LogCategoryServiceError" xml:space="preserve">
+    <value>服务错误</value>
+  </data>
+  <data name="LogCategoryToolManager" xml:space="preserve">
+    <value>工具管理器</value>
+  </data>
+  <data name="LogCategoryToolManagerError" xml:space="preserve">
+    <value>工具管理器错误</value>
+  </data>
+  <data name="LogCategoryPermissionError" xml:space="preserve">
+    <value>权限错误</value>
+  </data>
+  <data name="LogCategoryPermissionSave" xml:space="preserve">
+    <value>权限保存</value>
+  </data>
+  <data name="LogCategoryPermissionLoad" xml:space="preserve">
+    <value>权限加载</value>
+  </data>
+  <data name="LogCategoryConfigLoad" xml:space="preserve">
+    <value>配置加载</value>
+  </data>
+  <data name="LogCategoryConfigSave" xml:space="preserve">
+    <value>配置保存</value>
+  </data>
+  <data name="LogCategoryPermission" xml:space="preserve">
+    <value>权限</value>
+  </data>
+  <data name="LogCategoryUIAction" xml:space="preserve">
+    <value>界面操作</value>
+  </data>
+  <data name="LogResultSuccess" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="LogResultPartialSuccess" xml:space="preserve">
+    <value>部分成功</value>
+  </data>
+  <data name="LogResultFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="LogOperationSetAllPermissions" xml:space="preserve">
+    <value>设置所有权限</value>
+  </data>
+  <data name="LogOperationStartService" xml:space="preserve">
+    <value>启动服务</value>
+  </data>
+  <data name="LogOperationStopService" xml:space="preserve">
+    <value>停止服务</value>
+  </data>
 </root>

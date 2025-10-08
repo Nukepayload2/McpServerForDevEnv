@@ -919,4 +919,54 @@ This software does not support remote information transmission, only local netwo
   <data name="CommandDescription" xml:space="preserve">
     <value>Command</value>
   </data>
+
+  <!-- 日志分类和结果描述 -->
+  <data name="LogCategoryServiceError" xml:space="preserve">
+    <value>ServiceError</value>
+  </data>
+  <data name="LogCategoryToolManager" xml:space="preserve">
+    <value>Tool Manager</value>
+  </data>
+  <data name="LogCategoryToolManagerError" xml:space="preserve">
+    <value>Tool Manager Error</value>
+  </data>
+  <data name="LogCategoryPermissionError" xml:space="preserve">
+    <value>Permission Error</value>
+  </data>
+  <data name="LogCategoryPermissionSave" xml:space="preserve">
+    <value>Permission Save</value>
+  </data>
+  <data name="LogCategoryPermissionLoad" xml:space="preserve">
+    <value>Permission Load</value>
+  </data>
+  <data name="LogCategoryConfigLoad" xml:space="preserve">
+    <value>Configuration Load</value>
+  </data>
+  <data name="LogCategoryConfigSave" xml:space="preserve">
+    <value>Configuration Save</value>
+  </data>
+  <data name="LogCategoryPermission" xml:space="preserve">
+    <value>Permission</value>
+  </data>
+  <data name="LogCategoryUIAction" xml:space="preserve">
+    <value>UIAction</value>
+  </data>
+  <data name="LogResultSuccess" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="LogResultPartialSuccess" xml:space="preserve">
+    <value>Partial Success</value>
+  </data>
+  <data name="LogResultFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="LogOperationSetAllPermissions" xml:space="preserve">
+    <value>SetAllPermissions</value>
+  </data>
+  <data name="LogOperationStartService" xml:space="preserve">
+    <value>StartService</value>
+  </data>
+  <data name="LogOperationStopService" xml:space="preserve">
+    <value>StopService</value>
+  </data>
 </root>

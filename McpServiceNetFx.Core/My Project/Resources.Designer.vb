@@ -745,6 +745,96 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Configuration Load 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryConfigLoad() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryConfigLoad", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Configuration Save 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryConfigSave() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryConfigSave", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryPermission() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryPermission", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission Error 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryPermissionError() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryPermissionError", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission Load 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryPermissionLoad() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryPermissionLoad", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission Save 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryPermissionSave() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryPermissionSave", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 ServiceError 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryServiceError() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryServiceError", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Tool Manager 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryToolManager() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryToolManager", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Tool Manager Error 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryToolManagerError() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryToolManagerError", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 UIAction 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogCategoryUIAction() As String
+            Get
+                Return ResourceManager.GetString("LogCategoryUIAction", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Failed to clear log: {0} 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LogClearLogFailed() As String
@@ -1087,6 +1177,33 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 SetAllPermissions 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogOperationSetAllPermissions() As String
+            Get
+                Return ResourceManager.GetString("LogOperationSetAllPermissions", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 StartService 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogOperationStartService() As String
+            Get
+                Return ResourceManager.GetString("LogOperationStartService", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 StopService 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogOperationStopService() As String
+            Get
+                Return ResourceManager.GetString("LogOperationStopService", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Parameters cannot be null 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LogParameterCannotBeNull() As String
@@ -1290,6 +1407,33 @@ Namespace My.Resources
         Public ReadOnly Property LogResetPortFailed() As String
             Get
                 Return ResourceManager.GetString("LogResetPortFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogResultFailed() As String
+            Get
+                Return ResourceManager.GetString("LogResultFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Partial Success 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogResultPartialSuccess() As String
+            Get
+                Return ResourceManager.GetString("LogResultPartialSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Success 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogResultSuccess() As String
+            Get
+                Return ResourceManager.GetString("LogResultSuccess", resourceCulture)
             End Get
         End Property
         
