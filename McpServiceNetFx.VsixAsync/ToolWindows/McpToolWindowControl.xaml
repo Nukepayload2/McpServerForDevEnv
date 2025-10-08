@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:McpServiceNetFx.VsixAsync.ToolWindows"
              xmlns:core="clr-namespace:McpServiceNetFx;assembly=McpServiceNetFx.Core"
+             xmlns:res="clr-namespace:McpServiceNetFx.My.Resources;assembly=McpServiceNetFx.Core"
              xmlns:vs_shell="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:vs="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              mc:Ignorable="d"
@@ -71,7 +72,7 @@
         </Grid.RowDefinitions>
 
         <!-- MCP 工具授权管理 -->
-        <GroupBox Grid.Row="0" Header="MCP 工具授权" Margin="5" Padding="8"
+        <GroupBox Grid.Row="0" Header="{x:Static res:Resources.GroupBoxMcpToolAuthorization}" Margin="5" Padding="8"
                   Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
                   Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
                   BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
@@ -84,9 +85,9 @@
 
                 <!-- 批量操作按钮 -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-                    <Button x:Name="AuthorizeAllButton" Content="全部允许" Margin="0,0,10,0"
+                    <Button x:Name="AuthorizeAllButton" Content="{x:Static res:Resources.ButtonAuthorizeAll}" Margin="0,0,10,0"
                             Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
-                    <Button x:Name="AskAllButton" Content="全部询问" Margin="0,0,10,0"
+                    <Button x:Name="AskAllButton" Content="{x:Static res:Resources.ButtonAskAll}" Margin="0,0,10,0"
                             Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                 </StackPanel>
 
@@ -104,9 +105,9 @@
                           AlternatingRowBackground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
                           BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="功能名称" Binding="{Binding FeatureName}" Width="*" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="描述" Binding="{Binding Description}" Width="1.5*" IsReadOnly="True"/>
-                        <DataGridTemplateColumn Header="权限级别" Width="120">
+                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderFeatureName}" Binding="{Binding FeatureName}" Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderDescription}" Binding="{Binding Description}" Width="1.5*" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="{x:Static res:Resources.HeaderPermissionLevel}" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
@@ -122,16 +123,16 @@
 
                 <!-- 底部操作按钮 -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                    <Button x:Name="SavePermissionsButton" Content="保存权限配置" Margin="0,0,10,0"
+                    <Button x:Name="SavePermissionsButton" Content="{x:Static res:Resources.ButtonSavePermissions}" Margin="0,0,10,0"
                             Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
-                    <Button x:Name="ReloadPermissionsButton" Content="重新加载"
+                    <Button x:Name="ReloadPermissionsButton" Content="{x:Static res:Resources.ButtonReloadPermissions}"
                             Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
 
         <!-- MCP 服务管理 -->
-        <GroupBox Grid.Row="1" Header="MCP 服务状态" Margin="5" Padding="8"
+        <GroupBox Grid.Row="1" Header="{x:Static res:Resources.GroupBoxMcpServiceStatus}" Margin="5" Padding="8"
                   Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
                   Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
                   BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
@@ -159,12 +160,12 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Orientation="Vertical">
-                                <TextBlock Text="MCP 服务" FontWeight="Bold" FontSize="14"
+                                <TextBlock Text="{x:Static res:Resources.TextMcpService}" FontWeight="Bold" FontSize="14"
                                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
-                                <TextBlock x:Name="ServiceStatusText" Text="状态: 已停止" Margin="0,2,0,0"
+                                <TextBlock x:Name="ServiceStatusText" Text="{x:Static res:Resources.TextStatusStopped}" Margin="0,2,0,0"
                                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                             </StackPanel>
-                            <ToggleButton x:Name="ServiceToggleButton" Grid.Column="1" Content="启动服务"
+                            <ToggleButton x:Name="ServiceToggleButton" Grid.Column="1" Content="{x:Static res:Resources.ButtonStartService}"
                                           Margin="10,0,0,0" Padding="16,8"
                                           Background="#28A745" Foreground="White" BorderBrush="#28A745"/>
                         </Grid>
@@ -179,14 +180,14 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="端口号:" VerticalAlignment="Center" Margin="0,0,8,0"
+                                <TextBlock Grid.Column="0" Text="{x:Static res:Resources.TextPortNumber}" VerticalAlignment="Center" Margin="0,0,8,0"
                                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                                 <TextBox x:Name="PortNumberTextBox" Grid.Column="1"
                                          Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
                                          Margin="0,0,8,0" Width="100" HorizontalAlignment="Left"
                                          Text="38080"
                                          LostFocus="PortNumberTextBox_LostFocus"/>
-                                <Button x:Name="ResetPortButton" Grid.Column="2" Content="重置为默认"
+                                <Button x:Name="ResetPortButton" Grid.Column="2" Content="{x:Static res:Resources.ButtonResetToDefault}"
                                         Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                             </Grid>
                         </Border>
@@ -196,7 +197,7 @@
                 <!-- 配置示例 -->
                 <TabControl Grid.Row="1"
                            Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
-                    <TabItem Header="MCP JSON 配置">
+                    <TabItem Header="{x:Static res:Resources.TabMcpJsonConfig}">
                         <TextBox x:Name="McpJsonConfigTextBox"
                                  Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
                                  FontFamily="Consolas"
@@ -207,7 +208,7 @@
                                  IsReadOnly="True"
                                  Margin="0"/>
                     </TabItem>
-                    <TabItem Header="Claude CLI 配置">
+                    <TabItem Header="{x:Static res:Resources.TabClaudeCliConfig}">
                         <TextBox x:Name="ClaudeCliConfigTextBox"
                                  Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
                                  FontFamily="Consolas"
@@ -223,7 +224,7 @@
         </GroupBox>
 
         <!-- ActivityLog 信息 -->
-        <GroupBox Grid.Row="2" Header="日志" Margin="5" Padding="8"
+        <GroupBox Grid.Row="2" Header="{x:Static res:Resources.GroupBoxLogs}" Margin="5" Padding="8"
                   Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"
                   Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
                   BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
@@ -235,10 +236,10 @@
 
                 <!-- 操作按钮区域 -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,5">
-                    <Button x:Name="ClearLogButton" Content="清空日志" Margin="0,0,5,0"
+                    <Button x:Name="ClearLogButton" Content="{x:Static res:Resources.ButtonClearLog}" Margin="0,0,5,0"
                             Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                     <Button x:Name="ViewActivityLogHelpButton"
-                            Content="如何查看文件日志"
+                            Content="{x:Static res:Resources.ButtonViewActivityLogHelp}"
                             Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
                 </StackPanel>
 
@@ -259,10 +260,10 @@
                           AlternatingRowBackground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
                           BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="时间" Binding="{Binding Timestamp}" Width="120" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="级别" Binding="{Binding Level}" Width="60" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="分类" Binding="{Binding Category}" Width="80" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="消息" Binding="{Binding Message}" Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderTime}" Binding="{Binding Timestamp}" Width="120" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderLevel}" Binding="{Binding Level}" Width="60" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderCategory}" Binding="{Binding Category}" Width="80" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderMessage}" Binding="{Binding Message}" Width="*" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -271,13 +272,13 @@
         <!-- 状态栏 -->
         <Border Grid.Row="3" Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}" Padding="8,4">
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="StatusText" Text="就绪" VerticalAlignment="Center"
+                <TextBlock x:Name="StatusText" Text="{x:Static res:Resources.TextReady}" VerticalAlignment="Center"
                            Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Separator Margin="10,0"/>
-                <TextBlock x:Name="ToolCountText" Text="工具: 4" VerticalAlignment="Center"
+                <TextBlock x:Name="ToolCountText" VerticalAlignment="Center"
                            Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
                 <Separator Margin="10,0"/>
-                <TextBlock x:Name="ServiceCountText" Text="服务: 2" VerticalAlignment="Center"
+                <TextBlock x:Name="ServiceCountText" VerticalAlignment="Center"
                            Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
             </StackPanel>
         </Border>

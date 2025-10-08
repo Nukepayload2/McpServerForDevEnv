@@ -596,4 +596,141 @@ This software does not support remote information transmission, only local netwo
   <data name="LogException" xml:space="preserve">
     <value>Exception</value>
   </data>
+
+  <!-- VsixAsync ToolWindow Resources -->
+  <data name="GroupBoxMcpToolAuthorization" xml:space="preserve">
+    <value>MCP Tool Authorization</value>
+  </data>
+  <data name="ButtonAuthorizeAll" xml:space="preserve">
+    <value>Allow All</value>
+  </data>
+  <data name="ButtonAskAll" xml:space="preserve">
+    <value>Ask All</value>
+  </data>
+  <data name="HeaderFeatureName" xml:space="preserve">
+    <value>Feature Name</value>
+  </data>
+  <data name="HeaderDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="HeaderPermissionLevel" xml:space="preserve">
+    <value>Permission Level</value>
+  </data>
+  <data name="ButtonSavePermissions" xml:space="preserve">
+    <value>Save Permissions</value>
+  </data>
+  <data name="ButtonReloadPermissions" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="GroupBoxMcpServiceStatus" xml:space="preserve">
+    <value>MCP Service Status</value>
+  </data>
+  <data name="TextMcpService" xml:space="preserve">
+    <value>MCP Service</value>
+  </data>
+  <data name="TextStatusStopped" xml:space="preserve">
+    <value>Status: Stopped</value>
+  </data>
+  <data name="ButtonStartService" xml:space="preserve">
+    <value>Start Service</value>
+  </data>
+  <data name="ButtonStopService" xml:space="preserve">
+    <value>Stop Service</value>
+  </data>
+  <data name="TextPortNumber" xml:space="preserve">
+    <value>Port:</value>
+  </data>
+  <data name="ButtonResetToDefault" xml:space="preserve">
+    <value>Reset to Default</value>
+  </data>
+  <data name="TabMcpJsonConfig" xml:space="preserve">
+    <value>MCP JSON Config</value>
+  </data>
+  <data name="TabClaudeCliConfig" xml:space="preserve">
+    <value>Claude CLI Config</value>
+  </data>
+  <data name="GroupBoxLogs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="ButtonClearLog" xml:space="preserve">
+    <value>Clear Log</value>
+  </data>
+  <data name="ButtonViewActivityLogHelp" xml:space="preserve">
+    <value>View File Log Help</value>
+  </data>
+  <data name="HeaderTime" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="HeaderLevel" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="HeaderCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="HeaderMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="TextReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="TextToolsCount" xml:space="preserve">
+    <value>Tools: {0}</value>
+  </data>
+  <data name="TextServicesCount" xml:space="preserve">
+    <value>Services: {0}</value>
+  </data>
+  <data name="MsgAllPermissionsAllowed" xml:space="preserve">
+    <value>All tool permissions have been set to Allow</value>
+  </data>
+  <data name="MsgAllPermissionsAsked" xml:space="preserve">
+    <value>All tool permissions have been set to Ask</value>
+  </data>
+  <data name="MsgPermissionsSaved" xml:space="preserve">
+    <value>Permission configuration saved</value>
+  </data>
+  <data name="MsgPermissionsReloaded" xml:space="preserve">
+    <value>Permission configuration reloaded</value>
+  </data>
+  <data name="MsgToolsListRefreshed" xml:space="preserve">
+    <value>Tools list refreshed</value>
+  </data>
+  <data name="MsgMcpServiceStarted" xml:space="preserve">
+    <value>MCP service started</value>
+  </data>
+  <data name="MsgMcpServiceStopped" xml:space="preserve">
+    <value>MCP service stopped</value>
+  </data>
+  <data name="MsgInterfaceLogCleared" xml:space="preserve">
+    <value>Interface log cleared</value>
+  </data>
+  <data name="MsgPortNumberSaved" xml:space="preserve">
+    <value>Port number automatically saved as: {0}</value>
+  </data>
+  <data name="MsgPortNumberReset" xml:space="preserve">
+    <value>Port number reset to default: {0}</value>
+  </data>
+  <data name="MsgStopServiceBeforePortChange" xml:space="preserve">
+    <value>Please stop the MCP service before changing the port number</value>
+  </data>
+  <data name="MsgPortNumberRange" xml:space="preserve">
+    <value>Port number must be in the range 1-65535</value>
+  </data>
+  <data name="MsgValidPortNumber" xml:space="preserve">
+    <value>Please enter a valid port number</value>
+  </data>
+  <data name="MsgAutoSavePortFailed" xml:space="preserve">
+    <value>Failed to auto-save port number: {0}</value>
+  </data>
+  <data name="MsgResetPortFailed" xml:space="preserve">
+    <value>Failed to reset port number: {0}</value>
+  </data>
+  <data name="MsgClearLogFailed" xml:space="preserve">
+    <value>Failed to clear log: {0}</value>
+  </data>
+  <data name="MsgCannotOpenHelpDoc" xml:space="preserve">
+    <value>Cannot open help documentation: {0}</value>
+  </data>
+  <data name="TitleServiceRunning" xml:space="preserve">
+    <value>Service Running - Port: {0}</value>
+  </data>
 </root>

@@ -4,6 +4,7 @@ Imports System.Windows.Controls
 Imports System.Windows.Data
 Imports System.Windows.Media
 Imports System.Globalization
+Imports SR = McpServiceNetFx.My.Resources.Resources
 
 Namespace ToolWindows
     ''' <summary>
@@ -90,46 +91,39 @@ Namespace ToolWindows
         Private Sub AuthorizeAll_Click() Handles AuthorizeAllButton.Click
             _state.SetAllPermissions(PermissionLevel.Allow)
             UpdateStatusBar()
-            ShowStatusMessage("所有工具权限已设置为允许")
+            ShowStatusMessage(SR.MsgAllPermissionsAllowed)
         End Sub
 
         Private Sub AskAll_Click() Handles AskAllButton.Click
             _state.SetAllPermissions(PermissionLevel.Ask)
             UpdateStatusBar()
-            ShowStatusMessage("所有工具权限已设置为询问")
+            ShowStatusMessage(SR.MsgAllPermissionsAsked)
         End Sub
 
         Private Sub SavePermissions_Click() Handles SavePermissionsButton.Click
             _state.SavePermissions()
-            ShowStatusMessage("权限配置已保存")
+            ShowStatusMessage(SR.MsgPermissionsSaved)
         End Sub
 
         Private Sub ReloadPermissions_Click() Handles ReloadPermissionsButton.Click
             _state.ReloadPermissions()
             ToolsDataGrid.Items.Refresh()
             UpdateStatusBar()
-            ShowStatusMessage("权限配置已重新加载")
-        End Sub
-
-        Private Sub RefreshTools_Click() Handles RefreshToolsButton.Click
-            ' 模拟刷新数据
-            ToolsDataGrid.Items.Refresh()
-            _state.LogInfo("ToolOperation", "工具列表已刷新")
-            ShowStatusMessage("工具列表已刷新")
+            ShowStatusMessage(SR.MsgPermissionsReloaded)
         End Sub
 
         Private Async Sub ServiceToggleButton_Checked() Handles ServiceToggleButton.Checked
             Await _state.StartServiceAsync()
             UpdateServiceStatusDisplay()
             UpdateStatusBar()
-            ShowStatusMessage("MCP 服务已启动")
+            ShowStatusMessage(SR.MsgMcpServiceStarted)
         End Sub
 
         Private Sub ServiceToggleButton_Unchecked() Handles ServiceToggleButton.Unchecked
             _state.StopService()
             UpdateServiceStatusDisplay()
             UpdateStatusBar()
-            ShowStatusMessage("MCP 服务已停止")
+            ShowStatusMessage(SR.MsgMcpServiceStopped)
         End Sub
 
         Private Sub UpdateServiceStatusDisplay()
@@ -139,14 +133,14 @@ Namespace ToolWindows
 
                 If service.IsRunning Then
                     ServiceToggleButton.IsChecked = True
-                    ServiceToggleButton.Content = "停止服务"
+                    ServiceToggleButton.Content = SR.ButtonStopService
                     ServiceToggleButton.Background = New SolidColorBrush(Colors.Red)
                     ' 禁用端口号输入框和重置按钮
                     PortNumberTextBox.IsEnabled = False
                     ResetPortButton.IsEnabled = False
                 Else
                     ServiceToggleButton.IsChecked = False
-                    ServiceToggleButton.Content = "启动服务"
+                    ServiceToggleButton.Content = SR.ButtonStartService
                     ServiceToggleButton.Background = New SolidColorBrush(Color.FromRgb(40, 167, 69))
                     ' 启用端口号输入框和重置按钮
                     PortNumberTextBox.IsEnabled = True
@@ -186,7 +180,7 @@ Namespace ToolWindows
                 .Interval = TimeSpan.FromSeconds(3)
             }
             AddHandler timer.Tick, Sub(s, args)
-                                       StatusText.Text = "就绪"
+                                       StatusText.Text = SR.TextReady
                                        timer.Stop()
                                    End Sub
             timer.Start()
@@ -202,7 +196,7 @@ Namespace ToolWindows
                 _state.LogInfo("HelpAction", "打开 ActivityLog 帮助文档")
             Catch ex As Exception
                 _state.LogError("HelpAction", $"无法打开帮助文档: {ex.Message}")
-                CustomMessageBox.Show(Nothing, $"无法打开帮助文档: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
+                CustomMessageBox.Show(Nothing, String.Format(SR.MsgCannotOpenHelpDoc, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
 
@@ -210,10 +204,10 @@ Namespace ToolWindows
             Try
                 _state.ClearLogItems()
                 ActivityLogDataGrid.Items.Refresh()
-                ShowStatusMessage("界面日志已清空")
+                ShowStatusMessage(SR.MsgInterfaceLogCleared)
             Catch ex As Exception
                 _state.LogError("UIAction", $"清空日志失败: {ex.Message}")
-                CustomMessageBox.Show(Nothing, $"清空日志失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
+                CustomMessageBox.Show(Nothing, String.Format(SR.MsgClearLogFailed, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
 
@@ -224,7 +218,7 @@ Namespace ToolWindows
                     If newPort > 0 AndAlso newPort <= 65535 Then
                         ' 检查服务是否正在运行
                         If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
-                            CustomMessageBox.Show(Nothing, "请先停止 MCP 服务，然后再修改端口号", "提示", CustomMessageBox.MessageBoxType.Information)
+                            CustomMessageBox.Show(Nothing, SR.MsgStopServiceBeforePortChange, SR.TitleHint, CustomMessageBox.MessageBoxType.Information)
                             PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                             Return
                         End If
@@ -245,19 +239,19 @@ Namespace ToolWindows
                         ' 更新服务状态显示
                         UpdateServiceStatusDisplay()
 
-                        ShowStatusMessage($"端口号已自动保存为: {newPort}")
+                        ShowStatusMessage(String.Format(SR.MsgPortNumberSaved, newPort))
                         _state.LogInfo("Configuration", $"端口号已自动保存为: {newPort}")
                     Else
-                        CustomMessageBox.Show(Nothing, "端口号必须在 1-65535 范围内", "错误", CustomMessageBox.MessageBoxType.Warning)
+                        CustomMessageBox.Show(Nothing, SR.MsgPortNumberRange, SR.TitleWarning, CustomMessageBox.MessageBoxType.Warning)
                         PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                     End If
                 Else
-                    CustomMessageBox.Show(Nothing, "请输入有效的端口号", "错误", CustomMessageBox.MessageBoxType.Warning)
+                    CustomMessageBox.Show(Nothing, SR.MsgValidPortNumber, SR.TitleWarning, CustomMessageBox.MessageBoxType.Warning)
                     PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                 End If
             Catch ex As Exception
                 _state.LogError("Configuration", $"自动保存端口号失败: {ex.Message}")
-                CustomMessageBox.Show(Nothing, $"自动保存端口号失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
+                CustomMessageBox.Show(Nothing, String.Format(SR.MsgAutoSavePortFailed, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
                 PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
             End Try
         End Sub
@@ -266,7 +260,7 @@ Namespace ToolWindows
             Try
                 ' 检查服务是否正在运行
                 If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
-                    CustomMessageBox.Show(Nothing, "请先停止 MCP 服务，然后再重置端口号", "提示", CustomMessageBox.MessageBoxType.Information)
+                    CustomMessageBox.Show(Nothing, SR.MsgStopServiceBeforePortChange, SR.TitleHint, CustomMessageBox.MessageBoxType.Information)
                     Return
                 End If
 
@@ -284,11 +278,11 @@ Namespace ToolWindows
                 ' 更新服务状态显示
                 UpdateServiceStatusDisplay()
 
-                ShowStatusMessage("端口号已重置为默认值: 38080")
+                ShowStatusMessage(String.Format(SR.MsgPortNumberReset, 38080))
                 _state.LogInfo("Configuration", "端口号已重置为默认值: 38080")
             Catch ex As Exception
                 _state.LogError("Configuration", $"重置端口号失败: {ex.Message}")
-                CustomMessageBox.Show(Nothing, $"重置端口号失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
+                CustomMessageBox.Show(Nothing, String.Format(SR.MsgResetPortFailed, ex.Message), SR.TitleError, CustomMessageBox.MessageBoxType.Error)
             End Try
         End Sub
     End Class
