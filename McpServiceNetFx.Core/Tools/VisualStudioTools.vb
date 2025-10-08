@@ -420,18 +420,20 @@ Public Class VisualStudioTools
     ''' </summary>
     Private Sub ProcessProjectItemForCustomTools(item As EnvDTE.ProjectItem, errors As StringBuilder, processedFiles As List(Of String))
         Try
-            Dim customToolValue = CStr(item.Properties.Item("CustomTool").Value)
-            If Not String.IsNullOrEmpty(customToolValue) Then
-                ' 运行自定义工具
-                CType(item.Object, VSProjectItem).RunCustomTool()
-                processedFiles.Add(item.Name)
-                Debug.WriteLine($"已为 {item.Name} 运行自定义工具")
-            End If
             Dim subItems = item.ProjectItems
-            If subItems IsNot Nothing Then
+            Const Folder = "{6BB5F8EF-4483-11D3-8BCF-00C04F8EC28C}"
+            If subItems?.Kind = Folder Then
                 For Each subItem As EnvDTE.ProjectItem In item.ProjectItems
                     ProcessProjectItemForCustomTools(subItem, errors, processedFiles)
                 Next
+            Else
+                Dim customToolValue = CStr(item.Properties.Item("CustomTool").Value)
+                If Not String.IsNullOrEmpty(customToolValue) Then
+                    ' 运行自定义工具
+                    CType(item.Object, VSProjectItem).RunCustomTool()
+                    processedFiles.Add(item.Name)
+                    Debug.WriteLine($"已为 {item.Name} 运行自定义工具")
+                End If
             End If
         Catch ex As Exception
             errors.AppendLine($"处理项目项 {item.Name} 时出错: {ex.Message}")
