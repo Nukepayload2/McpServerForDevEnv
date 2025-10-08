@@ -686,7 +686,10 @@ Namespace ToolWindows
         ''' </summary>
         Private Shared Sub ShowUserMessageWindow(title As String, message As String, command As String)
             Try
-                Dim window As New UserMessageWindow(title, message, command)
+                Dim window As New UserMessageWindow(title, message, command) With {
+                    .Owner = System.Windows.Application.Current.MainWindow,
+                    .WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner
+                }
                 window.Show()
             Catch ex As Exception
                 System.Diagnostics.Debug.WriteLine($"显示用户消息窗口失败: {ex.Message}")
