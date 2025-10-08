@@ -136,16 +136,21 @@ Namespace ToolWindows
             If _state.Services.Count > 0 Then
                 Dim service = _state.Services(0)
                 ServiceStatusText.Text = $"状态: {service.Status}"
-                ServicePortText.Text = $"端口: {service.Port}"
 
                 If service.IsRunning Then
                     ServiceToggleButton.IsChecked = True
                     ServiceToggleButton.Content = "停止服务"
                     ServiceToggleButton.Background = New SolidColorBrush(Colors.Red)
+                    ' 禁用端口号输入框和重置按钮
+                    PortNumberTextBox.IsEnabled = False
+                    ResetPortButton.IsEnabled = False
                 Else
                     ServiceToggleButton.IsChecked = False
                     ServiceToggleButton.Content = "启动服务"
                     ServiceToggleButton.Background = New SolidColorBrush(Color.FromRgb(40, 167, 69))
+                    ' 启用端口号输入框和重置按钮
+                    PortNumberTextBox.IsEnabled = True
+                    ResetPortButton.IsEnabled = True
                 End If
             End If
         End Sub
@@ -212,7 +217,7 @@ Namespace ToolWindows
             End Try
         End Sub
 
-        Private Sub SavePortButton_Click() Handles SavePortButton.Click
+        Private Sub PortNumberTextBox_LostFocus() Handles PortNumberTextBox.LostFocus
             Try
                 Dim newPort As Integer
                 If Integer.TryParse(PortNumberTextBox.Text, newPort) Then
@@ -221,6 +226,11 @@ Namespace ToolWindows
                         If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
                             CustomMessageBox.Show(Nothing, "请先停止 MCP 服务，然后再修改端口号", "提示", CustomMessageBox.MessageBoxType.Information)
                             PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
+                            Return
+                        End If
+
+                        ' 检查端口号是否已经是最新的，避免重复保存
+                        If _state.ServerConfiguration.Port = newPort Then
                             Return
                         End If
 
@@ -235,8 +245,8 @@ Namespace ToolWindows
                         ' 更新服务状态显示
                         UpdateServiceStatusDisplay()
 
-                        ShowStatusMessage($"端口号已保存为: {newPort}")
-                        _state.LogInfo("Configuration", $"端口号已更新为: {newPort}")
+                        ShowStatusMessage($"端口号已自动保存为: {newPort}")
+                        _state.LogInfo("Configuration", $"端口号已自动保存为: {newPort}")
                     Else
                         CustomMessageBox.Show(Nothing, "端口号必须在 1-65535 范围内", "错误", CustomMessageBox.MessageBoxType.Warning)
                         PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
@@ -246,8 +256,9 @@ Namespace ToolWindows
                     PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
                 End If
             Catch ex As Exception
-                _state.LogError("Configuration", $"保存端口号失败: {ex.Message}")
-                CustomMessageBox.Show(Nothing, $"保存端口号失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
+                _state.LogError("Configuration", $"自动保存端口号失败: {ex.Message}")
+                CustomMessageBox.Show(Nothing, $"自动保存端口号失败: {ex.Message}", "错误", CustomMessageBox.MessageBoxType.Error)
+                PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
             End Try
         End Sub
 
