@@ -8,12 +8,12 @@ Visual Studio MCP Server GUI, providing development environment capabilities int
 The project is in Beta stage
 
 - [x] Standalone Service Manager
-  - [x] Basic functionality
-  - [x] English text resources
-  - [ ] Multiple instances attached to different ports, should this be done in the first version?
-- [ ] VSIX Embedded Service Manager
+    - [x] Basic functionality
+    - [x] English text resources
+- [x] VSIX Embedded Service Manager
+- [ ] Research which MCP tools are still needed to cover basic use cases
 
-## Features
+## Features (Standalone Service Manager)
 
 Expose selected Visual Studio instances to AI programming tools through HTTP-based MCP protocol locally
 
@@ -44,9 +44,18 @@ Expose selected Visual Studio instances to AI programming tools through HTTP-bas
 - Windows 11: No dependencies
 - Earlier Windows versions: .NET Framework version >= 4.7.2
 
+## Features (VSIX Embedded Service Manager)
+- Open main interface from View -> Other Windows -> MCP Service Manager
+- Provides the same MCP tools and permission management as the standalone service manager
+- Supports dark theme and light theme
+- Does not support controlling other Visual Studio instances, only the current Visual Studio instance
+- Supports Visual Studio from 2022 to latest version
 ## Project Structure
 
-Main project: McpServiceNetFx and McpServiceNetFx.Core
+Main projects:
+- McpServiceNetFx is a standalone WPF UI,
+- McpServiceNetFx.Core is the underlying MCP implementation
+- McpServiceNetFx.VsixAsync is the Visual Studio plugin
 
 Research projects are in the Research folder
 

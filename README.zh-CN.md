@@ -8,10 +8,10 @@ Visual Studio MCP 服务器 GUI，为 AI 助手提供与 Visual Studio 集成的
 - [x] 外挂式服务管理器
     - [x] 基本功能
     - [x] 英文文本资源
-    - [ ] 多实例附加到不同端口，第一版做不做？
-- [ ] VSIX 内嵌式服务管理器
+- [x] VSIX 内嵌式服务管理器
+- [ ] 研究还需要提供哪些 MCP 工具以覆盖基本用例
 
-## 功能特性
+## 功能特性 (外挂式服务管理器)
 
 在本地将选定的 Visual Studio 实例通过基于 HTTP 的 MCP 协议暴露给 AI 编程工具
 
@@ -42,9 +42,19 @@ Visual Studio MCP 服务器 GUI，为 AI 助手提供与 Visual Studio 集成的
 - Windows 11: 无依赖
 - 早期版本的 Windows: .NET Framework 版本 >= 4.7.2
 
+## 功能特性 (VSIX 内嵌式服务管理器)
+- 在视图 -> 其它窗口 -> MCP 服务管理器 打开主界面
+- 与外挂式服务管理器提供相同的 MCP 工具和权限管理
+- 支持暗色主题和亮色主题
+- 不支持控制其它 Visual Studio 实例，只能控制当前 Visual Studio 实例
+- 支持从 Visual Studio 2022 到最新版
+
 ## 项目结构
 
-正式项目：McpServiceNetFx 是独立的 WPF UI，McpServiceNetFx.Core 是底层 MCP 实现
+正式项目：
+- McpServiceNetFx 是独立的 WPF UI，
+- McpServiceNetFx.Core 是底层 MCP 实现
+- McpServiceNetFx.VsixAsync 是 Visual Studio 插件
 
 研究项目在 Research 里面
 
