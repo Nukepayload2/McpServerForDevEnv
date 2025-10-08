@@ -99,9 +99,11 @@ Partial Public Class CustomMessageBox
     End Function
 
     Public Overloads Shared Function Show(owner As Window, message As String, title As String, type As MessageBoxType, Optional showYesNo As Boolean = False, Optional isTopmost As Boolean = False) As MessageBoxResult
-        Dim msgBox As New CustomMessageBox(title, message, type, showYesNo)
-        msgBox.Owner = owner
-        msgBox.Topmost = isTopmost
+        Dim msgBox As New CustomMessageBox(title, message, type, showYesNo) With {
+            .Owner = If(owner, System.Windows.Application.Current.MainWindow),
+            .WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            .Topmost = isTopmost
+        }
         msgBox.PlaySystemSound()
         msgBox.ShowDialog()
         Return msgBox._result
