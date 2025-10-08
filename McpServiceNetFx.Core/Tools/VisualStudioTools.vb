@@ -69,10 +69,6 @@ Public Class VisualStudioTools
     End Function
 
     Public Async Function BuildProjectAsync(projectName As String, configuration As String) As Task(Of BuildResult)
-        Return Await BuildProjectInternal(projectName, configuration)
-    End Function
-
-    Private Async Function BuildProjectInternal(projectName As String, configuration As String) As Task(Of BuildResult)
         Dim startTime = DateTime.Now
         Dim result As New BuildResult With {
             .Success = True,

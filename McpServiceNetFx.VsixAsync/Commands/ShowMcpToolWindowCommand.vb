@@ -24,15 +24,11 @@ Namespace Commands
             Async Function()
                 Await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync()
 
-                Dim window = Await package.ShowToolWindowAsync(
+                Await package.ShowToolWindowAsync(
                     GetType(ToolWindows.McpToolWindow),
                      0,
                     create:=True,
                     cancellationToken:=package.DisposalToken)
-
-                If window Is Nothing Then
-                    Throw New Exception("无法创建MCP工具窗口")
-                End If
             End Function)
         End Sub
     End Class

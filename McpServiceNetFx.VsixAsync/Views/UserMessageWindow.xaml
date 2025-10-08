@@ -14,33 +14,64 @@
         ResizeMode="CanResize"
         Background="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
         Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}">
-    <StackPanel Margin="8">
-        <!-- 消息标签 -->
-        <Label x:Name="MessageLabel"
-               Content="{x:Static res:Resources.MessageLabel}"
-               FontWeight="Bold"
-               Margin="0,0,0,4"
-               Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
 
-        <!-- 消息文本 -->
-        <TextBlock x:Name="MessageTextBlock"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,8"
-                   Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+    <Window.Resources>
+        <!-- 消息区域样式 -->
+        <Style x:Key="MessageAreaStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBackgroundBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="CornerRadius" Value="2"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 消息区域 -->
+        <Border Grid.Row="0" Style="{StaticResource MessageAreaStyle}">
+            <StackPanel>
+                <!-- 消息标签 -->
+                <Label x:Name="MessageLabel"
+                       Content="{x:Static res:Resources.MessageLabel}"
+                       FontWeight="Bold"
+                       Margin="0,0,0,4"
+                       Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+
+                <!-- 消息文本 -->
+                <TextBlock x:Name="MessageTextBlock"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+            </StackPanel>
+        </Border>
 
         <!-- 命令文本框 -->
-        <TextBox x:Name="CommandTextBox"
-                 Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
-                 IsReadOnly="True" MinHeight="140"
-                 TextWrapping="Wrap"
-                 VerticalScrollBarVisibility="Auto"
-                 FontFamily="Consolas"
-                 Margin="0,0,0,8"/>
+        <Border Grid.Row="1"
+                BorderBrush="{DynamicResource {x:Static vs_shell:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                BorderThickness="1"
+                Margin="0,0,0,8">
+            <TextBox x:Name="CommandTextBox"
+                     Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogTextBoxStyleKey}}"
+                     IsReadOnly="True"
+                     MinHeight="140"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     FontFamily="Consolas"
+                     BorderThickness="0"
+                     Background="Transparent"/>
+        </Border>
 
         <!-- 按钮面板 -->
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="0,8,0,0">
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
             <Button x:Name="CloseButton"
                     Content="{x:Static res:Resources.ButtonClose}"
                     MinWidth="80"
@@ -48,5 +79,5 @@
                     IsCancel="True"
                     Style="{DynamicResource {x:Static vs:VsResourceKeys.ThemedDialogButtonStyleKey}}"/>
         </StackPanel>
-    </StackPanel>
+    </Grid>
 </Window>
