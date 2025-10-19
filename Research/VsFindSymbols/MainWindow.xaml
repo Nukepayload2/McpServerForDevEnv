@@ -5,8 +5,133 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VsFindSymbols"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Visual Studio 符号搜索工具" Height="650" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        MinHeight="500" MinWidth="800">
 
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 搜索区域 -->
+        <GroupBox Grid.Row="0" Header="搜索设置" Margin="0,0,0,10">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="符号名称:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox x:Name="SymbolNameTextBox" Grid.Row="0" Grid.Column="1"
+                         Height="30" VerticalContentAlignment="Center"
+                         Text="{Binding SymbolName, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,10,0"/>
+
+                <Button x:Name="SearchButton" Grid.Row="0" Grid.Column="2"
+                        Content="搜索" Width="80" Height="30" Margin="0,0,10,0"
+                        Command="{Binding SearchCommand}"/>
+
+                <Button x:Name="ClearButton" Grid.Row="0" Grid.Column="3"
+                        Content="清除" Width="60" Height="30" Margin="0,0,10,0"
+                        Command="{Binding ClearCommand}"/>
+
+                <Button x:Name="OpenFileButton" Grid.Row="0" Grid.Column="4"
+                        Content="打开文件" Width="80" Height="30" Margin="0,0,10,0"
+                        Command="{Binding OpenFileCommand}"/>
+
+                <!-- 搜索选项 -->
+                <Label Grid.Row="1" Grid.Column="0" Content="搜索范围:" VerticalAlignment="Center" Margin="0,10,10,0"/>
+                <ComboBox x:Name="SearchScopeComboBox" Grid.Row="1" Grid.Column="1"
+                          Height="30" VerticalContentAlignment="Center" Margin="0,10,10,0"
+                          SelectedItem="{Binding SelectedSearchScope}">
+                    <ComboBoxItem Content="解决方案" Tag="Solution"/>
+                    <ComboBoxItem Content="当前项目" Tag="Project"/>
+                    <ComboBoxItem Content="命名空间" Tag="Namespace"/>
+                    <ComboBoxItem Content="类" Tag="Class"/>
+                </ComboBox>
+
+                <Label Grid.Row="1" Grid.Column="2" Content="搜索类型:" VerticalAlignment="Center" Margin="0,10,10,0"/>
+                <ComboBox x:Name="SearchTypeComboBox" Grid.Row="1" Grid.Column="3"
+                          Height="30" VerticalContentAlignment="Center" Margin="0,10,0,0"
+                          SelectedItem="{Binding SelectedSearchType}">
+                    <ComboBoxItem Content="定义" Tag="Definition"/>
+                    <ComboBoxItem Content="引用" Tag="Reference"/>
+                    <ComboBoxItem Content="全部" Tag="All"/>
+                </ComboBox>
+            </Grid>
+        </GroupBox>
+
+        <!-- 状态区域 -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ProgressBar x:Name="SearchProgressBar" Grid.Column="0"
+                         Height="20" Margin="0,0,10,0"
+                         Visibility="Collapsed"
+                         IsIndeterminate="True"/>
+
+            <TextBlock x:Name="StatusTextBlock" Grid.Column="1"
+                       Text="{Binding StatusText}" VerticalAlignment="Center" Margin="0,0,0,0"
+                       FontWeight="SemiBold"/>
+        </Grid>
+
+        <!-- 结果区域 -->
+        <GroupBox Grid.Row="2" Header="搜索结果" Margin="0,0,0,10">
+            <DataGrid x:Name="ResultsDataGrid"
+                      ItemsSource="{Binding SearchResults}"
+                      SelectedItem="{Binding SelectedResult}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      GridLinesVisibility="Horizontal"
+                      HeadersVisibility="Column"
+                      SelectionMode="Single"
+                      AlternatingRowBackground="LightGray"
+                      RowBackground="White"
+                      FontFamily="Consolas"
+                      FontSize="12">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="符号名称" Binding="{Binding SymbolName}" Width="200"/>
+                    <DataGridTextColumn Header="类型" Binding="{Binding SymbolType}" Width="100"/>
+                    <DataGridTextColumn Header="文件路径" Binding="{Binding FilePath}" Width="400">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="ToolTip" Value="{Binding FilePath}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="行号" Binding="{Binding LineNumber}" Width="60"/>
+                    <DataGridTextColumn Header="列号" Binding="{Binding ColumnNumber}" Width="60"/>
+                    <DataGridTextColumn Header="项目" Binding="{Binding ProjectName}" Width="150"/>
+                    <DataGridTextColumn Header="命名空间" Binding="{Binding Namespace}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <!-- 详细信息区域 -->
+        <GroupBox Grid.Row="3" Header="详细信息" Height="120" MinHeight="80">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <TextBlock x:Name="DetailsTextBlock"
+                           Text="{Binding SelectedResult.FullDisplayName, FallbackValue='请选择一个结果查看详细信息'}"
+                           TextWrapping="Wrap" Margin="5"
+                           FontFamily="Segoe UI" FontSize="12"/>
+            </ScrollViewer>
+        </GroupBox>
     </Grid>
-</Window>
+
+    </Window>

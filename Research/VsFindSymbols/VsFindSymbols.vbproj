@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="mscorlib" />
+	<Reference Include="mscorlib" />
   </ItemGroup>
 
   <ItemGroup>
