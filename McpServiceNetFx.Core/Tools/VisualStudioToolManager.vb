@@ -67,6 +67,8 @@ Public Class VisualStudioToolManager
         Try
             ' 手动注册所有工具，避免反射的性能开销
             ' 使用延迟数据上下文构造函数
+
+            ' Visual Studio 相关工具
             RegisterTool(New BuildSolutionTool(_logger, _permissionHandler))
             RegisterTool(New BuildProjectTool(_logger, _permissionHandler))
             RegisterTool(New RunProjectCustomToolsTool(_logger, _permissionHandler))
@@ -74,6 +76,13 @@ Public Class VisualStudioToolManager
             RegisterTool(New GetSolutionInfoTool(_logger, _permissionHandler))
             RegisterTool(New GetActiveDocumentTool(_logger, _permissionHandler))
             RegisterTool(New GetAllOpenDocumentsTool(_logger, _permissionHandler))
+
+            ' 文件操作工具
+            RegisterTool(New ReadLinesTool(_logger, _permissionHandler))
+            RegisterTool(New WriteLinesTool(_logger, _permissionHandler))
+            RegisterTool(New AppendLinesTool(_logger, _permissionHandler))
+            RegisterTool(New StringReplaceTool(_logger, _permissionHandler))
+            RegisterTool(New ReplaceLinesTool(_logger, _permissionHandler))
 
             _logger?.LogMcpRequest("工具管理器", "工具预注册完成", $"共预注册 {_tools.Count} 个工具，等待数据上下文")
 
