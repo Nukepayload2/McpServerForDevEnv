@@ -67,8 +67,9 @@ Public Class BuildProjectTool
                 .Message = result.Message,
                 .BuildTime = result.BuildTime,
                 .Configuration = result.Configuration,
-                .Errors = If(result.Errors?.ToArray(), New CompilationError() {}),
-                .Warnings = If(result.Warnings?.ToArray(), New CompilationError() {})
+                .Errors = If(result.Errors?.ToArray(), {}),
+                .Warnings = If(result.Warnings?.ToArray(), {}),
+                .BuildOutput = result.BuildOutput
             }
 
         Catch ex As Exception

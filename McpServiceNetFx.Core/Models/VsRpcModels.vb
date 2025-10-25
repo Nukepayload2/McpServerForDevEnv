@@ -39,6 +39,9 @@ Public Class BuildResult
 
     <JsonProperty("message")>
     Public Property Message As String
+
+    <JsonProperty("buildOutput", DefaultValueHandling:=DefaultValueHandling.Ignore)>
+    Public Property BuildOutput As String
 End Class
 
 ' 构建结果强类型
@@ -60,6 +63,9 @@ Public Class BuildResultResponse
 
     <JsonProperty("warnings", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Warnings As CompilationError()
+
+    <JsonProperty("buildOutput", DefaultValueHandling:=DefaultValueHandling.Ignore)>
+    Public Property BuildOutput As String
 End Class
 
 ' 解决方案信息强类型

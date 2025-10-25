@@ -1,4 +1,5 @@
 Imports System.Text
+Imports EnvDTE
 Imports EnvDTE80
 Imports VSLangProj
 
@@ -18,13 +19,16 @@ Public Class VisualStudioTools
     End Function
 
     Private Async Function BuildSolutionInternal(configuration As String) As Task(Of BuildResult)
-        Dim startTime = DateTime.Now
+        Dim startTime = Date.Now
         Dim result As New BuildResult With {
             .Success = True,
             .Errors = New List(Of CompilationError)(),
             .Warnings = New List(Of CompilationError)(),
             .Configuration = configuration
         }
+
+        Dim buildOutput As String = ""
+        Dim lastBuildInfo As Integer = 0
 
         Try
             ' 在UI线程上执行DTE操作
@@ -34,42 +38,67 @@ Public Class VisualStudioTools
                     Throw New Exception("没有打开的解决方案")
                 End If
 
-                ' 设置构建配置
-                Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
-                solutionBuild.SolutionConfigurations.Item(configuration).Activate()
+                ' 获取输出窗口
+                Dim outputWindow As OutputWindow = _dte2.ToolWindows.OutputWindow
+                Dim buildPane As OutputWindowPane = Nothing
 
-                ' 清除之前的错误 - 由于没有ClearAll方法，我们跳过这一步
+                Try
+                    ' 尝试获取现有的 Build 窗格
+                    buildPane = outputWindow.OutputWindowPanes.Item("Build")
+                    buildPane.Clear() ' 清除之前的输出
+                Catch
+                    ' 如果不存在则创建新的 Build 窗格
+                    buildPane = outputWindow.OutputWindowPanes.Add("Build")
+                End Try
+
+                ' 设置构建配置
+                Dim solutionBuild2 As EnvDTE80.SolutionBuild2 = CType(_dte2.Solution.SolutionBuild, EnvDTE80.SolutionBuild2)
+                solutionBuild2.SolutionConfigurations.Item(configuration).Activate()
 
                 ' 执行构建（不等待完成）
-                solutionBuild.Build(False)
+                solutionBuild2.Build(False)
 
                 ' 轮询构建状态
-                Do While solutionBuild.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
+                Do While solutionBuild2.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
                     Await Task.Delay(100)
                 Loop
+
+                ' 获取构建结果信息
+                lastBuildInfo = solutionBuild2.LastBuildInfo
+
+                ' 捕获输出
+                If buildPane.TextDocument IsNot Nothing Then
+                    Dim startPoint As TextPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
+                    Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
+                    buildOutput = startPoint.GetText(endPoint)
+                End If
             End Function)
 
-            ' 收集错误和警告（需要在UI线程上执行）
-            Dim allErrors = Await CollectErrorsFromToolWindowAsync()
-            result.Errors = allErrors.Errors
-            result.Warnings = allErrors.Warnings
-            result.Success = result.Errors.Count = 0
-            result.BuildTime = DateTime.Now - startTime
-            result.Message = If(result.Success,
-                                "构建成功完成",
-                                $"构建失败，发现 {result.Errors.Count} 个错误和 {result.Warnings.Count} 个警告")
+            ' 设置构建输出和结果信息
+            result.BuildOutput = buildOutput
+            result.BuildTime = Date.Now - startTime
+
+            ' 使用 LastBuildInfo 判断构建是否成功
+            If lastBuildInfo = 0 Then
+                result.Success = True
+                result.Message = "构建成功完成"
+            Else
+                result.Success = False
+                result.Message = $"构建失败，{lastBuildInfo} 个项目构建失败，详细信息请查看构建输出"
+            End If
 
         Catch ex As Exception
             result.Success = False
             result.Message = $"构建过程中发生错误: {ex.Message}"
-            result.BuildTime = DateTime.Now - startTime
+            result.BuildTime = Date.Now - startTime
+            result.BuildOutput = buildOutput ' 包含已捕获的输出，即使有异常
         End Try
 
         Return result
     End Function
 
     Public Async Function BuildProjectAsync(projectName As String, configuration As String) As Task(Of BuildResult)
-        Dim startTime = DateTime.Now
+        Dim startTime = Date.Now
         Dim result As New BuildResult With {
             .Success = True,
             .Errors = New List(Of CompilationError)(),
@@ -77,9 +106,11 @@ Public Class VisualStudioTools
             .Configuration = configuration
         }
 
-        Try
-            Dim targetProject As EnvDTE.Project = Nothing
+        Dim targetProject As EnvDTE.Project = Nothing
+        Dim buildOutput As String = ""
+        Dim lastBuildInfo As Integer = 0
 
+        Try
             ' 在UI线程上查找项目并启动构建
             Await _dispatcher.InvokeAsync(
             Async Function()
@@ -98,33 +129,60 @@ Public Class VisualStudioTools
                     Throw New Exception($"找不到项目: {projectName}")
                 End If
 
+                ' 获取输出窗口
+                Dim outputWindow As OutputWindow = _dte2.ToolWindows.OutputWindow
+                Dim buildPane As OutputWindowPane = Nothing
+
+                Try
+                    ' 尝试获取现有的 Build 窗格
+                    buildPane = outputWindow.OutputWindowPanes.Item("Build")
+                    buildPane.Clear() ' 清除之前的输出
+                Catch
+                    ' 如果不存在则创建新的 Build 窗格
+                    buildPane = outputWindow.OutputWindowPanes.Add("Build")
+                End Try
+
                 ' 设置构建配置
-                Dim solutionBuild As EnvDTE.SolutionBuild = _dte2.Solution.SolutionBuild
-                solutionBuild.SolutionConfigurations.Item(configuration).Activate()
+                Dim solutionBuild2 As EnvDTE80.SolutionBuild2 = CType(_dte2.Solution.SolutionBuild, EnvDTE80.SolutionBuild2)
+                solutionBuild2.SolutionConfigurations.Item(configuration).Activate()
 
                 ' 构建特定项目（不等待完成）
-                solutionBuild.BuildProject(configuration, targetProject.UniqueName, False)
+                solutionBuild2.BuildProject(configuration, targetProject.UniqueName, False)
 
                 ' 轮询构建状态
-                Do While solutionBuild.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
+                Do While solutionBuild2.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
                     Await Task.Delay(100)
                 Loop
+
+                ' 获取构建结果信息
+                lastBuildInfo = solutionBuild2.LastBuildInfo
+
+                ' 捕获输出
+                If buildPane.TextDocument IsNot Nothing Then
+                    Dim startPoint As TextPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
+                    Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
+                    buildOutput = startPoint.GetText(endPoint)
+                End If
             End Function)
 
-            ' 收集错误和警告
-            Dim allErrors = Await CollectErrorsFromToolWindowAsync()
-            result.Errors = allErrors.Errors
-            result.Warnings = allErrors.Warnings
-            result.Success = result.Errors.Count = 0
-            result.BuildTime = DateTime.Now - startTime
-            result.Message = If(result.Success,
-                                $"项目 {projectName} 构建成功",
-                                $"项目 {projectName} 构建失败，发现 {result.Errors.Count} 个错误和 {result.Warnings.Count} 个警告")
+            ' 设置构建输出和结果信息
+            result.BuildOutput = buildOutput
+            result.BuildTime = Date.Now - startTime
+
+            ' 使用 LastBuildInfo 判断构建是否成功
+            If lastBuildInfo = 0 Then
+                result.Success = True
+                result.Message = $"项目 {projectName} 构建成功"
+            Else
+                result.Success = False
+                result.Message = $"项目 {projectName} 构建失败，{lastBuildInfo} 个项目构建失败，详细信息请查看构建输出"
+            End If
 
         Catch ex As Exception
             result.Success = False
             result.Message = $"构建项目 {projectName} 时发生错误: {ex.Message}"
-            result.BuildTime = DateTime.Now - startTime
+            result.BuildTime = Date.Now - startTime
+            result.BuildOutput = buildOutput ' 包含已捕获的输出，即使有异常
         End Try
 
         Return result
@@ -151,81 +209,120 @@ Public Class VisualStudioTools
             .Warnings = New List(Of CompilationError)()
         }
 
+        Dim buildOutput As String = ""
+
         ' 需要在UI线程上执行
         Await _dispatcher.InvokeAsync(
         Async Function()
             Try
-                ' 获取错误列表工具窗口
-                Dim errorList = _dte2.ToolWindows.ErrorList
+                ' 首先尝试从 Build OutputWindow 获取输出（新的主要策略）
+                Try
+                    Dim outputWindow As OutputWindow = _dte2.ToolWindows.OutputWindow
+                    Dim buildPane As OutputWindowPane = Nothing
 
-                If errorList Is Nothing Then
-                    Return
-                End If
-
-                ' 获取错误项集合
-                Dim errorItems = errorList.ErrorItems
-
-                If errorItems Is Nothing Then
-                    Return
-                End If
-
-                For i = 1 To errorItems.Count
                     Try
-                        Dim errorItem = errorItems.Item(i)
+                        buildPane = outputWindow.OutputWindowPanes.Item("Build")
+                        If buildPane?.TextDocument IsNot Nothing Then
+                            Dim startPoint As TextPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
+                            Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
+                            buildOutput = startPoint.GetText(endPoint)
+                        End If
+                    Catch
+                        ' 如果 Build 窗格不存在，继续尝试 ErrorList
+                    End Try
+                Catch ex As Exception
+                    _logger?.LogMcpRequest("获取输出窗口", "警告", ex.Message)
+                End Try
 
-                        If errorItem IsNot Nothing Then
-                            Dim description As String = If(errorItem.Description, "")
-                            Dim fileName As String = If(errorItem.FileName, "")
-                            Dim line As Integer = CInt(errorItem.Line)
-                            Dim column As Integer = CInt(errorItem.Column)
-                            Dim errorLevel = errorItem.ErrorLevel
-                            Dim projectName As String = If(errorItem.Project, "")
+                ' 如果 OutputWindow 没有输出，回退到 ErrorList（旧的备用策略）
+                If String.IsNullOrEmpty(buildOutput) Then
+                    Try
+                        ' 获取错误列表工具窗口
+                        Dim errorList = _dte2.ToolWindows.ErrorList
 
-                            ' 转换错误级别为字符串
-                            Dim severity As String
-                            Select Case errorLevel
-                                Case vsBuildErrorLevel.vsBuildErrorLevelLow
-                                    severity = "Message"
-                                Case vsBuildErrorLevel.vsBuildErrorLevelMedium
-                                    severity = "Warning"
-                                Case vsBuildErrorLevel.vsBuildErrorLevelHigh
-                                    severity = "Error"
-                                Case Else
-                                    severity = "Unknown"
-                            End Select
+                        If errorList IsNot Nothing Then
+                            ' 获取错误项集合
+                            Dim errorItems = errorList.ErrorItems
 
-                            ' 应用过滤器
-                            If severityFilter <> "All" AndAlso severity <> severityFilter Then
-                                Continue For
+                            If errorItems IsNot Nothing Then
+                                For i = 1 To errorItems.Count
+                                    Try
+                                        Dim errorItem = errorItems.Item(i)
+
+                                        If errorItem IsNot Nothing Then
+                                            Dim description As String = If(errorItem.Description, "")
+                                            Dim fileName As String = If(errorItem.FileName, "")
+                                            Dim line As Integer = CInt(errorItem.Line)
+                                            Dim column As Integer = CInt(errorItem.Column)
+                                            Dim errorLevel = errorItem.ErrorLevel
+                                            Dim projectName As String = If(errorItem.Project, "")
+
+                                            ' 转换错误级别为字符串
+                                            Dim severity As String
+                                            Select Case errorLevel
+                                                Case vsBuildErrorLevel.vsBuildErrorLevelLow
+                                                    severity = "Message"
+                                                Case vsBuildErrorLevel.vsBuildErrorLevelMedium
+                                                    severity = "Warning"
+                                                Case vsBuildErrorLevel.vsBuildErrorLevelHigh
+                                                    severity = "Error"
+                                                Case Else
+                                                    severity = "Unknown"
+                                            End Select
+
+                                            ' 应用过滤器
+                                            If severityFilter <> "All" AndAlso severity <> severityFilter Then
+                                                Continue For
+                                            End If
+
+                                            ' 创建 CompilationError 对象
+                                            Dim compilationError As New CompilationError With {
+                                                .Message = description,
+                                                .File = fileName,
+                                                .Line = line,
+                                                .Column = column,
+                                                .Project = projectName,
+                                                .Severity = severity
+                                            }
+
+                                            Select Case severity
+                                                Case "Error"
+                                                    result.Errors.Add(compilationError)
+                                                Case "Warning"
+                                                    result.Warnings.Add(compilationError)
+                                            End Select
+                                        End If
+                                    Catch ex As Exception
+                                        ' 忽略单个错误项的处理错误
+                                    End Try
+                                Next
                             End If
-
-                            ' 创建 CompilationError 对象
-                            Dim compilationError As New CompilationError With {
-                                .Message = description,
-                                .File = fileName,
-                                .Line = line,
-                                .Column = column,
-                                .Project = projectName,
-                                .Severity = severity
-                            }
-
-                            Select Case severity
-                                Case "Error"
-                                    result.Errors.Add(compilationError)
-                                Case "Warning"
-                                    result.Warnings.Add(compilationError)
-                            End Select
                         End If
                     Catch ex As Exception
-                        ' 忽略单个错误项的处理错误
+                        _logger?.LogMcpRequest("获取错误列表", "警告", ex.Message)
                     End Try
-                Next
+                End If
 
             Catch ex As Exception
                 ' 记录错误但不抛出异常
                 _logger?.LogMcpRequest("收集错误", "警告", ex.Message)
             End Try
         End Function)
+
+        ' 不再解析 Build 输出，因为我们现在使用 LastBuildInfo 来判断构建结果
+        ' 如果需要详细的错误信息，用户可以直接查看 BuildOutput
+
+        ' 应用过滤器（如果没有在前面应用）
+        If severityFilter <> "All" Then
+            If severityFilter = "Error" Then
+                result.Warnings.Clear()
+            ElseIf severityFilter = "Warning" Then
+                result.Errors.Clear()
+            ElseIf severityFilter = "Message" Then
+                result.Errors.Clear()
+                result.Warnings.Clear()
+            End If
+        End If
 
         Return result
     End Function
