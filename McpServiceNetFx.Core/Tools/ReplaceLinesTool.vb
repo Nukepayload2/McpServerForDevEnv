@@ -44,7 +44,7 @@ Public Class ReplaceLinesTool
                     "start",
                     New PropertyDefinition With {
                         .Type = "number",
-                        .Description = "起始行号（从0开始）"
+                        .Description = "起始行号（从1开始）"
                     }
                 },
                 {
@@ -123,7 +123,7 @@ Public Class ReplaceLinesTool
             LogOperation("替换文件行", "开始", $"文件: {filePath}, 起始行: {start}, 行数: {length}")
 
             ' 调用文件操作辅助类
-            Dim replaceResult = FileOperationHelper.ReplaceLinesInFile(filePath, start, length, content, expectedHash)
+            Dim replaceResult = FileOperationHelper.ReplaceLinesInFile(filePath, start - 1, length, content, expectedHash)
 
             ' 计算新内容的行数
             Dim newLinesCount = 0
