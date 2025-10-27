@@ -486,8 +486,8 @@ Public NotInheritable Class FileOperationHelper
             Return result
         End If
 
-        If length <= 0 Then
-            result.Error = "替换行数必须大于0"
+        If length < 0 Then
+            result.Error = "替换行数不能为负数"
             result.ErrorCode = "INVALID_LENGTH"
             Return result
         End If
@@ -518,13 +518,20 @@ Public NotInheritable Class FileOperationHelper
             Dim totalLines = allLines.Length
 
             ' 验证行号范围
-            If start >= totalLines Then
+            If start > totalLines Then
                 result.Error = "起始行号超出文件范围"
                 result.ErrorCode = "START_BEYOND_EOF"
                 Return result
             End If
 
-            Dim actualLength = Math.Min(length, totalLines - start)
+        Dim actualLength As Integer
+            If start = totalLines Then
+                ' 在文件末尾插入或追加
+                actualLength = 0
+            Else
+                actualLength = Math.Min(length, totalLines - start)
+            End If
+
             Dim endLine = start + actualLength - 1
 
             ' 分割新内容为行
@@ -541,9 +548,12 @@ Public NotInheritable Class FileOperationHelper
             ' 插入新行
             Array.Copy(newLines, 0, newFileLines, start, newLines.Length)
 
-            ' 复制替换后的行
-            If endLine + 1 < totalLines Then
+            ' 复制替换后的行（只在actualLength > 0时执行）
+            If actualLength > 0 AndAlso endLine + 1 < totalLines Then
                 Array.Copy(allLines, endLine + 1, newFileLines, start + newLines.Length, totalLines - endLine - 1)
+            ElseIf actualLength = 0 AndAlso start < totalLines Then
+                ' 如果是插入操作（length=0），复制起始位置之后的所有行
+                Array.Copy(allLines, start, newFileLines, start + newLines.Length, totalLines - start)
             End If
 
             ' 写入新内容

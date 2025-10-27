@@ -22,7 +22,7 @@ Public Class ReplaceLinesTool
     ''' </summary>
     Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
         .Name = "replace_lines",
-        .Description = "替换文件中指定行范围的内容，配合带行号的ReadLines使用",
+        .Description = "替换或插入文件中指定行范围的内容。当length为0时为插入操作，配合带行号的ReadLines使用",
         .InputSchema = New InputSchema With {
             .Type = "object",
             .Properties = New Dictionary(Of String, PropertyDefinition) From {
@@ -51,7 +51,7 @@ Public Class ReplaceLinesTool
                     "length",
                     New PropertyDefinition With {
                         .Type = "number",
-                        .Description = "要替换的行数"
+                        .Description = "要替换的行数，0表示插入操作"
                     }
                 },
                 {
@@ -116,8 +116,8 @@ Public Class ReplaceLinesTool
                 Throw New McpException("起始行号不能为负数", McpErrorCode.InvalidParams)
             End If
 
-            If length <= 0 Then
-                Throw New McpException("替换行数必须大于0", McpErrorCode.InvalidParams)
+            If length < 0 Then
+                Throw New McpException("替换行数不能为负数", McpErrorCode.InvalidParams)
             End If
 
             LogOperation("替换文件行", "开始", $"文件: {filePath}, 起始行: {start}, 行数: {length}")
