@@ -1,4 +1,4 @@
-<Window x:Class="CustomMessageBox"
+﻿<Window x:Class="CustomMessageBox"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,6 @@
         xmlns:res="clr-namespace:McpServiceNetFx.My.Resources;assembly=McpServiceNetFx.Core"
         mc:Ignorable="d"
         Title="{x:Static res:Resources.CustomMessageBoxTitle}"
-        Height="200"
         Width="400"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
