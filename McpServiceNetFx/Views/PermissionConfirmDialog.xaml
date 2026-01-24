@@ -1,0 +1,84 @@
+<Window x:Class="PermissionConfirmDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:res="clr-namespace:McpServiceNetFx.My.Resources;assembly=McpServiceNetFx.Core"
+        mc:Ignorable="d"
+        Title="Permission Confirm"
+        Height="Auto" Width="500"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 问号图标和消息 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+            <TextBlock Text="?" FontSize="24" FontWeight="Bold"
+                       Foreground="{DynamicResource {x:Static SystemColors.HotTrackBrushKey}}"
+                       VerticalAlignment="Top" Margin="0,0,10,0"/>
+            <TextBlock Text="{x:Static res:Resources.PermissionConfirm_Message}"
+                       FontSize="14" TextWrapping="Wrap" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- 功能信息 -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,15">
+            <TextBlock Text="{x:Static res:Resources.PermissionConfirm_Feature}" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock x:Name="TxtFeatureName" Text="" Padding="10,0,0,0" TextWrapping="Wrap"/>
+            <TextBlock Text="{x:Static res:Resources.PermissionConfirm_Operation}" FontWeight="Bold" Margin="0,10,0,5"/>
+            <TextBlock x:Name="TxtOperationDescription" Text="" Padding="10,0,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- 文件路径 -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,15">
+            <TextBlock Text="{x:Static res:Resources.PermissionConfirm_FilePath}" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock x:Name="TxtFilePath" Text="" Padding="10,0,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- 默认应答 Expander -->
+        <Expander Grid.Row="3" Header="{x:Static res:Resources.PermissionConfirm_DefaultResponse}" Margin="0,0,0,15">
+            <StackPanel Margin="10,5,0,5">
+                <TextBlock Text="{x:Static res:Resources.PermissionConfirm_WildcardHelp}"
+                           FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                <RadioButton x:Name="RbAlwaysAllow" GroupName="DefaultResponse" Margin="0,5,0,5"
+                            Content="{x:Static res:Resources.PermissionConfirm_AlwaysAllow}" IsChecked="False"/>
+                <TextBox x:Name="TxtAllowPattern" Text="" Margin="25,0,0,5"
+                         IsEnabled="{Binding ElementName=RbAlwaysAllow, Path=IsChecked}"/>
+
+                <RadioButton x:Name="RbAlwaysDeny" GroupName="DefaultResponse" Margin="0,10,0,5"
+                            Content="{x:Static res:Resources.PermissionConfirm_AlwaysDeny}" IsChecked="False"/>
+                <TextBox x:Name="TxtDenyPattern" Text="" Margin="25,0,0,5"
+                         IsEnabled="{Binding ElementName=RbAlwaysDeny, Path=IsChecked}"/>
+
+                <RadioButton x:Name="RbEachTime" GroupName="DefaultResponse" Margin="0,10,0,5"
+                            Content="{x:Static res:Resources.PermissionConfirm_EachTime}" IsChecked="True"/>
+            </StackPanel>
+        </Expander>
+
+        <!-- 了解更多链接 -->
+        <TextBlock Grid.Row="4" Margin="0,0,0,10">
+            <Hyperlink RequestNavigate="OnLearnMoreClick" NavigateUri="">
+                <TextBlock Text="{x:Static res:Resources.PermissionConfirm_LearnMore}"/>
+            </Hyperlink>
+        </TextBlock>
+
+        <!-- 按钮 -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button x:Name="BtnAllow" Content="{x:Static res:Resources.PermissionConfirm_Allow}"
+                    Width="80" Height="30" Margin="0,0,10,0" Click="OnAllowClick"/>
+            <Button x:Name="BtnDeny" Content="{x:Static res:Resources.PermissionConfirm_Deny}"
+                    Width="80" Height="30" Click="OnDenyClick"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -72,6 +72,16 @@ Public MustInherit Class VisualStudioToolBase
     End Property
 
     ''' <summary>
+    ''' 标识是否为文件操作工具
+    ''' 文件工具支持 AlwaysAsk 权限和路径策略检查
+    ''' </summary>
+    Public Overridable ReadOnly Property IsFileTool As Boolean
+        Get
+            Return False
+        End Get
+    End Property
+
+    ''' <summary>
     ''' 执行工具（包装方法）
     ''' </summary>
     ''' <param name="arguments">工具参数</param>
@@ -110,6 +120,29 @@ Public MustInherit Class VisualStudioToolBase
     Protected Function CheckPermission() As Boolean
         Try
             Return _permissionHandler.CheckPermission(FeatureName, ToolDescription)
+        Catch ex As Exception
+            _logger?.LogMcpRequest(My.Resources.LogPermissionCheckException, My.Resources.LogException, ex.Message)
+            Return False
+        End Try
+    End Function
+
+    ''' <summary>
+    ''' 检查文件权限（增强版本，支持路径策略）
+    ''' </summary>
+    ''' <param name="filePath">文件路径</param>
+    ''' <param name="accessType">访问类型</param>
+    ''' <returns>是否有权限</returns>
+    Protected Function CheckFilePermission(filePath As String, accessType As FileAccessType) As Boolean
+        Try
+            ' 通过反射调用文件权限检查方法
+            Dim filePermissionMethod = GetType(IMcpPermissionHandler).GetMethod("CheckFilePermission")
+            If filePermissionMethod IsNot Nothing Then
+                Dim result = filePermissionMethod.Invoke(_permissionHandler, New Object() {FeatureName, ToolDescription, filePath, accessType})
+                Return DirectCast(result, Boolean)
+            Else
+                ' 如果接口方法不存在，回退到基础权限检查
+                Return CheckPermission()
+            End If
         Catch ex As Exception
             _logger?.LogMcpRequest(My.Resources.LogPermissionCheckException, My.Resources.LogException, ex.Message)
             Return False

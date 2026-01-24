@@ -148,7 +148,31 @@ McpServiceNetFx.Core/
 - 权限验证中间件
 - 异常处理和错误响应
 
-### 3. McpServiceNetFx.VsixAsync - Visual Studio 插件
+### 3. McpServiceNetFx.Tests - 单元测试项目
+
+**技术栈**: VB.NET + .NET 10.0 + MSTest 4.0.1
+
+**主要职责**:
+- 为 Core 项目提供单元测试
+- 测试 MCP 工具和辅助类
+- 验证权限控制逻辑
+- 测试路径处理和通配符匹配
+
+**核心文件夹结构**:
+
+```
+McpServiceNetFx.Tests/
+├── Test1.vb                     # 测试类
+└── McpServiceNetFx.Tests.vbproj # 项目文件
+```
+
+**测试覆盖范围**:
+- PathHelper 路径标准化和通配符匹配测试
+- 文件操作工具测试
+- 权限模型测试
+- MCP 协议组件测试
+
+### 4. McpServiceNetFx.VsixAsync - Visual Studio 插件
 
 **技术栈**: VB.NET + .NET Framework + VS SDK + Avalonia UI
 
@@ -212,6 +236,7 @@ McpServiceNetFx
 | 层次 | 项目 | 技术栈 | 主要框架 |
 |------|------|--------|----------|
 | 表现层 | McpServiceNetFx | VB.NET + .NET Framework | WPF + WPF-UI |
+| 测试层 | McpServiceNetFx.Tests | VB.NET + .NET 10.0 | MSTest |
 | 表现层 | McpServiceNetFx.VsixAsync | VB.NET + .NET Framework | Avalonia UI + VS SDK |
 | 核心层 | McpServiceNetFx.Core | VB.NET + .NET Framework | System.Net.Http |
 

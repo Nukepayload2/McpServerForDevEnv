@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  一个强类型的资源类，用于查找本地化的字符串等。
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -358,6 +358,33 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Read 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property FileAccessType_Read() As String
+            Get
+                Return ResourceManager.GetString("FileAccessType_Read", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Read/Write 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property FileAccessType_ReadWrite() As String
+            Get
+                Return ResourceManager.GetString("FileAccessType_ReadWrite", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Write 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property FileAccessType_Write() As String
+            Get
+                Return ResourceManager.GetString("FileAccessType_Write", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 No file 的本地化字符串。
         '''</summary>
         Public ReadOnly Property FileNoFile() As String
@@ -628,6 +655,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LearnMore_Url() As String
+            Get
+                Return ResourceManager.GetString("LearnMore_Url", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Document path: {0} 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LogActiveDocPath() As String
@@ -642,6 +678,15 @@ Namespace My.Resources
         Public ReadOnly Property LogAddedNewToolPermissions() As String
             Get
                 Return ResourceManager.GetString("LogAddedNewToolPermissions", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Failed to add path policy: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogAddPathPolicyFailed() As String
+            Get
+                Return ResourceManager.GetString("LogAddPathPolicyFailed", resourceCulture)
             End Get
         End Property
         
@@ -1227,6 +1272,24 @@ Namespace My.Resources
         Public ReadOnly Property LogParameterConversionFailure() As String
             Get
                 Return ResourceManager.GetString("LogParameterConversionFailure", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Path policy added: {0} - {1} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogPathPolicyAdded() As String
+            Get
+                Return ResourceManager.GetString("LogPathPolicyAdded", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Path policy matched: {0} - {1} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogPathPolicyMatch() As String
+            Get
+                Return ResourceManager.GetString("LogPathPolicyMatch", resourceCulture)
             End Get
         End Property
         
@@ -2068,6 +2131,132 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Allow List 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_AllowList() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_AllowList", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Add Policy 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Button_AddPolicy() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Button_AddPolicy", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Save Policies 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Button_SavePolicies() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Button_SavePolicies", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Access Type 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Column_AccessType() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Column_AccessType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Description 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Column_Description() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Column_Description", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Function Name 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Column_FunctionName() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Column_FunctionName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Wildcard Pattern 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Column_Pattern() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Column_Pattern", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Column_Permission() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Column_Permission", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Deny List (Priority) 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_DenyList() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_DenyList", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 • Deny list takes priority over allow list 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Hint_DenyPriority() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Hint_DenyPriority", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 • Unmatched paths will still show confirmation dialog (Ask mode) 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Hint_Unmatched() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Hint_Unmatched", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 • Case-insensitive, supports wildcards: e.g. * and ? 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Hint_Wildcard() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Hint_Wildcard", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Ask Mode Auto-Authorization Policies 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Tab_AskAutoAuth() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Tab_AskAutoAuth", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Function Permissions 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Tab_FunctionPermissions() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Tab_FunctionPermissions", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Allowed 的本地化字符串。
         '''</summary>
         Public ReadOnly Property PermissionAllowed() As String
@@ -2082,6 +2271,123 @@ Namespace My.Resources
         Public ReadOnly Property PermissionAsk() As String
             Get
                 Return ResourceManager.GetString("PermissionAsk", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Allow 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_Allow() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_Allow", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Always Allow 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_AlwaysAllow() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_AlwaysAllow", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Always Deny 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_AlwaysDeny() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_AlwaysDeny", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Default Response 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_DefaultResponse() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_DefaultResponse", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Deny 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_Deny() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_Deny", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Ask Each Time 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_EachTime() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_EachTime", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Feature: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_Feature() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_Feature", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 File Path: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_FilePath() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_FilePath", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Learn More 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_LearnMore() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_LearnMore", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Do you want to allow the following operation? 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_Message() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_Message", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Operation: 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_Operation() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_Operation", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Permission Confirm 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_Title() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_Title", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Case-insensitive, supports wildcards: e.g. * and ? 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_WildcardHelp() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_WildcardHelp", resourceCulture)
             End Get
         End Property
         
@@ -2109,6 +2415,42 @@ Namespace My.Resources
         Public ReadOnly Property PermissionDenied() As String
             Get
                 Return ResourceManager.GetString("PermissionDenied", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Auto Allow 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionLevel_Allow() As String
+            Get
+                Return ResourceManager.GetString("PermissionLevel_Allow", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Always Ask 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionLevel_AlwaysAsk() As String
+            Get
+                Return ResourceManager.GetString("PermissionLevel_AlwaysAsk", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Ask As Needed 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionLevel_Ask() As String
+            Get
+                Return ResourceManager.GetString("PermissionLevel_Ask", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Auto Deny 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionLevel_Deny() As String
+            Get
+                Return ResourceManager.GetString("PermissionLevel_Deny", resourceCulture)
             End Get
         End Property
         

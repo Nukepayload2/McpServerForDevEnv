@@ -84,22 +84,31 @@ Public Class ReadLinesTool
     End Property
 
     ''' <summary>
+    ''' 标识为文件操作工具
+    ''' </summary>
+    Public Overrides ReadOnly Property IsFileTool As Boolean
+        Get
+            Return True
+        End Get
+    End Property
+
+    ''' <summary>
     ''' 执行工具的具体实现
     ''' </summary>
     ''' <param name="arguments">工具参数</param>
     ''' <returns>执行结果</returns>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
-            If Not CheckPermission() Then
-                Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
-            End If
-
             ' 验证必需参数
             ValidateRequiredArguments(arguments, "filePath")
 
             ' 获取参数
             Dim filePath = CStr(arguments("filePath"))
+
+            ' 检查文件权限
+            If Not CheckFilePermission(filePath, FileAccessType.Read) Then
+                Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
+            End If
             Dim start = GetOptionalArgument(arguments, "start", _base)
             Dim length = GetOptionalArgument(arguments, "length", 100)
             Dim withLineNumbers = GetOptionalArgument(arguments, "withLineNumbers", False)

@@ -28,14 +28,48 @@ End Class
 Public Enum PermissionLevel
     Allow
     Ask
+    AlwaysAsk
     Deny
 End Enum
 
 Public Class PermissionLevels
-    Public Shared ReadOnly Property Value As PermissionLevel() = {
+    ''' <summary>
+    ''' 所有工具的权限级别（不含 AlwaysAsk）
+    ''' </summary>
+    Public Shared ReadOnly Property All As PermissionLevel() = {
         PermissionLevel.Allow,
         PermissionLevel.Ask,
         PermissionLevel.Deny
+    }
+
+    ''' <summary>
+    ''' 文件工具的权限级别（含 AlwaysAsk）
+    ''' </summary>
+    Public Shared ReadOnly Property ForFileTools As PermissionLevel() = {
+        PermissionLevel.Allow,
+        PermissionLevel.Ask,
+        PermissionLevel.AlwaysAsk,
+        PermissionLevel.Deny
+    }
+
+    ''' <summary>
+    ''' 兼容旧代码的属性（返回 All）
+    ''' </summary>
+    Public Shared ReadOnly Property Value As PermissionLevel() = All
+End Class
+
+''' <summary>
+''' 文件访问类型集合
+''' 用于 UI 绑定
+''' </summary>
+Public Class FileAccessTypes
+    ''' <summary>
+    ''' 所有文件访问类型
+    ''' </summary>
+    Public Shared ReadOnly Property Value As FileAccessType() = {
+        FileAccessType.Read,
+        FileAccessType.Write,
+        FileAccessType.ReadWrite
     }
 End Class
 

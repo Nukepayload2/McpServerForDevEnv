@@ -970,4 +970,130 @@
   <data name="LogOperationStopService" xml:space="preserve">
     <value>停止服务</value>
   </data>
+
+  <!-- 文件 IO 工具授权系统增强 - 权限级别 -->
+  <data name="PermissionLevel_Allow" xml:space="preserve">
+    <value>自动允许</value>
+  </data>
+  <data name="PermissionLevel_Ask" xml:space="preserve">
+    <value>按需询问</value>
+  </data>
+  <data name="PermissionLevel_AlwaysAsk" xml:space="preserve">
+    <value>总是询问</value>
+  </data>
+  <data name="PermissionLevel_Deny" xml:space="preserve">
+    <value>自动拒绝</value>
+  </data>
+
+  <!-- 文件访问类型 -->
+  <data name="FileAccessType_Read" xml:space="preserve">
+    <value>读取</value>
+  </data>
+  <data name="FileAccessType_Write" xml:space="preserve">
+    <value>写入</value>
+  </data>
+  <data name="FileAccessType_ReadWrite" xml:space="preserve">
+    <value>读写</value>
+  </data>
+
+  <!-- 权限确认对话框 -->
+  <data name="PermissionConfirm_Title" xml:space="preserve">
+    <value>权限确认</value>
+  </data>
+  <data name="PermissionConfirm_Message" xml:space="preserve">
+    <value>是否允许以下操作？</value>
+  </data>
+  <data name="PermissionConfirm_Feature" xml:space="preserve">
+    <value>功能:</value>
+  </data>
+  <data name="PermissionConfirm_Operation" xml:space="preserve">
+    <value>操作:</value>
+  </data>
+  <data name="PermissionConfirm_FilePath" xml:space="preserve">
+    <value>文件路径:</value>
+  </data>
+  <data name="PermissionConfirm_DefaultResponse" xml:space="preserve">
+    <value>默认应答</value>
+  </data>
+  <data name="PermissionConfirm_AlwaysAllow" xml:space="preserve">
+    <value>总是允许</value>
+  </data>
+  <data name="PermissionConfirm_AlwaysDeny" xml:space="preserve">
+    <value>总是拒绝</value>
+  </data>
+  <data name="PermissionConfirm_EachTime" xml:space="preserve">
+    <value>每次询问</value>
+  </data>
+  <data name="PermissionConfirm_Allow" xml:space="preserve">
+    <value>允许</value>
+  </data>
+  <data name="PermissionConfirm_Deny" xml:space="preserve">
+    <value>拒绝</value>
+  </data>
+  <data name="PermissionConfirm_WildcardHelp" xml:space="preserve">
+    <value>不分大小写，支持通配符：例如 * 和 ?</value>
+  </data>
+  <data name="PermissionConfirm_LearnMore" xml:space="preserve">
+    <value>了解更多</value>
+  </data>
+
+  <!-- 路径策略配置 UI -->
+  <data name="PathPolicy_Tab_FunctionPermissions" xml:space="preserve">
+    <value>功能权限</value>
+  </data>
+  <data name="PathPolicy_Tab_AskAutoAuth" xml:space="preserve">
+    <value>Ask 模式自动授权策略</value>
+  </data>
+  <data name="PathPolicy_Column_FunctionName" xml:space="preserve">
+    <value>功能名称</value>
+  </data>
+  <data name="PathPolicy_Column_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="PathPolicy_Column_Permission" xml:space="preserve">
+    <value>权限</value>
+  </data>
+  <data name="PathPolicy_AllowList" xml:space="preserve">
+    <value>允许列表</value>
+  </data>
+  <data name="PathPolicy_DenyList" xml:space="preserve">
+    <value>拒绝列表（优先）</value>
+  </data>
+  <data name="PathPolicy_Column_Pattern" xml:space="preserve">
+    <value>通配符模式</value>
+  </data>
+  <data name="PathPolicy_Column_AccessType" xml:space="preserve">
+    <value>访问类型</value>
+  </data>
+  <data name="PathPolicy_Button_AddPolicy" xml:space="preserve">
+    <value>添加策略</value>
+  </data>
+  <data name="PathPolicy_Button_SavePolicies" xml:space="preserve">
+    <value>保存策略</value>
+  </data>
+  <data name="PathPolicy_Hint_DenyPriority" xml:space="preserve">
+    <value>• 拒绝列表优先于允许列表</value>
+  </data>
+  <data name="PathPolicy_Hint_Unmatched" xml:space="preserve">
+    <value>• 未匹配路径仍会弹出确认对话框（Ask 模式）</value>
+  </data>
+  <data name="PathPolicy_Hint_Wildcard" xml:space="preserve">
+    <value>• 不分大小写，支持通配符：例如 * 和 ?</value>
+  </data>
+
+  <!-- 了解更多链接 -->
+  <data name="LearnMore_Url" xml:space="preserve">
+    <value>https://learn.microsoft.com/zh-cn/dotnet/visual-basic/language-reference/operators/like-operator</value>
+  </data>
+
+  <!-- 日志记录 -->
+  <data name="LogPathPolicyMatch" xml:space="preserve">
+    <value>路径策略匹配: {0} - {1}</value>
+  </data>
+  <data name="LogPathPolicyAdded" xml:space="preserve">
+    <value>路径策略已添加: {0} - {1}</value>
+  </data>
+  <data name="LogAddPathPolicyFailed" xml:space="preserve">
+    <value>添加路径策略失败: {0}</value>
+  </data>
 </root>

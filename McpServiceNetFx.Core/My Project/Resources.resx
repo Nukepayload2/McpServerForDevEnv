@@ -969,4 +969,130 @@ This software does not support remote information transmission, only local netwo
   <data name="LogOperationStopService" xml:space="preserve">
     <value>StopService</value>
   </data>
+
+  <!-- 文件 IO 工具授权系统增强 - 权限级别 -->
+  <data name="PermissionLevel_Allow" xml:space="preserve">
+    <value>Auto Allow</value>
+  </data>
+  <data name="PermissionLevel_Ask" xml:space="preserve">
+    <value>Ask As Needed</value>
+  </data>
+  <data name="PermissionLevel_AlwaysAsk" xml:space="preserve">
+    <value>Always Ask</value>
+  </data>
+  <data name="PermissionLevel_Deny" xml:space="preserve">
+    <value>Auto Deny</value>
+  </data>
+
+  <!-- 文件访问类型 -->
+  <data name="FileAccessType_Read" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="FileAccessType_Write" xml:space="preserve">
+    <value>Write</value>
+  </data>
+  <data name="FileAccessType_ReadWrite" xml:space="preserve">
+    <value>Read/Write</value>
+  </data>
+
+  <!-- 权限确认对话框 -->
+  <data name="PermissionConfirm_Title" xml:space="preserve">
+    <value>Permission Confirm</value>
+  </data>
+  <data name="PermissionConfirm_Message" xml:space="preserve">
+    <value>Do you want to allow the following operation?</value>
+  </data>
+  <data name="PermissionConfirm_Feature" xml:space="preserve">
+    <value>Feature:</value>
+  </data>
+  <data name="PermissionConfirm_Operation" xml:space="preserve">
+    <value>Operation:</value>
+  </data>
+  <data name="PermissionConfirm_FilePath" xml:space="preserve">
+    <value>File Path:</value>
+  </data>
+  <data name="PermissionConfirm_DefaultResponse" xml:space="preserve">
+    <value>Default Response</value>
+  </data>
+  <data name="PermissionConfirm_AlwaysAllow" xml:space="preserve">
+    <value>Always Allow</value>
+  </data>
+  <data name="PermissionConfirm_AlwaysDeny" xml:space="preserve">
+    <value>Always Deny</value>
+  </data>
+  <data name="PermissionConfirm_EachTime" xml:space="preserve">
+    <value>Ask Each Time</value>
+  </data>
+  <data name="PermissionConfirm_Allow" xml:space="preserve">
+    <value>Allow</value>
+  </data>
+  <data name="PermissionConfirm_Deny" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="PermissionConfirm_WildcardHelp" xml:space="preserve">
+    <value>Case-insensitive, supports wildcards: e.g. * and ?</value>
+  </data>
+  <data name="PermissionConfirm_LearnMore" xml:space="preserve">
+    <value>Learn More</value>
+  </data>
+
+  <!-- 路径策略配置 UI -->
+  <data name="PathPolicy_Tab_FunctionPermissions" xml:space="preserve">
+    <value>Function Permissions</value>
+  </data>
+  <data name="PathPolicy_Tab_AskAutoAuth" xml:space="preserve">
+    <value>Ask Mode Auto-Authorization Policies</value>
+  </data>
+  <data name="PathPolicy_Column_FunctionName" xml:space="preserve">
+    <value>Function Name</value>
+  </data>
+  <data name="PathPolicy_Column_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="PathPolicy_Column_Permission" xml:space="preserve">
+    <value>Permission</value>
+  </data>
+  <data name="PathPolicy_AllowList" xml:space="preserve">
+    <value>Allow List</value>
+  </data>
+  <data name="PathPolicy_DenyList" xml:space="preserve">
+    <value>Deny List (Priority)</value>
+  </data>
+  <data name="PathPolicy_Column_Pattern" xml:space="preserve">
+    <value>Wildcard Pattern</value>
+  </data>
+  <data name="PathPolicy_Column_AccessType" xml:space="preserve">
+    <value>Access Type</value>
+  </data>
+  <data name="PathPolicy_Button_AddPolicy" xml:space="preserve">
+    <value>Add Policy</value>
+  </data>
+  <data name="PathPolicy_Button_SavePolicies" xml:space="preserve">
+    <value>Save Policies</value>
+  </data>
+  <data name="PathPolicy_Hint_DenyPriority" xml:space="preserve">
+    <value>• Deny list takes priority over allow list</value>
+  </data>
+  <data name="PathPolicy_Hint_Unmatched" xml:space="preserve">
+    <value>• Unmatched paths will still show confirmation dialog (Ask mode)</value>
+  </data>
+  <data name="PathPolicy_Hint_Wildcard" xml:space="preserve">
+    <value>• Case-insensitive, supports wildcards: e.g. * and ?</value>
+  </data>
+
+  <!-- 了解更多链接 -->
+  <data name="LearnMore_Url" xml:space="preserve">
+    <value>https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator</value>
+  </data>
+
+  <!-- 日志记录 -->
+  <data name="LogPathPolicyMatch" xml:space="preserve">
+    <value>Path policy matched: {0} - {1}</value>
+  </data>
+  <data name="LogPathPolicyAdded" xml:space="preserve">
+    <value>Path policy added: {0} - {1}</value>
+  </data>
+  <data name="LogAddPathPolicyFailed" xml:space="preserve">
+    <value>Failed to add path policy: {0}</value>
+  </data>
 </root>

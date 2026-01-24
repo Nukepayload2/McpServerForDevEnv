@@ -1,4 +1,5 @@
 Imports System.IO
+Imports McpServiceNetFx.Models
 
 Public Module PersistenceModule
     Private ReadOnly LocalAppDataPath As String = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
@@ -182,6 +183,69 @@ Public Module PersistenceModule
             Return 38080 ' 默认端口
         Catch ex As Exception
             Return 38080 ' 默认端口
+        End Try
+    End Function
+
+    ''' <summary>
+    ''' 保存路径策略配置
+    ''' </summary>
+    ''' <param name="policies">路径策略列表</param>
+    Public Sub SavePathPolicies(policies As IEnumerable(Of PathPermissionPolicy))
+        Try
+            Dim folder = EnsureAppDataFolder()
+            Dim filePath = Path.Combine(folder, "pathPolicies.xml")
+
+            Dim doc = <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+                      <PathPolicies>
+                          <%= From p In policies
+                              Select <PathPolicy
+                                         PolicyType=<%= p.PolicyType.ToString() %>
+                                         FileAccess=<%= p.FileAccess.ToString() %>
+                                         Pattern=<%= p.Pattern %>/> %>
+                      </PathPolicies>
+
+            doc.Save(filePath)
+        Catch ex As Exception
+            Throw New Exception("保存路径策略配置失败", ex)
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' 加载路径策略配置
+    ''' </summary>
+    ''' <returns>路径策略列表</returns>
+    Public Function LoadPathPolicies() As List(Of PathPermissionPolicy)
+        Try
+            Dim folder = EnsureAppDataFolder()
+            Dim filePath = Path.Combine(folder, "pathPolicies.xml")
+
+            If Not File.Exists(filePath) Then
+                ' 路径策略文件不存在时返回空列表
+                Return New List(Of PathPermissionPolicy)()
+            End If
+
+            Dim doc = XDocument.Load(filePath)
+            Dim policies = New List(Of PathPermissionPolicy)()
+
+            For Each element In doc.Root.Elements("PathPolicy")
+                Dim policyTypeValue = element.@PolicyType
+                Dim fileAccessValue = element.@FileAccess
+                Dim pattern = element.@Pattern
+
+                Dim parsedPolicyType As PathPolicyType
+                Dim parsedFileAccess As FileAccessType
+
+                If [Enum].TryParse(Of PathPolicyType)(policyTypeValue, parsedPolicyType) AndAlso
+                   [Enum].TryParse(Of FileAccessType)(fileAccessValue, parsedFileAccess) Then
+                    Dim policy = New PathPermissionPolicy(parsedPolicyType, parsedFileAccess, pattern)
+                    policies.Add(policy)
+                End If
+            Next
+
+            Return policies
+        Catch ex As Exception
+            ' 如果加载失败，返回空列表
+            Return New List(Of PathPermissionPolicy)()
         End Try
     End Function
 End Module

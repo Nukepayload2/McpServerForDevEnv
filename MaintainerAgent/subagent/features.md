@@ -131,7 +131,7 @@ output:
 
 #### 4.1 读取行 (Read Lines)
 
-**功能描述**: 读取文件的指定行范围
+**功能描述**: 读取文件的指定行范围，支持路径策略自动授权
 
 **源码范围**:
 ```
@@ -140,6 +140,7 @@ output:
 模型: McpServiceNetFx.Core/Models/FileOperationModels.vb
 辅助: McpServiceNetFx.Core/Tools/FileOperationHelper.vb
 基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+权限: McpServiceNetFx.Core/Models/FileAccessType.vb
 ```
 
 **MCP 工具名**: `read_lines`
@@ -149,11 +150,12 @@ output:
 - `startLine`: 起始行号（1-based）
 - `endLine`: 结束行号（可选，默认读取到文件末尾）
 
-**权限配置**: UI 中的 "Read Lines" 权限项
+**权限配置**: UI 中的 "Read Lines" 权限项，支持 AlwaysAsk 级别
+**访问类型**: Read
 
 #### 4.2 写入行 (Write Lines)
 
-**功能描述**: 向文件写入内容，覆盖原内容
+**功能描述**: 向文件写入内容，覆盖原内容，支持路径策略自动授权
 
 **源码范围**:
 ```
@@ -162,6 +164,7 @@ output:
 模型: McpServiceNetFx.Core/Models/FileOperationModels.vb
 辅助: McpServiceNetFx.Core/Tools/FileOperationHelper.vb
 基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+权限: McpServiceNetFx.Core/Models/FileAccessType.vb
 ```
 
 **MCP 工具名**: `write_lines`
@@ -171,11 +174,12 @@ output:
 - `lines`: 行内容数组
 - `startLine`: 起始行号（可选，默认从第 1 行开始）
 
-**权限配置**: UI 中的 "Write Lines" 权限项
+**权限配置**: UI 中的 "Write Lines" 权限项，支持 AlwaysAsk 级别
+**访问类型**: Write
 
 #### 4.3 追加行 (Append Lines)
 
-**功能描述**: 在文件末尾追加内容
+**功能描述**: 在文件末尾追加内容，支持路径策略自动授权
 
 **源码范围**:
 ```
@@ -184,6 +188,7 @@ output:
 模型: McpServiceNetFx.Core/Models/FileOperationModels.vb
 辅助: McpServiceNetFx.Core/Tools/FileOperationHelper.vb
 基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+权限: McpServiceNetFx.Core/Models/FileAccessType.vb
 ```
 
 **MCP 工具名**: `append_lines`
@@ -192,11 +197,12 @@ output:
 - `filePath`: 文件路径
 - `lines`: 行内容数组
 
-**权限配置**: UI 中的 "Append Lines" 权限项
+**权限配置**: UI 中的 "Append Lines" 权限项，支持 AlwaysAsk 级别
+**访问类型**: Write
 
 #### 4.4 替换行 (Replace Lines)
 
-**功能描述**: 替换文件中的指定行范围
+**功能描述**: 替换文件中的指定行范围，支持路径策略自动授权
 
 **源码范围**:
 ```
@@ -205,6 +211,7 @@ output:
 模型: McpServiceNetFx.Core/Models/FileOperationModels.vb
 辅助: McpServiceNetFx.Core/Tools/FileOperationHelper.vb
 基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+权限: McpServiceNetFx.Core/Models/FileAccessType.vb
 ```
 
 **MCP 工具名**: `replace_lines`
@@ -215,11 +222,12 @@ output:
 - `endLine`: 结束行号
 - `lines`: 替换内容数组
 
-**权限配置**: UI 中的 "Replace Lines" 权限项
+**权限配置**: UI 中的 "Replace Lines" 权限项，支持 AlwaysAsk 级别
+**访问类型**: ReadWrite
 
 #### 4.5 字符串替换 (String Replace)
 
-**功能描述**: 在文件中替换字符串
+**功能描述**: 在文件中替换字符串，支持路径策略自动授权
 
 **源码范围**:
 ```
@@ -228,6 +236,7 @@ output:
 模型: McpServiceNetFx.Core/Models/FileOperationModels.vb
 辅助: McpServiceNetFx.Core/Tools/FileOperationHelper.vb
 基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+权限: McpServiceNetFx.Core/Models/FileAccessType.vb
 ```
 
 **MCP 工具名**: `string_replace`
@@ -238,7 +247,8 @@ output:
 - `newString`: 替换后的字符串
 - `replaceAll`: 是否替换所有出现（可选，默认 false）
 
-**权限配置**: UI 中的 "String Replace" 权限项
+**权限配置**: UI 中的 "String Replace" 权限项，支持 AlwaysAsk 级别
+**访问类型**: ReadWrite
 
 ### 5. 解决方案信息 (Solution Information)
 
@@ -343,22 +353,63 @@ UI: McpServiceNetFx/Views/MainWindow.VsInstances.vb
 
 ### 9. 权限管理系统
 
-**功能描述**: 为每个 MCP 功能配置独立的权限级别
+**功能描述**: 为每个 MCP 功能配置独立的权限级别，支持路径通配符自动应答策略
 
 **源码范围**:
 ```
 接口: McpServiceNetFx.Core/Mcp/IMcpPermissionHandler.vb
 模型: McpServiceNetFx.Core/Models/PermissionModels.vb
+模型: McpServiceNetFx.Core/Models/FileAccessType.vb
+模型: McpServiceNetFx.Core/Models/PathPermissionPolicy.vb
+辅助: McpServiceNetFx.Core/Helpers/PathHelper.vb
 UI: McpServiceNetFx/Views/MainWindow.Permissions.vb
+UI: McpServiceNetFx/Views/PermissionConfirmDialog.xaml
+转换器: McpServiceNetFx/Converters/PermissionLevelConverter.vb
+转换器: McpServiceNetFx/Converters/FileAccessTypeConverter.vb
 持久化: McpServiceNetFx/Helpers/PersistenceModule.vb
 ```
 
 **权限级别**:
 - **Allow**: 自动允许操作
-- **Ask**: 每次操作前询问用户
+- **Ask**: 每次操作前询问用户，支持路径策略自动应答
+- **AlwaysAsk**: 总是询问（仅文件工具可用），跳过路径策略
 - **Deny**: 拒绝操作
 
-**UI 配置位置**: 主窗口的 Permissions 标签页
+**文件访问类型**:
+- **Read**: 读取访问
+- **Write**: 写入访问
+- **ReadWrite**: 读写访问
+
+**路径通配符策略**:
+- 支持允许列表和拒绝列表
+- 拒绝列表优先级高于允许列表
+- 支持通配符模式匹配（使用 VB Like 运算符）
+- 支持路径标准化（POSIX 路径、用户目录 ~）
+- 未匹配路径仍会弹出确认对话框（Ask 模式下）
+
+**权限检查流程**:
+```
+CheckFilePermission(filePath, accessType)
+│
+└─ 功能权限检查（顶级）
+    ├─ Allow → 允许
+    ├─ Deny → 拒绝
+    ├─ Ask → 进入路径策略检查
+    │   ├─ 拒绝列表 → 匹配 → 拒绝
+    │   ├─ 允许列表 → 匹配 → 允许
+    │   └─ 未匹配 → 弹增强对话框（可配置策略）
+    └─ AlwaysAsk → 弹基础对话框（无策略配置）
+```
+
+**增强权限确认对话框**:
+- 显示功能名称、操作描述、文件路径
+- 可展开的"默认应答"区域
+- 支持快速添加允许/拒绝策略
+- 可编辑的通配符模式输入框
+
+**UI 配置位置**: 主窗口的 MCP Permissions 标签页
+- 功能权限表格：配置每个工具的权限级别
+- Ask 模式自动授权策略：配置路径通配符策略
 
 ## MCP 服务 (MCP Service)
 
@@ -517,8 +568,12 @@ UI: McpServiceNetFx/Views/MainWindow.Logging.vb
 - 相关文件: ReadLinesTool.vb, WriteLinesTool.vb, AppendLinesTool.vb, ReplaceLinesTool.vb, StringReplaceTool.vb
 
 ### 查询权限相关功能
-- 关键词: permission, security, allow, deny
-- 相关文件: IMcpPermissionHandler.vb, PermissionModels.vb, MainWindow.Permissions.vb
+- 关键词: permission, security, allow, deny, ask, always ask
+- 相关文件: IMcpPermissionHandler.vb, PermissionModels.vb, FileAccessType.vb, PathPermissionPolicy.vb, PathHelper.vb, MainWindow.Permissions.vb, PermissionConfirmDialog.xaml
+
+### 查询路径策略相关功能
+- 关键词: path policy, wildcard, pattern, allow list, deny list
+- 相关文件: PathPermissionPolicy.vb, PathHelper.vb, MainWindow.Permissions.vb, PersistenceModule.vb
 
 ### 查询 VS 集成相关功能
 - 关键词: VS, Visual Studio, instance, monitor, toolwindow

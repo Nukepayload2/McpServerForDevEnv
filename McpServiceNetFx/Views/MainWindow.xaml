@@ -8,7 +8,12 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:core="clr-namespace:McpServiceNetFx;assembly=McpServiceNetFx.Core"
         xmlns:res="clr-namespace:McpServiceNetFx.My.Resources;assembly=McpServiceNetFx.Core"
+        xmlns:conv="clr-namespace:McpServiceNetFx.Converters"
         Title="{x:Static res:Resources.AppTitle}" Height="600" Width="900" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <conv:PermissionLevelConverter x:Key="PermissionLevelConverter"/>
+        <conv:FileAccessTypeConverter x:Key="FileAccessTypeConverter"/>
+    </Window.Resources>
     <Grid Margin="10">
         <TabControl x:Name="TabControlMain">
             <TabItem Header="{x:Static res:Resources.TabServiceManagement}">
@@ -96,46 +101,134 @@
 
             <!-- MCP 功能授权选项卡 -->
             <TabItem Header="{x:Static res:Resources.TabMcpPermissions}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,0,10">
+                        <!-- 功能权限区域 -->
+                        <GroupBox Header="{x:Static res:Resources.PathPolicy_Tab_FunctionPermissions}" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
-                        <Button x:Name="BtnAllowAll" Content="{x:Static res:Resources.ButtonAllowAll}" Width="100"
-                                Margin="0,0,10,0"/>
-                        <Button x:Name="BtnAskAll" Content="{x:Static res:Resources.ButtonAskAll}" Width="100"
-                                Margin="0,0,10,0"/>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
+                                    <Button x:Name="BtnAllowAll" Content="{x:Static res:Resources.ButtonAllowAll}" Width="100"
+                                            Margin="0,0,10,0"/>
+                                    <Button x:Name="BtnAskAll" Content="{x:Static res:Resources.ButtonAskAll}" Width="100"
+                                            Margin="0,0,10,0"/>
+                                </StackPanel>
+
+                                <ui:DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
+                                          CanUserAddRows="False" GridLinesVisibility="Horizontal"
+                                          HeadersVisibility="Column" Height="200">
+                                    <ui:DataGrid.Columns>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_FunctionName}" Binding="{Binding FeatureName}" Width="*"/>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Description}" Binding="{Binding Description}" Width="2*"/>
+                                        <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_Permission}" Width="Auto">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
+                                                      SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                      IsEditable="False"
+                                                      Background="Transparent"
+                                                      BorderThickness="0"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </ui:DataGrid.Columns>
+                                </ui:DataGrid>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- Ask 模式自动授权策略区域 -->
+                        <GroupBox Header="{x:Static res:Resources.PathPolicy_Tab_AskAutoAuth}" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TabControl x:Name="TabPathPolicies" Grid.Row="0" Margin="0,8">
+                                    <TabItem Header="{x:Static res:Resources.PathPolicy_AllowList}">
+                                        <Grid>
+                                            <ui:DataGrid x:Name="DgAllowPolicies" AutoGenerateColumns="False"
+                                                      CanUserAddRows="False" GridLinesVisibility="Horizontal"
+                                                      HeadersVisibility="Column" Height="150">
+                                                <ui:DataGrid.Columns>
+                                                    <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*"/>
+                                                    <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="Auto">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <ComboBox ItemsSource="{x:Static core:FileAccessTypes.Value}"
+                                                                  SelectedItem="{Binding FileAccess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEditable="False"
+                                                                  Background="Transparent"
+                                                                  BorderThickness="0"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </ui:DataGrid.Columns>
+                                            </ui:DataGrid>
+                                        </Grid>
+                                    </TabItem>
+                                    <TabItem Header="{x:Static res:Resources.PathPolicy_DenyList}">
+                                        <Grid>
+                                            <ui:DataGrid x:Name="DgDenyPolicies" AutoGenerateColumns="False"
+                                                      CanUserAddRows="False" GridLinesVisibility="Horizontal"
+                                                      HeadersVisibility="Column" Height="150">
+                                                <ui:DataGrid.Columns>
+                                                    <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*"/>
+                                                    <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="Auto">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <ComboBox ItemsSource="{x:Static core:FileAccessTypes.Value}"
+                                                                  SelectedItem="{Binding FileAccess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                  IsEditable="False"
+                                                                  Background="Transparent"
+                                                                  BorderThickness="0"/>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </ui:DataGrid.Columns>
+                                            </ui:DataGrid>
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+
+                                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                                    <TextBlock Text="{x:Static res:Resources.PathPolicy_Hint_DenyPriority}" TextWrapping="Wrap" Margin="5,2"/>
+                                    <TextBlock Text="{x:Static res:Resources.PathPolicy_Hint_Unmatched}" TextWrapping="Wrap" Margin="5,2"/>
+                                    <StackPanel Orientation="Horizontal" Margin="5,2">
+                                        <TextBlock Text="{x:Static res:Resources.PathPolicy_Hint_Wildcard}" TextWrapping="Wrap"/>
+                                        <Button x:Name="BtnLearnMore" Content="{x:Static res:Resources.PermissionConfirm_LearnMore}"
+                                                Margin="5,0,0,0" Padding="5,0"
+                                                Click="BtnLearnMore_Click"
+                                                Cursor="Hand"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Foreground="#0078D4"
+                                                HorizontalAlignment="Left"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button x:Name="BtnAddPolicy" Content="{x:Static res:Resources.PathPolicy_Button_AddPolicy}" Width="100"
+                                            Margin="0,0,10,0" Click="BtnAddPolicy_Click"/>
+                                    <Button x:Name="BtnSavePathPolicies" Content="{x:Static res:Resources.PathPolicy_Button_SavePolicies}" Width="100"
+                                            Click="BtnSavePathPolicies_Click"/>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- 保存和重新加载按钮 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfig}" Width="100"
+                                    Margin="0,0,10,0"/>
+                            <Button x:Name="BtnReloadPermissions" Content="{x:Static res:Resources.ButtonReload}" Width="100"/>
+                        </StackPanel>
                     </StackPanel>
-
-                    <ui:DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
-                              CanUserAddRows="False" GridLinesVisibility="Horizontal"
-                              HeadersVisibility="Column">
-                        <ui:DataGrid.Columns>
-                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderFeatureName}" Binding="{Binding FeatureName}"/>
-                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderDescription}" Binding="{Binding Description}"/>
-                            <DataGridTemplateColumn Header="{x:Static res:Resources.HeaderPermission}" >
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
-                                          SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                          IsEditable="False"
-                                          Background="Transparent"
-                                          BorderThickness="0"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </ui:DataGrid.Columns>
-                    </ui:DataGrid>
-
-                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
-                        <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfig}" Width="100"
-                                Margin="0,0,10,0"/>
-                        <Button x:Name="BtnReloadPermissions" Content="{x:Static res:Resources.ButtonReload}" Width="100"/>
-                    </StackPanel>
-                </Grid>
+                </ScrollViewer>
             </TabItem>
 
     

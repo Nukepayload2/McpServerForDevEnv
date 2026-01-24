@@ -43,6 +43,7 @@
 
     Private Sub InitializePermissions()
         LoadPermissions()
+        LoadPathPolicies()
     End Sub
 
     Private Sub InitializeMcpService()
