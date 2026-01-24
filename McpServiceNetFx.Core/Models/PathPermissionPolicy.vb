@@ -73,6 +73,12 @@ Public Class PathPermissionPolicy
     ''' </summary>
     ''' <param name="requestedAccess">请求的访问类型</param>
     ''' <returns>如果策略适用于请求的访问类型则返回 True</returns>
+    ''' <remarks>
+    ''' 匹配规则：
+    ''' - ReadWrite 策略适用于所有访问类型
+    ''' - Read 策略适用于 Read 和 ReadWrite 请求（因为 ReadWrite 包含 Read）
+    ''' - Write 策略适用于 Write 和 ReadWrite 请求（因为 ReadWrite 包含 Write）
+    ''' </remarks>
     Public Function AppliesTo(requestedAccess As FileAccessType) As Boolean
         Select Case FileAccess
             Case FileAccessType.ReadWrite
@@ -80,12 +86,12 @@ Public Class PathPermissionPolicy
                 Return True
 
             Case FileAccessType.Read
-                ' 读策略仅适用于读请求
-                Return requestedAccess = FileAccessType.Read
+                ' 读策略适用于读请求和读写请求
+                Return requestedAccess = FileAccessType.Read OrElse requestedAccess = FileAccessType.ReadWrite
 
             Case FileAccessType.Write
-                ' 写策略仅适用于写请求
-                Return requestedAccess = FileAccessType.Write
+                ' 写策略适用于写请求和读写请求
+                Return requestedAccess = FileAccessType.Write OrElse requestedAccess = FileAccessType.ReadWrite
 
             Case Else
                 Return False

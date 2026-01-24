@@ -131,8 +131,13 @@ McpServiceNetFx.Core/
 │   ├── McpModels.vb              # MCP 模型
 │   ├── VsRpcModels.vb            # VS RPC 模型
 │   ├── FileOperationModels.vb    # 文件操作模型
-│   └── PermissionModels.vb       # 权限模型
+│   ├── PermissionModels.vb       # 权限模型
+│   ├── PathPermissionPolicy.vb   # 路径权限策略
+│   ├── FileAccessType.vb         # 文件访问类型枚举
+│   └── PolicyCheckResult.vb      # 策略检查结果（新增）
 ├── Helpers/                      # 辅助类
+│   ├── PathHelper.vb             # 路径辅助模块
+│   ├── PathPolicyManager.vb      # 路径权限策略管理器（新增）
 │   └── Abstractions.vb           # 抽象类定义
 ├── My Project/                   # VB 项目资源
 │   ├── Resources.Designer.vb     # 资源管理器
@@ -162,8 +167,10 @@ McpServiceNetFx.Core/
 
 ```
 McpServiceNetFx.Tests/
-├── Test1.vb                     # 测试类
-└── McpServiceNetFx.Tests.vbproj # 项目文件
+├── PathPermissionPolicyTests.vb  # PathPermissionPolicy 测试（原 Test1.vb）
+├── PolicyCheckResultTests.vb     # PolicyCheckResult 测试（新增）
+├── PathPolicyManagerTests.vb     # PathPolicyManager 测试（新增）
+└── McpServiceNetFx.Tests.vbproj  # 项目文件
 ```
 
 **测试覆盖范围**:

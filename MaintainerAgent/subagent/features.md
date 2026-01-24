@@ -361,12 +361,17 @@ UI: McpServiceNetFx/Views/MainWindow.VsInstances.vb
 模型: McpServiceNetFx.Core/Models/PermissionModels.vb
 模型: McpServiceNetFx.Core/Models/FileAccessType.vb
 模型: McpServiceNetFx.Core/Models/PathPermissionPolicy.vb
+模型: McpServiceNetFx.Core/Models/PolicyCheckResult.vb (新增)
 辅助: McpServiceNetFx.Core/Helpers/PathHelper.vb
+辅助: McpServiceNetFx.Core/Helpers/PathPolicyManager.vb (新增)
 UI: McpServiceNetFx/Views/MainWindow.Permissions.vb
 UI: McpServiceNetFx/Views/PermissionConfirmDialog.xaml
 转换器: McpServiceNetFx/Converters/PermissionLevelConverter.vb
 转换器: McpServiceNetFx/Converters/FileAccessTypeConverter.vb
 持久化: McpServiceNetFx/Helpers/PersistenceModule.vb
+测试: McpServiceNetFx.Tests/PolicyCheckResultTests.vb (新增)
+测试: McpServiceNetFx.Tests/PathPolicyManagerTests.vb (新增)
+测试: McpServiceNetFx.Tests/PathPermissionPolicyTests.vb
 ```
 
 **权限级别**:

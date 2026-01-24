@@ -1,4 +1,4 @@
-# McpServerForDevEnv 项目智能体协作指南
+﻿# McpServerForDevEnv 项目智能体协作指南
 
 本项目配备维护者智能体，用于缓存项目知识和协助开发工作。
 
@@ -36,10 +36,10 @@
 ## 使用场景
 
 ### 1. 项目架构查询
-直接读取 `./MaintainerAgent/subagent/architecture.md` 了解项目结构，无需扫描代码。
+VbNet agent 直接读取 `./MaintainerAgent/subagent/architecture.md` 了解项目结构，无需扫描代码。
 
 ### 2. 功能源码定位
-直接读取 `./MaintainerAgent/subagent/features.md` 获取功能实现范围，无需搜索。
+VbNet agent 直接读取 `./MaintainerAgent/subagent/features.md` 获取功能实现范围，无需搜索。
 
 ### 3. 代码开发任务
 调用 VbNetDev 执行代码开发，Maintainer 提供源码定位支持。
@@ -77,14 +77,16 @@
 
 ### 开发新 MCP 工具
 ```markdown
-1. 读取 MaintainerAgent/subagent/features.md 了解现有工具结构
-2. 调用 VbNetDev 执行开发，提供源码位置参考
+1. 读取 MaintainerAgent/main.md
+2. 调用其中 subagent 找到相关源码路径和架构设计信息
+3. 调用 VbNetDev 执行开发，按参考信息和源码路径
 ```
 
 ### 修改 UI 界面
 ```markdown
-1. 读取 MaintainerAgent/subagent/architecture.md 了解 UI 项目结构
-2. 调用 VbNetDev 执行开发，提供 XAML/VB 文件位置
+1. 读取 MaintainerAgent/main.md
+2. 调用其中 subagent 找到相关源码路径和架构设计信息
+3. 调用 VbNetDev 执行开发，提供 XAML/VB 文件位置
 ```
 
 ### 代码审查

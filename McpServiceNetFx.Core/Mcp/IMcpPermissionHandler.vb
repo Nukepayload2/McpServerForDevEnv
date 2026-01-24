@@ -17,6 +17,6 @@ Public Interface IMcpPermissionHandler
     ''' <param name="operationDescription">操作描述</param>
     ''' <param name="filePath">文件路径</param>
     ''' <param name="accessType">访问类型</param>
-    ''' <returns>是否有权限</returns>
-    Function CheckFilePermission(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As Boolean
+    ''' <returns>策略检查结果</returns>
+    Function CheckFilePermission(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As PolicyCheckResult
 End Interface
