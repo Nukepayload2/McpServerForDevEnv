@@ -1,4 +1,4 @@
-Imports System.Collections.Concurrent
+﻿Imports System.Collections.Concurrent
 
 ''' <summary>
 ''' Visual Studio MCP 工具管理器
@@ -78,11 +78,13 @@ Public Class VisualStudioToolManager
             RegisterTool(New GetAllOpenDocumentsTool(_logger, _permissionHandler))
 
             ' 文件操作工具
-            RegisterTool(New ReadLinesTool(_logger, _permissionHandler))
+            RegisterTool(New ReadLinesTool(_logger, _permissionHandler, 0))
+            RegisterTool(New ReadLinesTool(_logger, _permissionHandler, 1))
+            RegisterTool(New ReplaceLinesTool(_logger, _permissionHandler, 0))
+            RegisterTool(New ReplaceLinesTool(_logger, _permissionHandler, 1))
             RegisterTool(New WriteLinesTool(_logger, _permissionHandler))
             RegisterTool(New AppendLinesTool(_logger, _permissionHandler))
             RegisterTool(New StringReplaceTool(_logger, _permissionHandler))
-            RegisterTool(New ReplaceLinesTool(_logger, _permissionHandler))
 
             _logger?.LogMcpRequest("工具管理器", "工具预注册完成", $"共预注册 {_tools.Count} 个工具，等待数据上下文")
 

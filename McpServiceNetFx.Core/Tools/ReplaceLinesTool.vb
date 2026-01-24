@@ -1,78 +1,91 @@
-Imports System.Collections.Generic
-Imports System.Threading.Tasks
-Imports McpServiceNetFx.Core.Models
-
-''' <summary>
+﻿''' <summary>
 ''' 替换文件中指定行范围内容的工具
 ''' </summary>
 Public Class ReplaceLinesTool
     Inherits VisualStudioToolBase
+
+    Private ReadOnly _base As Integer
+    Private ReadOnly _toolDefinition As Lazy(Of ToolDefinition)
 
     ''' <summary>
     ''' 创建工具实例
     ''' </summary>
     ''' <param name="logger">日志记录器</param>
     ''' <param name="permissionHandler">权限处理器</param>
-    Public Sub New(logger As IMcpLogger, permissionHandler As IMcpPermissionHandler)
+    ''' <param name="base">行号基数（0表示从0开始计数，1表示从1开始计数）</param>
+    Public Sub New(logger As IMcpLogger, permissionHandler As IMcpPermissionHandler, base As Integer)
         MyBase.New(logger, permissionHandler)
+        _base = base
+        _toolDefinition = New Lazy(Of ToolDefinition)(AddressOf CreateToolDefinition)
     End Sub
 
     ''' <summary>
     ''' 获取工具定义
     ''' </summary>
-    Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
-        .Name = "replace_lines",
-        .Description = "替换或插入文件中指定行范围的内容。当length为0时为插入操作，配合带行号的ReadLines使用",
-        .InputSchema = New InputSchema With {
-            .Type = "object",
-            .Properties = New Dictionary(Of String, PropertyDefinition) From {
-                {
-                    "filePath",
-                    New PropertyDefinition With {
-                        .Type = "string",
-                        .Description = "要操作的文件路径"
+    Public Overrides ReadOnly Property ToolDefinition As ToolDefinition
+        Get
+            Return _toolDefinition.Value
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' 创建工具定义（延迟初始化）
+    ''' </summary>
+    Private Function CreateToolDefinition() As ToolDefinition
+        Return New ToolDefinition With {
+            .Name = "replace_lines_base" & _base,
+            .Description = $"替换或插入文件中指定行范围的内容（行号从{_base}开始）。当length为0时为插入操作，配合带行号的ReadLines使用",
+            .InputSchema = New InputSchema With {
+                .Type = "object",
+                .Properties = New Dictionary(Of String, PropertyDefinition) From {
+                    {
+                        "filePath",
+                        New PropertyDefinition With {
+                            .Type = "string",
+                            .Description = "要操作的文件路径"
+                        }
+                    },
+                    {
+                        "hash",
+                        New PropertyDefinition With {
+                            .Type = "string",
+                            .Description = "文件当前HASH值（必需，用于校验）"
+                        }
+                    },
+                    {
+                        "start",
+                        New PropertyDefinition With {
+                            .Type = "number",
+                            .Description = $"起始行号（从{_base}开始）"
+                        }
+                    },
+                    {
+                        "length",
+                        New PropertyDefinition With {
+                            .Type = "number",
+                            .Description = "要替换的行数，0表示插入操作"
+                        }
+                    },
+                    {
+                        "content",
+                        New PropertyDefinition With {
+                            .Type = "string",
+                            .Description = "新内容"
+                        }
+                    },
+                    {
+                        "encoding",
+                        New PropertyDefinition With {
+                            .Type = "string",
+                            .Description = "文件编码格式，默认为UTF-8",
+                            .[Default] = "UTF-8"
+                        }
                     }
                 },
-                {
-                    "hash",
-                    New PropertyDefinition With {
-                        .Type = "string",
-                        .Description = "文件当前HASH值（必需，用于校验）"
-                    }
-                },
-                {
-                    "start",
-                    New PropertyDefinition With {
-                        .Type = "number",
-                        .Description = "起始行号（从1开始）"
-                    }
-                },
-                {
-                    "length",
-                    New PropertyDefinition With {
-                        .Type = "number",
-                        .Description = "要替换的行数，0表示插入操作"
-                    }
-                },
-                {
-                    "content",
-                    New PropertyDefinition With {
-                        .Type = "string",
-                        .Description = "新内容"
-                    }
-                },
-                {
-                    "encoding",
-                    New PropertyDefinition With {
-                        .Type = "string",
-                        .Description = "文件编码格式，默认为UTF-8",
-                        .[Default] = "UTF-8"
-                    }
-                }
-            },
-            .Required = {"filePath", "hash", "start", "length", "content"}
+                .Required = {"filePath", "hash", "start", "length", "content"}
+            }
         }
-    }
+    End Function
 
     ''' <summary>
     ''' 获取默认权限级别
@@ -112,18 +125,18 @@ Public Class ReplaceLinesTool
             End If
 
             ' 参数验证
-            If start < 0 Then
-                Throw New McpException("起始行号不能为负数", McpErrorCode.InvalidParams)
+            If start < _base Then
+                Throw New McpException($"起始行号不能小于{_base}", McpErrorCode.InvalidParams)
             End If
 
             If length < 0 Then
                 Throw New McpException("替换行数不能为负数", McpErrorCode.InvalidParams)
             End If
 
-            LogOperation("替换文件行", "开始", $"文件: {filePath}, 起始行: {start}, 行数: {length}")
+            LogOperation("替换文件行", "开始", $"文件: {filePath}, 起始行: {start}, 行号基数: {_base}, 行数: {length}")
 
             ' 调用文件操作辅助类
-            Dim replaceResult = FileOperationHelper.ReplaceLinesInFile(filePath, start - 1, length, content, expectedHash)
+            Dim replaceResult = FileOperationHelper.ReplaceLinesInFile(filePath, start - _base, length, content, expectedHash)
 
             ' 计算新内容的行数
             Dim newLinesCount = 0
@@ -156,7 +169,7 @@ Public Class ReplaceLinesTool
             Else
                 toolResult.Message = replaceResult.Error
                 toolResult.ErrorCode = replaceResult.ErrorCode
-                toolResult.Details = $"文件: {filePath}, 起始行: {start}, 行数: {length}"
+                toolResult.Details = $"文件: {filePath}, 起始行: {start}, 行号基数: {_base}, 行数: {length}"
                 LogOperation("替换文件行", "失败", replaceResult.Error)
 
                 ' 如果是业务错误，返回成功状态但包含错误信息
