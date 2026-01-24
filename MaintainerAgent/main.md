@@ -99,7 +99,7 @@ output:
 
 ```
 MaintainerAgent/works/
-├── .template.md          # 记忆文件模板
+├── template.md          # 记忆文件模板
 └── {work-name}.md        # 具体工作记忆文件
 ```
 
@@ -116,7 +116,7 @@ MaintainerAgent/works/
 
 当开始一个新的开发任务或需要记录工作上下文时：
 
-1. 复制 `works/.template.md` 创建 `works/{work-name}.md`
+1. 根据模板 `works/template.md` 创建 `works/{work-name}.md`
 2. 填写工作名称、日期、相关功能
 3. 随着工作进展更新记录
 4. 工作完成后更新 `status: completed`

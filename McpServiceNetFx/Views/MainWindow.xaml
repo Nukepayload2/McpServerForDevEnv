@@ -132,26 +132,27 @@
 
             <!-- MCP 功能授权选项卡 -->
             <TabItem Header="{x:Static res:Resources.TabMcpPermissions}">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="0,0,0,10">
-                        <!-- 功能权限区域 -->
-                        <GroupBox Header="{x:Static res:Resources.PathPolicy_Tab_FunctionPermissions}" Margin="0,0,0,10">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
+                    <!-- 内部 TabControl 分隔功能权限和文件权限 -->
+                    <TabControl x:Name="TabPermissionTypes" Grid.Row="0">
+                        <!-- 功能权限 Tab -->
+                        <TabItem Header="{x:Static res:Resources.PermissionType_Function}">
+                            <StackPanel Margin="0,8,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                     <Button x:Name="BtnAllowAll" Content="{x:Static res:Resources.ButtonAllowAll}" Width="100"
                                             Margin="0,0,10,0"/>
                                     <Button x:Name="BtnAskAll" Content="{x:Static res:Resources.ButtonAskAll}" Width="100"
                                             Margin="0,0,10,0"/>
                                 </StackPanel>
 
-                                <ui:DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
+                                <ui:DataGrid x:Name="DgPermissions" AutoGenerateColumns="False"
                                           CanUserAddRows="False" GridLinesVisibility="Horizontal"
-                                          HeadersVisibility="Column" Height="200">
+                                          HeadersVisibility="Column">
                                     <ui:DataGrid.Columns>
                                         <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_FunctionName}" Binding="{Binding FeatureName}" Width="*"/>
                                         <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Description}" Binding="{Binding Description}" Width="2*"/>
@@ -179,24 +180,24 @@
                                         </DataGridTemplateColumn>
                                     </ui:DataGrid.Columns>
                                 </ui:DataGrid>
-                            </Grid>
-                        </GroupBox>
+                            </StackPanel>
+                        </TabItem>
 
-                        <!-- Ask 模式自动授权策略区域 -->
-                        <GroupBox Header="{x:Static res:Resources.PathPolicy_Tab_AskAutoAuth}" Margin="0,0,0,10">
-                            <Grid>
+                        <!-- 文件权限 Tab -->
+                        <TabItem Header="{x:Static res:Resources.PermissionType_File}">
+                            <Grid Margin="0,8,0,0">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <TabControl x:Name="TabPathPolicies" Grid.Row="0" Margin="0,8">
+                                <TabControl x:Name="TabPathPolicies" Grid.Row="0">
                                     <TabItem Header="{x:Static res:Resources.PathPolicy_AllowList}">
                                         <Grid>
                                             <ui:DataGrid x:Name="DgAllowPolicies" AutoGenerateColumns="False"
                                                       CanUserAddRows="False" GridLinesVisibility="Horizontal"
-                                                      HeadersVisibility="Column" Height="150">
+                                                      HeadersVisibility="Column" >
                                                 <ui:DataGrid.Columns>
                                                     <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*">
                                                         <DataGridTextColumn.ElementStyle>
@@ -237,7 +238,7 @@
                                         <Grid>
                                             <ui:DataGrid x:Name="DgDenyPolicies" AutoGenerateColumns="False"
                                                       CanUserAddRows="False" GridLinesVisibility="Horizontal"
-                                                      HeadersVisibility="Column" Height="150">
+                                                      HeadersVisibility="Column">
                                                 <ui:DataGrid.Columns>
                                                     <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*">
                                                         <DataGridTextColumn.ElementStyle>
@@ -297,16 +298,16 @@
                                             Margin="0,0,10,0" Click="BtnAddPolicy_Click"/>
                                 </StackPanel>
                             </Grid>
-                        </GroupBox>
+                        </TabItem>
+                    </TabControl>
 
-                        <!-- 保存和重新加载按钮 -->
-                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfigAndPolicies}" Width="140"
-                                    Margin="0,0,10,0"/>
-                            <Button x:Name="BtnReloadPermissions" Content="{x:Static res:Resources.ButtonReload}" Width="100"/>
-                        </StackPanel>
+                    <!-- 保存和重新加载按钮 -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,10">
+                        <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfigAndPolicies}" Width="140"
+                                Margin="0,0,10,0"/>
+                        <Button x:Name="BtnReloadPermissions" Content="{x:Static res:Resources.ButtonReload}" Width="100"/>
                     </StackPanel>
-                </ScrollViewer>
+                </Grid>
             </TabItem>
 
     

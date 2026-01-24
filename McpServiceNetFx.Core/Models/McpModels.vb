@@ -240,7 +240,7 @@ Public MustInherit Class ContentBlock
     ''' <summary>
     ''' 获取或设置可选的注释
     ''' </summary>
-    <JsonProperty("annotations")>
+    <JsonProperty("annotations", NullValueHandling:=NullValueHandling.Ignore)>
     Public Property Annotations As Object
 End Class
 

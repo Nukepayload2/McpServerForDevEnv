@@ -408,8 +408,9 @@ CheckFilePermission(filePath, accessType)
 - 可编辑的通配符模式输入框
 
 **UI 配置位置**: 主窗口的 MCP Permissions 标签页
-- 功能权限表格：配置每个工具的权限级别
-- Ask 模式自动授权策略：配置路径通配符策略
+- UI 结构：使用内部 TabControl 分为"功能权限"和"文件权限"两个子标签页
+- 功能权限子页：配置每个工具的权限级别（Allow/Ask/AlwaysAsk/Deny）
+- 文件权限子页：配置路径通配符策略（允许列表/拒绝列表）
 - 保存按钮：统一的"Save Config & Policies"按钮，同时保存功能权限和路径策略配置
 - 重新加载按钮：同时重新加载功能权限和路径策略配置
 

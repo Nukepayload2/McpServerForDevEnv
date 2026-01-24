@@ -1113,4 +1113,10 @@
   <data name="LogAddPathPolicyFailed" xml:space="preserve">
     <value>添加路径策略失败: {0}</value>
   </data>
+  <data name="PermissionType_Function" xml:space="preserve">
+    <value>功能权限</value>
+  </data>
+  <data name="PermissionType_File" xml:space="preserve">
+    <value>文件权限</value>
+  </data>
 </root>

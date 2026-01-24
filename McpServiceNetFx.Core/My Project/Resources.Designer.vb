@@ -2500,6 +2500,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 File Permissions 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionType_File() As String
+            Get
+                Return ResourceManager.GetString("PermissionType_File", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Function Permissions 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionType_Function() As String
+            Get
+                Return ResourceManager.GetString("PermissionType_Function", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 User Allowed 的本地化字符串。
         '''</summary>
         Public ReadOnly Property PermissionUserAllowed() As String

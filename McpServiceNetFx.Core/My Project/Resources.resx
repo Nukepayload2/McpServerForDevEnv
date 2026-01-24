@@ -1112,4 +1112,10 @@ This software does not support remote information transmission, only local netwo
   <data name="LogAddPathPolicyFailed" xml:space="preserve">
     <value>Failed to add path policy: {0}</value>
   </data>
+  <data name="PermissionType_Function" xml:space="preserve">
+    <value>Function Permissions</value>
+  </data>
+  <data name="PermissionType_File" xml:space="preserve">
+    <value>File Permissions</value>
+  </data>
 </root>
