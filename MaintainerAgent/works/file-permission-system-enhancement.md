@@ -199,12 +199,12 @@ CheckFilePermission(filePath, accessType)
 │ │ [添加策略] [保存策略]                              │ │
 │ │ • 拒绝列表优先于允许列表                           │ │
 │ │ • 未匹配路径仍会弹出确认对话框                     │ │
-│ │ • 不分大小写，支持通配符：例如 * 和 ? [了解更多](https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator)                       │ │
+│ │ • 不分大小写，支持通配符：例如 * 和 ? [了解更多]   │ │
 │ └─────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
 ```
 
-- 了解更多是按钮，点击事件里面导航，链接在 resx 里面，默认指向 en-us，中文指向 zh-cn
+- 了解更多是按钮，点击事件里面 process.start shellexecute 导航，链接在 resx 里面，默认指向 en-us，中文指向 zh-cn
 - 功能权限配置区域：
   - 权限列使用 `PermissionLevelConverter` 绑定，显示本地化字符串
   - 下拉框选项根据工具类型动态生成（文件工具多显示 AlwaysAsk）
@@ -220,15 +220,49 @@ CheckFilePermission(filePath, accessType)
 - `permissions.xml` - 更新权限级别枚举值
 
 ##### 13. 本地化
-| Key | zh-CN |
-|-----|-------|
-| PermissionLevel_Allow | 自动允许 |
-| PermissionLevel_Ask | 按需询问 |
-| PermissionLevel_AlwaysAsk | 总是询问 |
-| PermissionLevel_Deny | 自动拒绝 |
-| FileAccessType_Read | 读取 |
-| FileAccessType_Write | 写入 |
-| FileAccessType_ReadWrite | 读写 |
+
+| Key | zh-CN | en-US |
+|-----|-------|-------|
+| **权限级别** |
+| PermissionLevel_Allow | 自动允许 | Auto Allow |
+| PermissionLevel_Ask | 按需询问 | Ask As Needed |
+| PermissionLevel_AlwaysAsk | 总是询问 | Always Ask |
+| PermissionLevel_Deny | 自动拒绝 | Auto Deny |
+| **访问类型** |
+| FileAccessType_Read | 读取 | Read |
+| FileAccessType_Write | 写入 | Write |
+| FileAccessType_ReadWrite | 读写 | Read/Write |
+| **权限确认对话框** |
+| PermissionConfirm_Title | 权限确认 | Permission Confirm |
+| PermissionConfirm_Message | 是否允许以下操作？ | Allow the following operation? |
+| PermissionConfirm_Feature | 功能: | Feature: |
+| PermissionConfirm_Operation | 操作: | Operation: |
+| PermissionConfirm_FilePath | 文件路径: | File Path: |
+| PermissionConfirm_DefaultResponse | 默认应答 | Default Response |
+| PermissionConfirm_AlwaysAllow | 总是允许 | Always Allow |
+| PermissionConfirm_AlwaysDeny | 总是拒绝 | Always Deny |
+| PermissionConfirm_EachTime | 每次询问 | Ask Each Time |
+| PermissionConfirm_Allow | 允许 | Allow |
+| PermissionConfirm_Deny | 拒绝 | Deny |
+| PermissionConfirm_WildcardHelp | 不分大小写，支持通配符：例如 * 和 ? | Case-insensitive, supports wildcards: e.g. * and ? |
+| PermissionConfirm_LearnMore | 了解更多 | Learn More |
+| **路径策略配置 UI** |
+| PathPolicy_Tab_FunctionPermissions | 功能权限 | Function Permissions |
+| PathPolicy_Tab_AskAutoAuth | Ask 模式自动授权策略 | Ask Mode Auto-Authorization Policies |
+| PathPolicy_Column_FunctionName | 功能名称 | Function Name |
+| PathPolicy_Column_Description | 描述 | Description |
+| PathPolicy_Column_Permission | 权限 | Permission |
+| PathPolicy_AllowList | 允许列表 | Allow List |
+| PathPolicy_DenyList | 拒绝列表（优先） | Deny List (Priority) |
+| PathPolicy_Column_Pattern | 通配符模式 | Wildcard Pattern |
+| PathPolicy_Column_AccessType | 访问类型 | Access Type |
+| PathPolicy_Button_AddPolicy | 添加策略 | Add Policy |
+| PathPolicy_Button_SavePolicies | 保存策略 | Save Policies |
+| PathPolicy_Hint_DenyPriority | • 拒绝列表优先于允许列表 | • Deny list takes priority over allow list |
+| PathPolicy_Hint_Unmatched | • 未匹配路径仍会弹出确认对话框（Ask 模式） | • Unmatched paths will still show confirmation dialog (Ask mode) |
+| PathPolicy_Hint_Wildcard | • 不分大小写，支持通配符：例如 * 和 ? | • Case-insensitive, supports wildcards: e.g. * and ? |
+| **了解更多链接** |
+| LearnMore_Url | https://learn.microsoft.com/zh-cn/dotnet/visual-basic/language-reference/operators/like-operator | https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator |
 
 **使用场景**:
 
