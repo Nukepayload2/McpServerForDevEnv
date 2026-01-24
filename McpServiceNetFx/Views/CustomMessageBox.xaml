@@ -6,9 +6,9 @@
         xmlns:res="clr-namespace:McpServiceNetFx.My.Resources;assembly=McpServiceNetFx.Core"
         mc:Ignorable="d"
         Title="{x:Static res:Resources.CustomMessageBoxTitle}"
-        Width="400"
+        Width="480" Height="260"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         ShowInTaskbar="False">
     <Grid Margin="20">
         <Grid.RowDefinitions>
