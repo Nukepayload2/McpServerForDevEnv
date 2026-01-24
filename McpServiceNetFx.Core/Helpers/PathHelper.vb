@@ -20,8 +20,16 @@ Public Module PathHelper
 
         ' 处理用户目录 (~)
         If path.StartsWith("~") Then
-            ' bug: 路径分隔符在起始位置的情况没处理掉
-            path = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), path.Substring(1))
+            ' 移除 ~ 和可能紧跟的路径分隔符
+            Dim remainingPath = path.Substring(1)
+            If remainingPath.StartsWith("/") OrElse remainingPath.StartsWith("\") Then
+                remainingPath = remainingPath.Substring(1)
+            End If
+            If String.IsNullOrEmpty(remainingPath) Then
+                path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+            Else
+                path = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), remainingPath)
+            End If
         End If
 
         ' 替换路径分隔符

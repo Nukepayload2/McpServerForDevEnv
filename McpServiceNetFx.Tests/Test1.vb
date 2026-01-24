@@ -74,46 +74,33 @@ Public Class PathHelperTests
     ''' <summary>
     ''' 测试 NormalizePath - 波浪号加路径 (~/Documents) 应正确转换
     ''' </summary>
-    ''' <remarks>
-    ''' 此测试验证 Bug 场景：确保路径分隔符被正确处理
-    ''' 期望结果：C:\Users\Username\Documents (全部使用反斜杠)
-    '''
-    ''' BUG: 当前实现存在 Bug，路径分隔符在起始位置的情况没处理掉
-    ''' 实际结果：路径会被错误地拼接为 G:\Documents (当前驱动器 + /Documents)
-    ''' 这个测试记录了已知的 Bug 行为
-    ''' </remarks>
     <TestMethod>
     Public Sub NormalizePath_TildeWithPath_ReturnsUserProfileSubPath()
         ' Arrange
         Dim input As String = "~/Documents"
+        Dim expected = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents")
 
         ' Act
         Dim result = PathHelper.NormalizePath(input)
 
-        ' Assert - 记录实际 Bug 行为
-        ' Bug: 路径被错误处理，当前工作目录驱动器 + /Documents
-        ' 正确应该是 Path.Combine(userProfile, "Documents")
-        Assert.IsTrue(result.EndsWith("Documents", StringComparison.OrdinalIgnoreCase), "应包含 Documents 文件夹")
-        Assert.IsTrue(Path.IsPathRooted(result), "结果应为完整路径")
+        ' Assert
+        Assert.AreEqual(expected, result, "~/Documents 应转换为用户配置文件下的 Documents 文件夹")
     End Sub
 
     ''' <summary>
     ''' 测试 NormalizePath - 波浪号加多级路径应正确转换
     ''' </summary>
-    ''' <remarks>
-    ''' BUG: 此测试记录了已知的 Bug 行为
-    ''' </remarks>
     <TestMethod>
     Public Sub NormalizePath_TildeWithNestedPath_ReturnsUserProfileNestedPath()
         ' Arrange
         Dim input As String = "~/Documents/Projects/Test"
+        Dim expected = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents", "Projects", "Test")
 
         ' Act
         Dim result = PathHelper.NormalizePath(input)
 
-        ' Assert - 记录实际 Bug 行为
-        Assert.IsTrue(result.EndsWith("Projects\Test", StringComparison.OrdinalIgnoreCase), "应包含路径")
-        Assert.IsTrue(Path.IsPathRooted(result), "结果应为完整路径")
+        ' Assert
+        Assert.AreEqual(expected, result, "~/Documents/Projects/Test 应转换为用户配置文件下的嵌套路径")
     End Sub
 
     ''' <summary>
@@ -378,21 +365,18 @@ Public Class PathHelperTests
     ''' <summary>
     ''' 测试 LikePath - 波浪号路径应被正确处理
     ''' </summary>
-    ''' <remarks>
-    ''' BUG: 此测试记录了已知的 Bug 行为
-    ''' </remarks>
     <TestMethod>
     Public Sub LikePath_TildePath_MatchesAfterNormalization()
         ' Arrange
         Dim filePath As String = "~/Documents/file.txt"
+        Dim userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+        Dim pattern As String = Path.Combine(userProfile, "Documents", "*.txt")
 
-        ' Act - 使用实际会被转换为的路径作为模式
-        Dim result = PathHelper.NormalizePath(filePath)
+        ' Act
+        Dim result = PathHelper.LikePath(filePath, pattern)
 
-        ' Assert - 验证路径被标准化（即使有 Bug）
-        Assert.IsTrue(Path.IsPathRooted(result), "结果应为完整路径")
-        Assert.IsTrue(result.Contains("Documents"), "应包含 Documents")
-        Assert.IsTrue(result.EndsWith("file.txt", StringComparison.OrdinalIgnoreCase), "应包含文件名")
+        ' Assert
+        Assert.IsTrue(result, "波浪号路径应被正确标准化并匹配模式")
     End Sub
 
     ''' <summary>
@@ -783,22 +767,19 @@ Public Class PathHelperTests
     ''' <summary>
     ''' 集成测试 - 波浪号路径与 PathPattern 结合
     ''' </summary>
-    ''' <remarks>
-    ''' BUG: 此测试记录了已知的 Bug 行为
-    ''' </remarks>
     <TestMethod>
     Public Sub Integration_TildePathWithPattern_MatchesCorrectly()
         ' Arrange
         Dim filePath As String = "~/Documents/file.txt"
-
-        ' Act - 先标准化路径，验证行为
-        Dim normalizedPath = PathHelper.NormalizePath(filePath)
-        Dim patternString As String = Path.Combine(Path.GetDirectoryName(normalizedPath), "*.txt")
+        Dim userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+        Dim patternString As String = Path.Combine(userProfile, "Documents", "*.txt")
         Dim pattern As New PathPattern(patternString)
+
+        ' Act
         Dim result = PathHelper.LikePath(filePath, pattern)
 
         ' Assert
-        Assert.IsTrue(result, "波浪号路径应通过模式匹配")
+        Assert.IsTrue(result, "波浪号路径应通过 PathPattern 匹配")
     End Sub
 
     ''' <summary>
