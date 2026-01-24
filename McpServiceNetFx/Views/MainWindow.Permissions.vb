@@ -60,12 +60,14 @@ Partial Public Class MainWindow
                     _permissionItems.Add(New PermissionItem With {
                         .FeatureName = defaultPermission.FeatureName,
                         .Description = defaultPermission.Description,
-                        .Permission = defaultPermission.Permission
+                        .Permission = defaultPermission.Permission,
+                        .IsFileTool = defaultPermission.IsFileTool
                     })
                     addedCount += 1
                 Else
-                    ' 更新现有权限项的描述（以防描述有变化）
+                    ' 更新现有权限项的描述和 IsFileTool（以防描述或工具类型有变化）
                     existingPermission.Description = defaultPermission.Description
+                    existingPermission.IsFileTool = defaultPermission.IsFileTool
                 End If
             Next
 
