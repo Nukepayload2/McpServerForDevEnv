@@ -111,7 +111,8 @@ Public Class VisualStudioToolManager
         Return _tools.Values.Select(Function(t) New PermissionItem With {
             .FeatureName = t.FeatureName,
             .Description = t.ToolDescription,
-            .Permission = t.DefaultPermission
+            .Permission = t.DefaultPermission,
+            .IsFileTool = t.IsFileTool
         }).ToList()
     End Function
 

@@ -1,6 +1,6 @@
 Imports System.Globalization
 Imports System.Windows.Data
-Imports McpServiceNetFx.Models
+Imports McpServiceNetFx
 
 Namespace Converters
     ''' <summary>

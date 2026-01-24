@@ -31,7 +31,7 @@ Public Class PathPermissionPolicy
     Public Property FileAccess As FileAccessType
 
     ''' <summary>
-    ''' 标准化后的通配符模式
+    ''' 通配符模式（原始形式，不标准化）
     ''' </summary>
     Public Property Pattern As String
 
@@ -40,15 +40,13 @@ Public Class PathPermissionPolicy
     ''' </summary>
     ''' <param name="policyType">策略类型</param>
     ''' <param name="fileAccess">文件访问类型</param>
-    ''' <param name="pattern">通配符模式（将自动标准化）</param>
+    ''' <param name="pattern">通配符模式（保持原始形式，允许空字符串用于UI编辑场景）</param>
     Public Sub New(policyType As PathPolicyType, fileAccess As FileAccessType, pattern As String)
-        If String.IsNullOrWhiteSpace(pattern) Then
-            Throw New ArgumentException("Pattern cannot be empty", NameOf(pattern))
-        End If
-
+        ' 允许空 Pattern 以支持 UI 编辑场景（用户先添加策略再填写内容）
+        ' 验证将在实际使用时（Matches 方法）进行
         Me.PolicyType = policyType
         Me.FileAccess = fileAccess
-        Me.Pattern = PathHelper.NormalizePath(pattern)
+        Me.Pattern = pattern
     End Sub
 
     ''' <summary>
@@ -57,6 +55,11 @@ Public Class PathPermissionPolicy
     ''' <param name="filePath">要检查的文件路径</param>
     ''' <returns>如果路径匹配策略模式则返回 True</returns>
     Public Function Matches(filePath As String) As Boolean
+        ' 空 Pattern 不匹配任何路径（用于支持 UI 编辑场景）
+        If String.IsNullOrWhiteSpace(Pattern) Then
+            Return False
+        End If
+
         If String.IsNullOrWhiteSpace(filePath) Then
             Return False
         End If

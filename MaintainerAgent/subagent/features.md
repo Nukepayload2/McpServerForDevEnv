@@ -410,6 +410,8 @@ CheckFilePermission(filePath, accessType)
 **UI 配置位置**: 主窗口的 MCP Permissions 标签页
 - 功能权限表格：配置每个工具的权限级别
 - Ask 模式自动授权策略：配置路径通配符策略
+- 保存按钮：统一的"Save Config & Policies"按钮，同时保存功能权限和路径策略配置
+- 重新加载按钮：同时重新加载功能权限和路径策略配置
 
 ## MCP 服务 (MCP Service)
 

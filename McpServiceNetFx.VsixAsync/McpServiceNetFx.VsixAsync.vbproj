@@ -63,6 +63,8 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\PermissionLevelConverter.vb" />
+    <Compile Include="Converters\PermissionLevelsConverter.vb" />
     <Compile Include="Helpers\SettingsPersistenceHelper.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="McpServiceNetFx.VsixAsyncPackage.vb" />

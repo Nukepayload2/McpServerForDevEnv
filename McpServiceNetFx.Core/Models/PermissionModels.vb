@@ -6,6 +6,7 @@ Public Class PermissionItem
 
     Public Property FeatureName As String
     Public Property Description As String
+    Public Property IsFileTool As Boolean
     Private _permission As PermissionLevel
 
     Public Property Permission As PermissionLevel
@@ -23,6 +24,20 @@ Public Class PermissionItem
     Protected Overridable Sub OnPropertyChanged(name As String)
         RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(name))
     End Sub
+
+    ''' <summary>
+    ''' 获取此工具可用的权限级别集合
+    ''' 文件工具返回 ForFileTools（含 AlwaysAsk），其他工具返回 All
+    ''' </summary>
+    Public ReadOnly Property AvailablePermissionLevels As PermissionLevel()
+        Get
+            If IsFileTool Then
+                Return PermissionLevels.ForFileTools
+            Else
+                Return PermissionLevels.All
+            End If
+        End Get
+    End Property
 End Class
 
 Public Enum PermissionLevel

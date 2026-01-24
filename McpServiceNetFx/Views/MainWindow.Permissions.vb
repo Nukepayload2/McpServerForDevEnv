@@ -121,15 +121,25 @@ Partial Public Class MainWindow
 
     Private Sub BtnSavePermissions_Click() Handles BtnSavePermissions.Click
         Try
+            ' 保存功能权限配置
             PersistenceModule.SavePermissions(_permissionItems)
-            UtilityModule.ShowInfo(Me, My.Resources.MsgSavePermissionsSuccess, My.Resources.TitleSaveSuccess)
+
+            ' 保存路径策略配置
+            Dim allPolicies = New List(Of PathPermissionPolicy)()
+            allPolicies.AddRange(_allowPolicyItems)
+            allPolicies.AddRange(_denyPolicyItems)
+            PersistenceModule.SavePathPolicies(allPolicies)
+
+            UtilityModule.ShowInfo(Me, My.Resources.MsgSaveConfigAndPoliciesSuccess, My.Resources.TitleSaveSuccess)
+            LogOperation(My.Resources.LogPermissions, My.Resources.LogCompleted, String.Format(My.Resources.LogConfigAndPoliciesSaved, _permissionItems.Count, allPolicies.Count))
         Catch ex As Exception
-            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgSavePermissionsFailed, ex.Message))
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgSaveConfigAndPoliciesFailed, ex.Message))
         End Try
     End Sub
 
     Private Sub BtnReloadPermissions_Click() Handles BtnReloadPermissions.Click
         LoadPermissions()
+        LoadPathPolicies()
     End Sub
 
     Public Function GetPermission(featureName As String) As PermissionLevel
@@ -362,34 +372,17 @@ Partial Public Class MainWindow
 
             If selectedTab = 0 Then
                 ' 允许列表
-                newPolicy = New PathPermissionPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, "C:\*\*")
-                AddPathPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, "C:\*\*")
+                newPolicy = New PathPermissionPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, String.Empty)
+                AddPathPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, String.Empty)
                 _allowPolicyItems.Add(newPolicy)
             Else
                 ' 拒绝列表
-                newPolicy = New PathPermissionPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, "C:\*\*")
-                AddPathPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, "C:\*\*")
+                newPolicy = New PathPermissionPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, String.Empty)
+                AddPathPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, String.Empty)
                 _denyPolicyItems.Add(newPolicy)
             End If
 
             LogOperation(My.Resources.LogPermissionCheck, My.Resources.LogCompleted, "New policy added")
-        Catch ex As Exception
-            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgSavePermissionsFailed, ex.Message))
-        End Try
-    End Sub
-
-    ''' <summary>
-    ''' 保存路径策略按钮点击事件
-    ''' </summary>
-    Private Sub BtnSavePathPolicies_Click(sender As Object, e As RoutedEventArgs)
-        Try
-            Dim allPolicies = New List(Of PathPermissionPolicy)()
-            allPolicies.AddRange(_allowPolicyItems)
-            allPolicies.AddRange(_denyPolicyItems)
-
-            PersistenceModule.SavePathPolicies(allPolicies)
-            UtilityModule.ShowInfo(Me, My.Resources.MsgSavePermissionsSuccess, My.Resources.TitleSaveSuccess)
-            LogOperation(My.Resources.LogPermissions, My.Resources.LogCompleted, String.Format(My.Resources.LogPermissionsSaved, allPolicies.Count))
         Catch ex As Exception
             UtilityModule.ShowError(Me, String.Format(My.Resources.MsgSavePermissionsFailed, ex.Message))
         End Try

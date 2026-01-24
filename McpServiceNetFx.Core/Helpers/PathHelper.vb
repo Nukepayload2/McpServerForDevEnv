@@ -10,6 +10,7 @@ Public Module PathHelper
     ''' <summary>
     ''' 标准化路径
     ''' 处理用户目录 (~)、POSIX 路径，转换为完整路径
+    ''' 对于通配符路径，只做基础标准化，不调用 GetFullPath
     ''' </summary>
     ''' <param name="path">要标准化的路径</param>
     ''' <returns>标准化后的完整路径</returns>
@@ -17,6 +18,9 @@ Public Module PathHelper
         If String.IsNullOrWhiteSpace(path) Then
             Return String.Empty
         End If
+
+        ' 检查路径是否包含通配符
+        Dim hasWildcards = path.Contains("*"c) OrElse path.Contains("?"c)
 
         ' 处理用户目录 (~)
         If path.StartsWith("~") Then
@@ -41,7 +45,12 @@ Public Module PathHelper
             path = driveLetter & ":" & path.Substring(2)
         End If
 
-        ' 转换为完整路径
+        ' 如果包含通配符，只做基础标准化，不调用 GetFullPath
+        If hasWildcards Then
+            Return path
+        End If
+
+        ' 转换为完整路径（仅对非通配符路径）
         Try
             If IO.Path.IsPathRooted(path) Then
                 ' 已是绝对路径，仅规范化
@@ -63,19 +72,22 @@ Public Module PathHelper
     ''' 使用 Like 运算符进行路径通配符匹配
     ''' </summary>
     ''' <param name="filePath">要匹配的文件路径</param>
-    ''' <param name="pathPattern">通配符模式</param>
+    ''' <param name="pathPattern">通配符模式（保持原始形式）</param>
     ''' <returns>如果路径匹配模式则返回 True</returns>
+    ''' <remarks>
+    ''' 只对实际文件路径进行标准化，pattern 保持原始通配符模式
+    ''' 这确保通配符不会被标准化过程破坏
+    ''' </remarks>
     Public Function LikePath(filePath As String, pathPattern As String) As Boolean
         If String.IsNullOrWhiteSpace(filePath) OrElse String.IsNullOrWhiteSpace(pathPattern) Then
             Return False
         End If
 
-        ' 标准化两个路径
+        ' 只标准化实际文件路径，pattern 保持原始形式
         Dim normalizedPath = NormalizePath(filePath)
-        Dim normalizedPattern = NormalizePath(pathPattern)
 
         ' 使用 Like 运算符进行匹配
-        Return normalizedPath Like normalizedPattern
+        Return normalizedPath Like pathPattern
     End Function
 
     ''' <summary>

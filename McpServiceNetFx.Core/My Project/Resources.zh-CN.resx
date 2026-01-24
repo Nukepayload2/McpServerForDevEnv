@@ -150,6 +150,9 @@
   <data name="ButtonSaveConfig" xml:space="preserve">
     <value>保存配置</value>
   </data>
+  <data name="ButtonSaveConfigAndPolicies" xml:space="preserve">
+    <value>保存配置和策略</value>
+  </data>
   <data name="ButtonReload" xml:space="preserve">
     <value>重新加载</value>
   </data>
@@ -328,11 +331,17 @@
   <data name="MsgSavePermissionsSuccess" xml:space="preserve">
     <value>权限配置已保存</value>
   </data>
+  <data name="MsgSaveConfigAndPoliciesSuccess" xml:space="preserve">
+    <value>配置和路径策略已保存</value>
+  </data>
   <data name="TitleSaveSuccess" xml:space="preserve">
     <value>保存成功</value>
   </data>
   <data name="MsgSavePermissionsFailed" xml:space="preserve">
     <value>保存权限配置失败: {0}</value>
+  </data>
+  <data name="MsgSaveConfigAndPoliciesFailed" xml:space="preserve">
+    <value>保存配置和路径策略失败: {0}</value>
   </data>
   <data name="MsgPermissionRequest" xml:space="preserve">
     <value>是否允许执行以下操作？{0}{0}功能: {1}{0}描述: {2}</value>
@@ -863,6 +872,9 @@
   <data name="LogPermissionsSaved" xml:space="preserve">
     <value>保存了 {0} 个权限配置</value>
   </data>
+  <data name="LogConfigAndPoliciesSaved" xml:space="preserve">
+    <value>保存了 {0} 个权限配置和 {1} 个路径策略</value>
+  </data>
   <data name="LogSavePermissionsFailed" xml:space="preserve">
     <value>保存权限配置失败: {0}</value>
   </data>
@@ -1079,6 +1091,11 @@
   </data>
   <data name="PathPolicy_Hint_Wildcard" xml:space="preserve">
     <value>• 不分大小写，支持通配符：例如 * 和 ?</value>
+  </data>
+
+  <!-- Pattern 列占位符文本 -->
+  <data name="PathPolicy_Pattern_Placeholder" xml:space="preserve">
+    <value>例如：C:\\Projects\\*\*.vb</value>
   </data>
 
   <!-- 了解更多链接 -->

@@ -150,6 +150,9 @@
   <data name="ButtonSaveConfig" xml:space="preserve">
     <value>Save Config</value>
   </data>
+  <data name="ButtonSaveConfigAndPolicies" xml:space="preserve">
+    <value>Save Config &amp; Policies</value>
+  </data>
   <data name="ButtonReload" xml:space="preserve">
     <value>Reload</value>
   </data>
@@ -328,11 +331,17 @@ This software does not support remote information transmission, only local netwo
   <data name="MsgSavePermissionsSuccess" xml:space="preserve">
     <value>Permission configuration saved</value>
   </data>
+  <data name="MsgSaveConfigAndPoliciesSuccess" xml:space="preserve">
+    <value>Configuration and path policies saved</value>
+  </data>
   <data name="TitleSaveSuccess" xml:space="preserve">
     <value>Save Successful</value>
   </data>
   <data name="MsgSavePermissionsFailed" xml:space="preserve">
     <value>Failed to save permission configuration: {0}</value>
+  </data>
+  <data name="MsgSaveConfigAndPoliciesFailed" xml:space="preserve">
+    <value>Failed to save configuration and path policies: {0}</value>
   </data>
   <data name="MsgPermissionRequest" xml:space="preserve">
     <value>Do you want to allow the following operation?{0}{0}Feature: {1}{0}Description: {2}</value>
@@ -862,6 +871,9 @@ This software does not support remote information transmission, only local netwo
   <data name="LogPermissionsSaved" xml:space="preserve">
     <value>Saved {0} permission configurations</value>
   </data>
+  <data name="LogConfigAndPoliciesSaved" xml:space="preserve">
+    <value>Saved {0} permission configurations and {1} path policies</value>
+  </data>
   <data name="LogSavePermissionsFailed" xml:space="preserve">
     <value>Failed to save permission configuration: {0}</value>
   </data>
@@ -1078,6 +1090,11 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="PathPolicy_Hint_Wildcard" xml:space="preserve">
     <value>• Case-insensitive, supports wildcards: e.g. * and ?</value>
+  </data>
+
+  <!-- Pattern 列占位符文本 -->
+  <data name="PathPolicy_Pattern_Placeholder" xml:space="preserve">
+    <value>e.g. C:\Projects\*\*.vb</value>
   </data>
 
   <!-- 了解更多链接 -->

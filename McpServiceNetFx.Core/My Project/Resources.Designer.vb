@@ -196,6 +196,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Save Config &amp; Policies 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonSaveConfigAndPolicies() As String
+            Get
+                Return ResourceManager.GetString("ButtonSaveConfigAndPolicies", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Save Permissions 的本地化字符串。
         '''</summary>
         Public ReadOnly Property ButtonSavePermissions() As String
@@ -894,6 +903,15 @@ Namespace My.Resources
         Public ReadOnly Property LogCompleted() As String
             Get
                 Return ResourceManager.GetString("LogCompleted", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Saved {0} permission configurations and {1} path policies 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogConfigAndPoliciesSaved() As String
+            Get
+                Return ResourceManager.GetString("LogConfigAndPoliciesSaved", resourceCulture)
             End Get
         End Property
         
@@ -2023,6 +2041,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Failed to save configuration and path policies: {0} 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgSaveConfigAndPoliciesFailed() As String
+            Get
+                Return ResourceManager.GetString("MsgSaveConfigAndPoliciesFailed", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Configuration and path policies saved 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property MsgSaveConfigAndPoliciesSuccess() As String
+            Get
+                Return ResourceManager.GetString("MsgSaveConfigAndPoliciesSuccess", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Failed to save permission configuration: {0} 的本地化字符串。
         '''</summary>
         Public ReadOnly Property MsgSavePermissionsFailed() As String
@@ -2235,6 +2271,15 @@ Namespace My.Resources
         Public ReadOnly Property PathPolicy_Hint_Wildcard() As String
             Get
                 Return ResourceManager.GetString("PathPolicy_Hint_Wildcard", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 e.g. C:\Projects\*\*.vb 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Pattern_Placeholder() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Pattern_Placeholder", resourceCulture)
             End Get
         End Property
         

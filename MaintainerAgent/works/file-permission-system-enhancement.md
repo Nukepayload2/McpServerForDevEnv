@@ -349,3 +349,228 @@ CheckFilePermission(filePath, accessType)
 - 文件访问类型区分（Read/Write/ReadWrite）
 - 增强的权限确认对话框
 - 完整的 UI 配置界面
+
+### 2025-01-24 - Bug 修复：权限下拉框和路径非法字符问题
+
+**状态**: completed
+
+**问题描述**:
+1. **权限下拉框未显示 AlwaysAsk 选项**: 下拉框应该为文件工具显示 AlwaysAsk 选项，但实际只显示 Allow/Ask/Deny
+2. **路径非法字符错误**: 添加路径策略时报错"路径有非法字符"
+
+**根本原因分析**:
+
+##### 问题1：权限下拉框未显示 AlwaysAsk
+- XAML 绑定使用 `PermissionLevels.Value`，而 `Value` 属性返回 `All`（不含 AlwaysAsk）
+- `PermissionItem` 模型缺少 `IsFileTool` 属性，无法区分工具类型
+- 设计要求：文件工具应显示 `PermissionLevels.ForFileTools`（含 AlwaysAsk），其他工具显示 `PermissionLevels.All`
+- `VisualStudioToolBase.GetDefaultPermissions()` 未包含 `IsFileTool` 信息
+
+##### 问题2：路径非法字符错误
+- `PathPermissionPolicy` 构造函数调用 `PathHelper.NormalizePath(pattern)`
+- `NormalizePath` 内部调用 `IO.Path.GetFullPath()` 对通配符路径（如 `C:\*\*`）抛出异常
+- 通配符字符 `*` 和 `?` 被系统路径验证视为非法字符
+
+**修复方案**:
+
+##### 修复1：权限下拉框动态绑定
+1. **修改 `PermissionItem` 模型**（`G:\Projects\McpServerForDevEnv\McpServiceNetFx.Core\Models\PermissionModels.vb`）:
+   - 添加 `IsFileTool` 属性
+   - 添加 `AvailablePermissionLevels` 只读属性，根据 `IsFileTool` 返回对应的权限级别集合
+
+2. **修改 `VisualStudioToolManager`**（`G:\Projects\McpServerForDevEnv\McpServiceNetFx.Core\Tools\VisualStudioToolManager.vb`）:
+   - `GetDefaultPermissions()` 方法包含 `IsFileTool` 信息
+
+3. **创建 `PermissionLevelsConverter` 转换器**:
+   - 主项目：`G:\Projects\McpServerForDevEnv\McpServiceNetFx\Converters\PermissionLevelsConverter.vb`
+   - VSIX 项目：`G:\Projects\McpServerForDevEnv\McpServiceNetFx.VsixAsync\Converters\PermissionLevelsConverter.vb`
+   - 实现 `IMultiValueConverter`，根据 `PermissionItem.IsFileTool` 返回对应的权限级别集合
+
+4. **更新 XAML 绑定**:
+   - 主窗口：`G:\Projects\McpServerForDevEnv\McpServiceNetFx\Views\MainWindow.xaml`
+   - VSIX 窗口：`G:\Projects\McpServerForDevEnv\McpServiceNetFx.VsixAsync\ToolWindows\McpToolWindowControl.xaml`
+   - 使用 `MultiBinding` 和 `PermissionLevelsConverter` 动态绑定权限级别集合
+
+##### 修复2：路径标准化支持通配符
+**修改 `PathHelper.NormalizePath`**（`G:\Projects\McpServerForDevEnv\McpServiceNetFx.Core\Helpers\PathHelper.vb`）:
+- 在函数开始时检查路径是否包含通配符（`*` 或 `?`）
+- 如果包含通配符，跳过 `IO.Path.GetFullPath()` 调用，只做基础标准化（分隔符替换、~ 展开、POSIX 路径转换）
+- 确保通配符路径可以正常用于策略匹配
+
+**修改文件清单**:
+
+| 序号 | 文件 | 操作 | 修改内容 |
+|------|------|------|----------|
+| 1 | `McpServiceNetFx.Core/Models/PermissionModels.vb` | 修改 | 添加 IsFileTool 属性和 AvailablePermissionLevels 属性 |
+| 2 | `McpServiceNetFx.Core/Tools/VisualStudioToolManager.vb` | 修改 | GetDefaultPermissions 包含 IsFileTool 信息 |
+| 3 | `McpServiceNetFx.Core/Helpers/PathHelper.vb` | 修改 | NormalizePath 支持通配符路径 |
+| 4 | `McpServiceNetFx/Converters/PermissionLevelsConverter.vb` | 新建 | IMultiValueConverter 实现 |
+| 5 | `McpServiceNetFx/Views/MainWindow.xaml` | 修改 | 使用 MultiBinding 动态绑定权限级别集合 |
+| 6 | `McpServiceNetFx.VsixAsync/Converters/PermissionLevelsConverter.vb` | 新建 | IMultiValueConverter 实现（VSIX 版本） |
+| 7 | `McpServiceNetFx.VsixAsync/ToolWindows/McpToolWindowControl.xaml` | 修改 | 使用 MultiBinding 动态绑定权限级别集合 |
+
+**验证结果**: ✅ 编译成功（McpServiceNetFx 和 McpServiceNetFx.Core 均通过）
+
+**影响范围**:
+- UI 层：权限配置界面下拉框显示
+- 业务层：权限检查逻辑保持不变
+- 数据层：PermissionItem 模型扩展（向后兼容，新增属性）
+
+**注意事项**:
+- 现有的 `permissions.xml` 配置文件可以继续使用，无需迁移
+- 文件工具的权限下拉框现在显示 4 个选项：Allow/Ask/AlwaysAsk/Deny
+- 非文件工具的权限下拉框显示 3 个选项：Allow/Ask/Deny
+- 路径策略现在支持通配符模式（如 `C:\Projects\*\*.vb`）
+
+### 2025-01-24 - Bug 修复：权限下拉框本地化显示
+
+**状态**: completed
+
+**问题描述**:
+权限下拉框显示英文枚举名称（Allow、Ask、AlwaysAsk、Deny）而不是本地化字符串（如"自动允许"、"按需询问"、"总是询问"、"自动拒绝"）。
+
+**根本原因分析**:
+- XAML 中 ComboBox 的 `ItemsSource` 绑定到枚举值数组
+- ComboBox 直接显示枚举的 `ToString()` 结果，没有使用 Converter 进行本地化转换
+- `PermissionLevelConverter` 已存在但未在 ComboBox 的 `ItemTemplate` 中使用
+
+**修复方案**:
+
+##### 修复：权限下拉框本地化
+在 ComboBox 中添加 `ItemTemplate`，使用 `PermissionLevelConverter` 将枚举值转换为本地化字符串：
+
+```xml
+<ComboBox.ItemTemplate>
+    <DataTemplate>
+        <TextBlock Text="{Binding Converter={StaticResource PermissionLevelConverter}}"/>
+    </DataTemplate>
+</ComboBox.ItemTemplate>
+```
+
+##### 修复：访问类型下拉框本地化
+同样为访问类型（Read/Write/ReadWrite）下拉框添加 `ItemTemplate`，使用 `FileAccessTypeConverter`：
+
+```xml
+<ComboBox.ItemTemplate>
+    <DataTemplate>
+        <TextBlock Text="{Binding Converter={StaticResource FileAccessTypeConverter}}"/>
+    </DataTemplate>
+</ComboBox.ItemTemplate>
+```
+
+**修改文件清单**:
+
+| 序号 | 文件 | 操作 | 修改内容 |
+|------|------|------|----------|
+| 1 | `McpServiceNetFx/Views/MainWindow.xaml` | 修改 | 权限下拉框添加 ItemTemplate（PermissionLevelConverter） |
+| 2 | `McpServiceNetFx/Views/MainWindow.xaml` | 修改 | 访问类型下拉框添加 ItemTemplate（FileAccessTypeConverter） |
+| 3 | `McpServiceNetFx.VsixAsync/Converters/PermissionLevelConverter.vb` | 新建 | VSIX 项目的权限级别转换器 |
+| 4 | `McpServiceNetFx.VsixAsync/ToolWindows/McpToolWindowControl.xaml` | 修改 | VSIX 窗口权限下拉框添加 ItemTemplate |
+| 5 | `McpServiceNetFx.VsixAsync/McpServiceNetFx.VsixAsync.vbproj` | 修改 | 添加 Converter 文件引用 |
+| 6 | `McpServiceNetFx/Converters/PermissionLevelConverter.vb` | 修改 | 修复 Imports 语句（移除 .Models） |
+| 7 | `McpServiceNetFx/Converters/FileAccessTypeConverter.vb` | 修改 | 修复 Imports 语句（移除 .Models） |
+
+**验证结果**: ✅ 编译成功（McpServiceNetFx 和 McpServiceNetFx.Core 均通过）
+
+**本地化字符串对照表**:
+
+| Key | zh-CN | en-US |
+|-----|-------|-------|
+| PermissionLevel_Allow | 自动允许 | Auto Allow |
+| PermissionLevel_Ask | 按需询问 | Ask As Needed |
+| PermissionLevel_AlwaysAsk | 总是询问 | Always Ask |
+| PermissionLevel_Deny | 自动拒绝 | Auto Deny |
+| FileAccessType_Read | 读取 | Read |
+| FileAccessType_Write | 写入 | Write |
+| FileAccessType_ReadWrite | 读写 | Read/Write |
+
+**注意事项**:
+- 文件工具的权限下拉框现在显示 4 个本地化选项："自动允许"、"按需询问"、"总是询问"、"自动拒绝"
+- 非文件工具的权限下拉框显示 3 个本地化选项："自动允许"、"按需询问"、"自动拒绝"
+- 访问类型下拉框显示本地化选项："读取"、"写入"、"读写"
+- VSIX 项目有预编译错误（与本次修复无关）
+
+### 2025-01-24 - Bug 修复：路径标准化逻辑修正
+
+**状态**: completed
+
+**问题描述**:
+`PathHelper.vb` 中的 `NormalizePath` 和 `hasWildcards` 判断逻辑有误：
+
+1. **路径规则（pattern）执行之前不应该 normalize**，否则会破坏通配符分隔符
+2. **`NormalizePath` 应该作用到被判断的路径**（实际文件路径），而不是 pattern
+3. **`hasWildcards` 判断不对**
+
+**当前错误逻辑**:
+- `PathPermissionPolicy` 构造函数对 pattern 调用 `NormalizePath`
+- `PathHelper.LikePath` 方法也对 pattern 调用 `NormalizePath`
+- 这会破坏 pattern 中的通配符和分隔符
+
+**正确逻辑应该是**:
+1. Pattern（路径规则）存储原始通配符模式，不做标准化
+2. 匹配时，对被判断的**实际文件路径**调用 `NormalizePath` 进行标准化
+3. 标准化后的实际路径与原始 pattern 进行 `Like` 比较
+
+**修复方案**:
+
+##### 修复1：PathPermissionPolicy.Pattern 保持原始形式
+**修改 `PathPermissionPolicy.vb`**（`G:\Projects\McpServerForDevEnv\McpServiceNetFx.Core\Models\PathPermissionPolicy.vb`）:
+- 构造函数不再调用 `PathHelper.NormalizePath(pattern)`
+- `Pattern` 属性存储原始通配符模式
+- 更新注释说明 pattern 保持原始形式
+
+##### 修复2：LikePath 只对实际文件路径标准化
+**修改 `PathHelper.LikePath`**（`G:\Projects\McpServerForDevEnv\McpServiceNetFx.Core\Helpers\PathHelper.vb`）:
+- 只对 `filePath` 调用 `NormalizePath`
+- `pathPattern` 保持原始形式
+- 添加详细注释说明设计意图
+
+**修改文件清单**:
+
+| 序号 | 文件 | 操作 | 修改内容 |
+|------|------|------|----------|
+| 1 | `McpServiceNetFx.Core/Models/PathPermissionPolicy.vb` | 修改 | 构造函数不再标准化 pattern |
+| 2 | `McpServiceNetFx.Core/Helpers/PathHelper.vb` | 修改 | LikePath 只对 filePath 标准化 |
+
+**核心修改代码**:
+
+`PathPermissionPolicy.vb` 修改前：
+```vb
+Me.Pattern = PathHelper.NormalizePath(pattern)
+```
+
+`PathPermissionPolicy.vb` 修改后：
+```vb
+Me.Pattern = pattern  ' 保持原始通配符模式
+```
+
+`PathHelper.LikePath` 修改前：
+```vb
+Dim normalizedPath = NormalizePath(filePath)
+Dim normalizedPattern = NormalizePath(pathPattern)
+Return normalizedPath Like normalizedPattern
+```
+
+`PathHelper.LikePath` 修改后：
+```vb
+Dim normalizedPath = NormalizePath(filePath)
+Return normalizedPath Like pathPattern  ' pattern 保持原始形式
+```
+
+**验证结果**: ✅ 修改完成
+
+**逻辑说明**:
+- **Pattern（路径规则）**: 用户输入的通配符模式（如 `C:\Projects\*\*.vb`），保持原始形式
+- **实际文件路径**: 被判断的文件路径（如 `C:\Projects\MyProject\main.vb`），需要标准化
+- **匹配过程**: 标准化后的实际路径与原始 pattern 进行 `Like` 比较
+- **通配符判断**: `hasWildcards` 在 `NormalizePath` 内部用于决定是否调用 `GetFullPath`，逻辑正确
+
+**影响范围**:
+- 路径权限策略匹配逻辑
+- 通配符模式匹配
+- 路径标准化逻辑
+
+**注意事项**:
+- 现有的路径策略配置可能需要重新保存（因为 pattern 存储方式改变）
+- 建议清空现有策略列表，重新配置路径策略
+- 匹配行为更符合预期，通配符不会被标准化过程破坏

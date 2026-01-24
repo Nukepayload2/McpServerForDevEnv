@@ -13,6 +13,37 @@
     <Window.Resources>
         <conv:PermissionLevelConverter x:Key="PermissionLevelConverter"/>
         <conv:FileAccessTypeConverter x:Key="FileAccessTypeConverter"/>
+        <conv:PermissionLevelsConverter x:Key="PermissionLevelsConverter"/>
+
+        <!-- Watermark TextBox Style for DataGrid Pattern Column -->
+        <Style x:Key="WatermarkTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <TextBlock x:Name="WatermarkText"
+                                       Text="{x:Static res:Resources.PathPolicy_Pattern_Placeholder}"
+                                       Foreground="Gray"
+                                       Margin="4,0,0,0"
+                                       VerticalAlignment="Center"
+                                       Visibility="Collapsed"/>
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="0"
+                                          VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""/>
+                                    <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="WatermarkText" Property="Visibility" Value="Visible"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid Margin="10">
         <TabControl x:Name="TabControlMain">
@@ -127,11 +158,22 @@
                                         <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_Permission}" Width="Auto">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <ComboBox ItemsSource="{x:Static core:PermissionLevels.Value}"
-                                                      SelectedItem="{Binding Permission, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                      IsEditable="False"
-                                                      Background="Transparent"
-                                                      BorderThickness="0"/>
+                                                    <ComboBox>
+                                                        <ComboBox.ItemsSource>
+                                                            <MultiBinding Converter="{StaticResource PermissionLevelsConverter}">
+                                                                <Binding/>
+                                                                <Binding Path="IsFileTool"/>
+                                                            </MultiBinding>
+                                                        </ComboBox.ItemsSource>
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="{Binding Converter={StaticResource PermissionLevelConverter}}"/>
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                        <ComboBox.SelectedItem>
+                                                            <Binding Path="Permission" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"/>
+                                                        </ComboBox.SelectedItem>
+                                                    </ComboBox>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
@@ -156,7 +198,20 @@
                                                       CanUserAddRows="False" GridLinesVisibility="Horizontal"
                                                       HeadersVisibility="Column" Height="150">
                                                 <ui:DataGrid.Columns>
-                                                    <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*"/>
+                                                    <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Setter Property="Margin" Value="4,0,0,0"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                        <DataGridTextColumn.EditingElementStyle>
+                                                            <Style BasedOn="{StaticResource WatermarkTextBoxStyle}" TargetType="TextBox">
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Setter Property="Margin" Value="0"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.EditingElementStyle>
+                                                    </DataGridTextColumn>
                                                     <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="Auto">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
@@ -164,7 +219,13 @@
                                                                   SelectedItem="{Binding FileAccess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                   IsEditable="False"
                                                                   Background="Transparent"
-                                                                  BorderThickness="0"/>
+                                                                  BorderThickness="0">
+                                                                    <ComboBox.ItemTemplate>
+                                                                        <DataTemplate>
+                                                                            <TextBlock Text="{Binding Converter={StaticResource FileAccessTypeConverter}}"/>
+                                                                        </DataTemplate>
+                                                                    </ComboBox.ItemTemplate>
+                                                                </ComboBox>
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
@@ -178,7 +239,20 @@
                                                       CanUserAddRows="False" GridLinesVisibility="Horizontal"
                                                       HeadersVisibility="Column" Height="150">
                                                 <ui:DataGrid.Columns>
-                                                    <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*"/>
+                                                    <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Pattern}" Binding="{Binding Pattern}" Width="2*">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Setter Property="Margin" Value="4,0,0,0"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                        <DataGridTextColumn.EditingElementStyle>
+                                                            <Style BasedOn="{StaticResource WatermarkTextBoxStyle}" TargetType="TextBox">
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Setter Property="Margin" Value="0"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.EditingElementStyle>
+                                                    </DataGridTextColumn>
                                                     <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="Auto">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
@@ -186,7 +260,13 @@
                                                                   SelectedItem="{Binding FileAccess, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                   IsEditable="False"
                                                                   Background="Transparent"
-                                                                  BorderThickness="0"/>
+                                                                  BorderThickness="0">
+                                                                    <ComboBox.ItemTemplate>
+                                                                        <DataTemplate>
+                                                                            <TextBlock Text="{Binding Converter={StaticResource FileAccessTypeConverter}}"/>
+                                                                        </DataTemplate>
+                                                                    </ComboBox.ItemTemplate>
+                                                                </ComboBox>
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
@@ -215,15 +295,13 @@
                                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,10,0,0">
                                     <Button x:Name="BtnAddPolicy" Content="{x:Static res:Resources.PathPolicy_Button_AddPolicy}" Width="100"
                                             Margin="0,0,10,0" Click="BtnAddPolicy_Click"/>
-                                    <Button x:Name="BtnSavePathPolicies" Content="{x:Static res:Resources.PathPolicy_Button_SavePolicies}" Width="100"
-                                            Click="BtnSavePathPolicies_Click"/>
                                 </StackPanel>
                             </Grid>
                         </GroupBox>
 
                         <!-- 保存和重新加载按钮 -->
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                            <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfig}" Width="100"
+                            <Button x:Name="BtnSavePermissions" Content="{x:Static res:Resources.ButtonSaveConfigAndPolicies}" Width="140"
                                     Margin="0,0,10,0"/>
                             <Button x:Name="BtnReloadPermissions" Content="{x:Static res:Resources.ButtonReload}" Width="100"/>
                         </StackPanel>
