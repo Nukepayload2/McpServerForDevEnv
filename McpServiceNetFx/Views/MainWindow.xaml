@@ -142,21 +142,26 @@
                     <TabControl x:Name="TabPermissionTypes" Grid.Row="0">
                         <!-- 功能权限 Tab -->
                         <TabItem Header="{x:Static res:Resources.PermissionType_Function}">
-                            <StackPanel Margin="0,8,0,0">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Grid Margin="0,8,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                                     <Button x:Name="BtnAllowAll" Content="{x:Static res:Resources.ButtonAllowAll}" Width="100"
                                             Margin="0,0,10,0"/>
                                     <Button x:Name="BtnAskAll" Content="{x:Static res:Resources.ButtonAskAll}" Width="100"
                                             Margin="0,0,10,0"/>
                                 </StackPanel>
 
-                                <ui:DataGrid x:Name="DgPermissions" AutoGenerateColumns="False"
+                                <ui:DataGrid x:Name="DgPermissions" Grid.Row="1" AutoGenerateColumns="False"
                                           CanUserAddRows="False" GridLinesVisibility="Horizontal"
                                           HeadersVisibility="Column">
                                     <ui:DataGrid.Columns>
                                         <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_FunctionName}" Binding="{Binding FeatureName}" Width="*"/>
                                         <DataGridTextColumn Header="{x:Static res:Resources.PathPolicy_Column_Description}" Binding="{Binding Description}" Width="2*"/>
-                                        <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_Permission}" Width="Auto">
+                                        <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_Permission}" Width="140">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <ComboBox>
@@ -180,7 +185,7 @@
                                         </DataGridTemplateColumn>
                                     </ui:DataGrid.Columns>
                                 </ui:DataGrid>
-                            </StackPanel>
+                            </Grid>
                         </TabItem>
 
                         <!-- 文件权限 Tab -->
@@ -213,7 +218,7 @@
                                                             </Style>
                                                         </DataGridTextColumn.EditingElementStyle>
                                                     </DataGridTextColumn>
-                                                    <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="Auto">
+                                                    <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="140">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <ComboBox ItemsSource="{x:Static core:FileAccessTypes.Value}"
@@ -254,7 +259,7 @@
                                                             </Style>
                                                         </DataGridTextColumn.EditingElementStyle>
                                                     </DataGridTextColumn>
-                                                    <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="Auto">
+                                                    <DataGridTemplateColumn Header="{x:Static res:Resources.PathPolicy_Column_AccessType}" Width="140">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <ComboBox ItemsSource="{x:Static core:FileAccessTypes.Value}"
