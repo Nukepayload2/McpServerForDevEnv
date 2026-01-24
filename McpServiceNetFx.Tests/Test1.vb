@@ -115,8 +115,8 @@ Public Class PathHelperTests
         Dim result = PathHelper.NormalizePath(input)
 
         ' Assert
-        Assert.IsTrue(result.StartsWith("D:"), "POSIX 路径 /d/ 应转换为 D:")
-        Assert.IsTrue(result.Contains("projects"), "应保留路径其余部分")
+        Assert.StartsWith("D:", result, "POSIX 路径 /d/ 应转换为 D:")
+        Assert.Contains("projects", result, "应保留路径其余部分")
     End Sub
 
     ''' <summary>
@@ -180,7 +180,7 @@ Public Class PathHelperTests
 
         ' Assert
         Assert.IsTrue(Path.IsPathRooted(result), "结果应为完整路径")
-        Assert.IsTrue(result.EndsWith("folder"), "应保留目标文件夹")
+        Assert.EndsWith("folder", result, "应保留目标文件夹")
     End Sub
 
     ''' <summary>
@@ -211,7 +211,7 @@ Public Class PathHelperTests
         Dim result = PathHelper.NormalizePath(input)
 
         ' Assert
-        Assert.IsFalse(result.Contains("/"), "不应包含正斜杠")
+        Assert.DoesNotContain("/", result, "不应包含正斜杠")
         Assert.AreEqual(Path.DirectorySeparatorChar, result(2), "驱动器后应为系统分隔符")
     End Sub
 
@@ -612,10 +612,10 @@ Public Class PathHelperTests
         Dim pathPattern As New PathPattern(pattern)
 
         ' Assert
-        Assert.AreEqual(2, pathPattern.IncludePatterns.Count)
-        Assert.IsTrue(pathPattern.IncludePatterns.Contains("*.txt"))
-        Assert.IsTrue(pathPattern.IncludePatterns.Contains("*.log"))
-        Assert.AreEqual(0, pathPattern.ExcludePatterns.Count)
+        Assert.HasCount(2, pathPattern.IncludePatterns)
+        Assert.Contains("*.txt", pathPattern.IncludePatterns)
+        Assert.Contains("*.log", pathPattern.IncludePatterns)
+        Assert.IsEmpty(pathPattern.ExcludePatterns)
     End Sub
 
     ''' <summary>
@@ -630,10 +630,10 @@ Public Class PathHelperTests
         Dim pathPattern As New PathPattern(pattern)
 
         ' Assert
-        Assert.AreEqual(0, pathPattern.IncludePatterns.Count)
-        Assert.AreEqual(2, pathPattern.ExcludePatterns.Count)
-        Assert.IsTrue(pathPattern.ExcludePatterns.Contains("*.tmp"))
-        Assert.IsTrue(pathPattern.ExcludePatterns.Contains("*.bak"))
+        Assert.IsEmpty(pathPattern.IncludePatterns)
+        Assert.HasCount(2, pathPattern.ExcludePatterns)
+        Assert.Contains("*.tmp", pathPattern.ExcludePatterns)
+        Assert.Contains("*.bak", pathPattern.ExcludePatterns)
     End Sub
 
     ''' <summary>
@@ -648,10 +648,10 @@ Public Class PathHelperTests
         Dim pathPattern As New PathPattern(pattern)
 
         ' Assert
-        Assert.AreEqual(2, pathPattern.IncludePatterns.Count)
-        Assert.AreEqual(2, pathPattern.ExcludePatterns.Count)
-        Assert.IsTrue(pathPattern.IncludePatterns.Contains("*.txt"))
-        Assert.IsTrue(pathPattern.ExcludePatterns.Contains("*.tmp"))
+        Assert.HasCount(2, pathPattern.IncludePatterns)
+        Assert.HasCount(2, pathPattern.ExcludePatterns)
+        Assert.Contains("*.txt", pathPattern.IncludePatterns)
+        Assert.Contains("*.tmp", pathPattern.ExcludePatterns)
     End Sub
 
     ''' <summary>
@@ -666,7 +666,7 @@ Public Class PathHelperTests
         Dim pathPattern As New PathPattern(pattern)
 
         ' Assert
-        Assert.AreEqual(2, pathPattern.IncludePatterns.Count)
+        Assert.HasCount(2, pathPattern.IncludePatterns)
     End Sub
 
     ''' <summary>
@@ -681,10 +681,10 @@ Public Class PathHelperTests
         Dim pathPattern As New PathPattern(pattern)
 
         ' Assert
-        Assert.AreEqual(1, pathPattern.IncludePatterns.Count)
-        Assert.AreEqual(1, pathPattern.ExcludePatterns.Count)
-        Assert.IsTrue(pathPattern.IncludePatterns.Contains("*.txt"))
-        Assert.IsTrue(pathPattern.ExcludePatterns.Contains("*.tmp"))
+        Assert.HasCount(1, pathPattern.IncludePatterns)
+        Assert.HasCount(1, pathPattern.ExcludePatterns)
+        Assert.Contains("*.txt", pathPattern.IncludePatterns)
+        Assert.Contains("*.tmp", pathPattern.ExcludePatterns)
     End Sub
 
     ''' <summary>
@@ -699,9 +699,9 @@ Public Class PathHelperTests
         Dim pathPattern As New PathPattern(pattern)
 
         ' Assert
-        Assert.AreEqual(1, pathPattern.ExcludePatterns.Count)
+        Assert.HasCount(1, pathPattern.ExcludePatterns)
         Dim excludePattern = pathPattern.ExcludePatterns(0)
-        Assert.IsFalse(excludePattern.StartsWith("!"), "排除模式应去除感叹号")
+        Assert.DoesNotStartWith("!", excludePattern, "排除模式应去除感叹号")
         Assert.AreEqual("C:\Test\*.tmp", excludePattern)
     End Sub
 
