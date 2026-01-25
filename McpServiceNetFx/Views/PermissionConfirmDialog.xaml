@@ -48,8 +48,13 @@
         <!-- 默认应答 Expander -->
         <Expander Grid.Row="3" Header="{x:Static res:Resources.PermissionConfirm_DefaultResponse}" Margin="0,0,0,15">
             <StackPanel Margin="10,5,0,5">
-                <TextBlock Text="{x:Static res:Resources.PermissionConfirm_WildcardHelp}"
-                           FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                <TextBlock FontSize="11" Foreground="Gray" TextWrapping="Wrap" Margin="0,0,0,10">
+                    <Run Text="{x:Static res:Resources.PermissionConfirm_WildcardPrefix}"/>
+                    <Hyperlink RequestNavigate="OnLearnMoreClick" NavigateUri="">
+                        <Run Text="{x:Static res:Resources.PermissionConfirm_WildcardLink}"/>
+                    </Hyperlink>
+                    <Run Text="{x:Static res:Resources.PermissionConfirm_WildcardSuffix}"/>
+                </TextBlock>
 
                 <RadioButton x:Name="RbAlwaysAllow" GroupName="DefaultResponse" Margin="0,5,0,5"
                             Content="{x:Static res:Resources.PermissionConfirm_AlwaysAllow}" IsChecked="False"/>
@@ -65,13 +70,6 @@
                             Content="{x:Static res:Resources.PermissionConfirm_EachTime}" IsChecked="True"/>
             </StackPanel>
         </Expander>
-
-        <!-- 了解更多链接 -->
-        <TextBlock Grid.Row="4" Margin="0,0,0,10">
-            <Hyperlink RequestNavigate="OnLearnMoreClick" NavigateUri="">
-                <TextBlock Text="{x:Static res:Resources.PermissionConfirm_LearnMore}"/>
-            </Hyperlink>
-        </TextBlock>
 
         <!-- 按钮 -->
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">

@@ -373,8 +373,6 @@
   <data name="FileNoFile" xml:space="preserve">
     <value>无文件</value>
   </data>
-
-  <!-- Log operation common strings -->
   <data name="LogToolManager" xml:space="preserve">
     <value>工具管理器</value>
   </data>
@@ -408,8 +406,6 @@
   <data name="LogRunProjectCustomTools" xml:space="preserve">
     <value>运行项目自定义工具</value>
   </data>
-
-  <!-- Log operation results -->
   <data name="LogSuccess" xml:space="preserve">
     <value>成功</value>
   </data>
@@ -443,8 +439,6 @@
   <data name="LogUnknownPermission" xml:space="preserve">
     <value>未知权限</value>
   </data>
-
-  <!-- Log operation details -->
   <data name="LogFrameworkCreated" xml:space="preserve">
     <value>工具管理器框架已创建，等待数据上下文</value>
   </data>
@@ -496,7 +490,7 @@
   <data name="LogServiceStarted" xml:space="preserve">
     <value>服务启动</value>
   </data>
-    <data name="LogVsExited" xml:space="preserve">
+  <data name="LogVsExited" xml:space="preserve">
     <value>Visual Studio 退出</value>
   </data>
   <data name="LogVsShutdown" xml:space="preserve">
@@ -508,8 +502,6 @@
   <data name="LogParameterConversionFailed" xml:space="preserve">
     <value>参数转换失败</value>
   </data>
-
-  <!-- Tool log details -->
   <data name="LogBuildStart" xml:space="preserve">
     <value>开始构建</value>
   </data>
@@ -582,8 +574,6 @@
   <data name="LogPermissionValueDetails" xml:space="preserve">
     <value>权限值: {0}</value>
   </data>
-
-  <!-- Additional log strings for missing patterns -->
   <data name="LogToolExecutionFailed" xml:space="preserve">
     <value>工具执行失败: {0}</value>
   </data>
@@ -602,64 +592,6 @@
   <data name="LogException" xml:space="preserve">
     <value>异常</value>
   </data>
-
-  <!-- VsixAsync 项目本地化资源 -->
-  <data name="LogMcpServiceManagerStarted" xml:space="preserve">
-    <value>MCP 服务管理器已启动</value>
-  </data>
-  <data name="textStatusWithColon" xml:space="preserve">
-    <value>状态: {0}</value>
-  </data>
-  <data name="LogToolPermissionUpdated" xml:space="preserve">
-    <value>工具 {0} 权限已更新为: {1}</value>
-  </data>
-  <data name="HelpActivityLogUrl" xml:space="preserve">
-    <value>https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log</value>
-  </data>
-  <data name="LogOpenedActivityLogHelp" xml:space="preserve">
-    <value>已打开 ActivityLog 帮助文档</value>
-  </data>
-  <data name="LogCannotOpenHelpDoc" xml:space="preserve">
-    <value>无法打开帮助文档: {0}</value>
-  </data>
-  <data name="LogClearLogFailed" xml:space="preserve">
-    <value>清空日志失败: {0}</value>
-  </data>
-  <data name="LogPortNumberAutoSaved" xml:space="preserve">
-    <value>端口号已自动保存为: {0}</value>
-  </data>
-  <data name="LogPortNumberResetToDefault" xml:space="preserve">
-    <value>端口号已重置为默认值: 38080</value>
-  </data>
-  <data name="LogResetPortFailed" xml:space="preserve">
-    <value>重置端口号失败: {0}</value>
-  </data>
-  <data name="TextPermissionAllow" xml:space="preserve">
-    <value>允许</value>
-  </data>
-  <data name="TextPermissionAsk" xml:space="preserve">
-    <value>询问</value>
-  </data>
-  <data name="TextPermissionDeny" xml:space="preserve">
-    <value>拒绝</value>
-  </data>
-  <data name="IconInformation" xml:space="preserve">
-    <value>i</value>
-  </data>
-  <data name="IconWarning" xml:space="preserve">
-    <value>!</value>
-  </data>
-  <data name="IconError" xml:space="preserve">
-    <value>X</value>
-  </data>
-  <data name="IconQuestion" xml:space="preserve">
-    <value>?</value>
-  </data>
-  <data name="DefaultPortNumber" xml:space="preserve">
-    <value>38080</value>
-  </data>
-
-  <!-- VsixAsync ToolWindow Resources -->
   <data name="GroupBoxMcpToolAuthorization" xml:space="preserve">
     <value>MCP 工具授权</value>
   </data>
@@ -777,9 +709,60 @@
   <data name="TitleServiceRunning" xml:space="preserve">
     <value>服务运行中 - 端口: {0}</value>
   </data>
-
-  
-  <!-- McpWindow 本地化资源 -->
+  <data name="LogMcpServiceManagerStarted" xml:space="preserve">
+    <value>MCP 服务管理器已启动</value>
+  </data>
+  <data name="textStatusWithColon" xml:space="preserve">
+    <value>状态: {0}</value>
+  </data>
+  <data name="LogToolPermissionUpdated" xml:space="preserve">
+    <value>工具 {0} 权限已更新为: {1}</value>
+  </data>
+  <data name="HelpActivityLogUrl" xml:space="preserve">
+    <value>https://learn.microsoft.com/zh-cn/visualstudio/extensibility/how-to-use-the-activity-log?view=vs-2022#to-examine-the-activity-log</value>
+  </data>
+  <data name="LogOpenedActivityLogHelp" xml:space="preserve">
+    <value>已打开 ActivityLog 帮助文档</value>
+  </data>
+  <data name="LogCannotOpenHelpDoc" xml:space="preserve">
+    <value>无法打开帮助文档: {0}</value>
+  </data>
+  <data name="LogClearLogFailed" xml:space="preserve">
+    <value>清空日志失败: {0}</value>
+  </data>
+  <data name="LogPortNumberAutoSaved" xml:space="preserve">
+    <value>端口号已自动保存为: {0}</value>
+  </data>
+  <data name="LogPortNumberResetToDefault" xml:space="preserve">
+    <value>端口号已重置为默认值: 38080</value>
+  </data>
+  <data name="LogResetPortFailed" xml:space="preserve">
+    <value>重置端口号失败: {0}</value>
+  </data>
+  <data name="TextPermissionAllow" xml:space="preserve">
+    <value>允许</value>
+  </data>
+  <data name="TextPermissionAsk" xml:space="preserve">
+    <value>询问</value>
+  </data>
+  <data name="TextPermissionDeny" xml:space="preserve">
+    <value>拒绝</value>
+  </data>
+  <data name="IconInformation" xml:space="preserve">
+    <value>i</value>
+  </data>
+  <data name="IconWarning" xml:space="preserve">
+    <value>!</value>
+  </data>
+  <data name="IconError" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="IconQuestion" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <data name="DefaultPortNumber" xml:space="preserve">
+    <value>38080</value>
+  </data>
   <data name="WindowTitle" xml:space="preserve">
     <value>MCP 服务管理器</value>
   </data>
@@ -825,8 +808,6 @@
   <data name="CopyCommandFailed" xml:space="preserve">
     <value>剪贴板操作失败，请手动复制下方的命令。</value>
   </data>
-
-  <!-- Additional McpWindow 本地化资源 -->
   <data name="LogCannotGetActivityLog" xml:space="preserve">
     <value>无法获取 ActivityLog 服务: {0}</value>
   </data>
@@ -932,8 +913,6 @@
   <data name="CommandDescription" xml:space="preserve">
     <value>命令</value>
   </data>
-
-  <!-- 日志分类和结果描述 -->
   <data name="LogCategoryServiceError" xml:space="preserve">
     <value>服务错误</value>
   </data>
@@ -982,8 +961,6 @@
   <data name="LogOperationStopService" xml:space="preserve">
     <value>停止服务</value>
   </data>
-
-  <!-- 文件 IO 工具授权系统增强 - 权限级别 -->
   <data name="PermissionLevel_Allow" xml:space="preserve">
     <value>自动允许</value>
   </data>
@@ -996,8 +973,6 @@
   <data name="PermissionLevel_Deny" xml:space="preserve">
     <value>自动拒绝</value>
   </data>
-
-  <!-- 文件访问类型 -->
   <data name="FileAccessType_Read" xml:space="preserve">
     <value>读取</value>
   </data>
@@ -1007,8 +982,6 @@
   <data name="FileAccessType_ReadWrite" xml:space="preserve">
     <value>读写</value>
   </data>
-
-  <!-- 权限确认对话框 -->
   <data name="PermissionConfirm_Title" xml:space="preserve">
     <value>权限确认</value>
   </data>
@@ -1042,14 +1015,18 @@
   <data name="PermissionConfirm_Deny" xml:space="preserve">
     <value>拒绝</value>
   </data>
-  <data name="PermissionConfirm_WildcardHelp" xml:space="preserve">
-    <value>不分大小写，支持通配符：例如 * 和 ?</value>
+  <data name="PermissionConfirm_WildcardPrefix" xml:space="preserve">
+    <value>不分大小写，</value>
+  </data>
+  <data name="PermissionConfirm_WildcardLink" xml:space="preserve">
+    <value>支持通配符</value>
+  </data>
+  <data name="PermissionConfirm_WildcardSuffix" xml:space="preserve">
+    <value>，例如 * 和 ?</value>
   </data>
   <data name="PermissionConfirm_LearnMore" xml:space="preserve">
     <value>了解更多</value>
   </data>
-
-  <!-- 路径策略配置 UI -->
   <data name="PathPolicy_Tab_FunctionPermissions" xml:space="preserve">
     <value>功能权限</value>
   </data>
@@ -1089,21 +1066,21 @@
   <data name="PathPolicy_Hint_Unmatched" xml:space="preserve">
     <value>• 未匹配路径仍会弹出确认对话框（Ask 模式）</value>
   </data>
-  <data name="PathPolicy_Hint_Wildcard" xml:space="preserve">
-    <value>• 不分大小写，支持通配符：例如 * 和 ?</value>
+  <data name="PathPolicy_Hint_WildcardPrefix" xml:space="preserve">
+    <value>• 不分大小写，</value>
   </data>
-
-  <!-- Pattern 列占位符文本 -->
+  <data name="PathPolicy_Hint_WildcardLink" xml:space="preserve">
+    <value>支持通配符</value>
+  </data>
+  <data name="PathPolicy_Hint_WildcardSuffix" xml:space="preserve">
+    <value>，例如 * 和 ?</value>
+  </data>
   <data name="PathPolicy_Pattern_Placeholder" xml:space="preserve">
-    <value>例如：C:\\Projects\\*\*.vb</value>
+    <value>例如：C:\Projects\*\*.vb</value>
   </data>
-
-  <!-- 了解更多链接 -->
   <data name="LearnMore_Url" xml:space="preserve">
-    <value>https://learn.microsoft.com/zh-cn/dotnet/visual-basic/language-reference/operators/like-operator</value>
+    <value>https://learn.microsoft.com/zh-cn/dotnet/visual-basic/language-reference/operators/like-operator#pattern-options</value>
   </data>
-
-  <!-- 日志记录 -->
   <data name="LogPathPolicyMatch" xml:space="preserve">
     <value>路径策略匹配: {0} - {1}</value>
   </data>

@@ -1,4 +1,6 @@
-﻿Partial Public Class MainWindow
+Imports System.Windows.Navigation
+
+Partial Public Class MainWindow
     Private _isLoaded As Boolean = False
     Private _toolManager As VisualStudioToolManager
 
@@ -57,5 +59,19 @@
     Private Sub InitializeLogging()
         ' 不再加载历史日志，仅初始化内存日志集合
         DgLogs.ItemsSource = _logs
+    End Sub
+
+    ''' <summary>
+    ''' 了解更多链接点击
+    ''' </summary>
+    Private Sub OnLearnMoreClick(sender As Object, e As RequestNavigateEventArgs)
+        Try
+            Dim url = My.Resources.LearnMore_Url
+            Process.Start(New ProcessStartInfo(url) With {
+                .UseShellExecute = True
+            })
+        Catch ex As Exception
+            UtilityModule.ShowError(Me, String.Format(My.Resources.MsgCannotOpenHelpDoc, ex.Message))
+        End Try
     End Sub
 End Class

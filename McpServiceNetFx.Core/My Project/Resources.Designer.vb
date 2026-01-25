@@ -664,7 +664,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  查找类似 https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator 的本地化字符串。
+        '''  查找类似 https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator#pattern-options 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LearnMore_Url() As String
             Get
@@ -2266,11 +2266,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  查找类似 • Case-insensitive, supports wildcards: e.g. * and ? 的本地化字符串。
+        '''  查找类似 wildcards are supported 的本地化字符串。
         '''</summary>
-        Public ReadOnly Property PathPolicy_Hint_Wildcard() As String
+        Public ReadOnly Property PathPolicy_Hint_WildcardLink() As String
             Get
-                Return ResourceManager.GetString("PathPolicy_Hint_Wildcard", resourceCulture)
+                Return ResourceManager.GetString("PathPolicy_Hint_WildcardLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 • Case-insensitive,  的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Hint_WildcardPrefix() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Hint_WildcardPrefix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 , e.g. * and ? 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PathPolicy_Hint_WildcardSuffix() As String
+            Get
+                Return ResourceManager.GetString("PathPolicy_Hint_WildcardSuffix", resourceCulture)
             End Get
         End Property
         
@@ -2428,11 +2446,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  查找类似 Case-insensitive, supports wildcards: e.g. * and ? 的本地化字符串。
+        '''  查找类似 wildcards are supported 的本地化字符串。
         '''</summary>
-        Public ReadOnly Property PermissionConfirm_WildcardHelp() As String
+        Public ReadOnly Property PermissionConfirm_WildcardLink() As String
             Get
-                Return ResourceManager.GetString("PermissionConfirm_WildcardHelp", resourceCulture)
+                Return ResourceManager.GetString("PermissionConfirm_WildcardLink", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Case-insensitive,  的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_WildcardPrefix() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_WildcardPrefix", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 , e.g. * and ? 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property PermissionConfirm_WildcardSuffix() As String
+            Get
+                Return ResourceManager.GetString("PermissionConfirm_WildcardSuffix", resourceCulture)
             End Get
         End Property
         

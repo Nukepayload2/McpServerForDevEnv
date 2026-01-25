@@ -373,8 +373,6 @@ This software does not support remote information transmission, only local netwo
   <data name="FileNoFile" xml:space="preserve">
     <value>No file</value>
   </data>
-
-  <!-- Log operation common strings -->
   <data name="LogToolManager" xml:space="preserve">
     <value>Tool Manager</value>
   </data>
@@ -408,8 +406,6 @@ This software does not support remote information transmission, only local netwo
   <data name="LogRunProjectCustomTools" xml:space="preserve">
     <value>Run Project Custom Tools</value>
   </data>
-
-  <!-- Log operation results -->
   <data name="LogSuccess" xml:space="preserve">
     <value>Success</value>
   </data>
@@ -443,8 +439,6 @@ This software does not support remote information transmission, only local netwo
   <data name="LogUnknownPermission" xml:space="preserve">
     <value>Unknown Permission</value>
   </data>
-
-  <!-- Log operation details -->
   <data name="LogFrameworkCreated" xml:space="preserve">
     <value>Tool manager framework created, waiting for data context</value>
   </data>
@@ -496,7 +490,7 @@ This software does not support remote information transmission, only local netwo
   <data name="LogServiceStarted" xml:space="preserve">
     <value>Service Started</value>
   </data>
-    <data name="LogVsExited" xml:space="preserve">
+  <data name="LogVsExited" xml:space="preserve">
     <value>Visual Studio Exited</value>
   </data>
   <data name="LogVsShutdown" xml:space="preserve">
@@ -508,8 +502,6 @@ This software does not support remote information transmission, only local netwo
   <data name="LogParameterConversionFailed" xml:space="preserve">
     <value>Parameter conversion failed</value>
   </data>
-
-  <!-- Tool log details -->
   <data name="LogBuildStart" xml:space="preserve">
     <value>Start building</value>
   </data>
@@ -582,8 +574,6 @@ This software does not support remote information transmission, only local netwo
   <data name="LogPermissionValueDetails" xml:space="preserve">
     <value>Permission value: {0}</value>
   </data>
-
-  <!-- Additional log strings for missing patterns -->
   <data name="LogToolExecutionFailed" xml:space="preserve">
     <value>Tool execution failed: {0}</value>
   </data>
@@ -602,15 +592,13 @@ This software does not support remote information transmission, only local netwo
   <data name="LogException" xml:space="preserve">
     <value>Exception</value>
   </data>
-
-  <!-- VsixAsync ToolWindow Resources -->
   <data name="GroupBoxMcpToolAuthorization" xml:space="preserve">
     <value>MCP Tool Authorization</value>
   </data>
   <data name="ButtonAuthorizeAll" xml:space="preserve">
     <value>Allow All</value>
   </data>
-    <data name="HeaderPermissionLevel" xml:space="preserve">
+  <data name="HeaderPermissionLevel" xml:space="preserve">
     <value>Permission Level</value>
   </data>
   <data name="ButtonSavePermissions" xml:space="preserve">
@@ -721,8 +709,6 @@ This software does not support remote information transmission, only local netwo
   <data name="TitleServiceRunning" xml:space="preserve">
     <value>Service Running - Port: {0}</value>
   </data>
-
-  <!-- Additional resources for VsixAsync localization -->
   <data name="LogMcpServiceManagerStarted" xml:space="preserve">
     <value>MCP service manager started</value>
   </data>
@@ -777,8 +763,6 @@ This software does not support remote information transmission, only local netwo
   <data name="DefaultPortNumber" xml:space="preserve">
     <value>38080</value>
   </data>
-
-  <!-- McpWindow 本地化资源 -->
   <data name="WindowTitle" xml:space="preserve">
     <value>MCP Service Manager</value>
   </data>
@@ -824,8 +808,6 @@ This software does not support remote information transmission, only local netwo
   <data name="CopyCommandFailed" xml:space="preserve">
     <value>Clipboard operation failed, please manually copy the command below.</value>
   </data>
-
-  <!-- Additional McpWindow 本地化资源 -->
   <data name="LogCannotGetActivityLog" xml:space="preserve">
     <value>Cannot get ActivityLog service: {0}</value>
   </data>
@@ -931,8 +913,6 @@ This software does not support remote information transmission, only local netwo
   <data name="CommandDescription" xml:space="preserve">
     <value>Command</value>
   </data>
-
-  <!-- 日志分类和结果描述 -->
   <data name="LogCategoryServiceError" xml:space="preserve">
     <value>ServiceError</value>
   </data>
@@ -981,8 +961,6 @@ This software does not support remote information transmission, only local netwo
   <data name="LogOperationStopService" xml:space="preserve">
     <value>StopService</value>
   </data>
-
-  <!-- 文件 IO 工具授权系统增强 - 权限级别 -->
   <data name="PermissionLevel_Allow" xml:space="preserve">
     <value>Auto Allow</value>
   </data>
@@ -995,8 +973,6 @@ This software does not support remote information transmission, only local netwo
   <data name="PermissionLevel_Deny" xml:space="preserve">
     <value>Auto Deny</value>
   </data>
-
-  <!-- 文件访问类型 -->
   <data name="FileAccessType_Read" xml:space="preserve">
     <value>Read</value>
   </data>
@@ -1006,8 +982,6 @@ This software does not support remote information transmission, only local netwo
   <data name="FileAccessType_ReadWrite" xml:space="preserve">
     <value>Read/Write</value>
   </data>
-
-  <!-- 权限确认对话框 -->
   <data name="PermissionConfirm_Title" xml:space="preserve">
     <value>Permission Confirm</value>
   </data>
@@ -1041,14 +1015,18 @@ This software does not support remote information transmission, only local netwo
   <data name="PermissionConfirm_Deny" xml:space="preserve">
     <value>Deny</value>
   </data>
-  <data name="PermissionConfirm_WildcardHelp" xml:space="preserve">
-    <value>Case-insensitive, supports wildcards: e.g. * and ?</value>
+  <data name="PermissionConfirm_WildcardPrefix" xml:space="preserve">
+    <value>Case-insensitive, </value>
+  </data>
+  <data name="PermissionConfirm_WildcardLink" xml:space="preserve">
+    <value>wildcards are supported</value>
+  </data>
+  <data name="PermissionConfirm_WildcardSuffix" xml:space="preserve">
+    <value>, e.g. * and ?</value>
   </data>
   <data name="PermissionConfirm_LearnMore" xml:space="preserve">
     <value>Learn More</value>
   </data>
-
-  <!-- 路径策略配置 UI -->
   <data name="PathPolicy_Tab_FunctionPermissions" xml:space="preserve">
     <value>Function Permissions</value>
   </data>
@@ -1088,21 +1066,21 @@ This software does not support remote information transmission, only local netwo
   <data name="PathPolicy_Hint_Unmatched" xml:space="preserve">
     <value>• Unmatched paths will still show confirmation dialog (Ask mode)</value>
   </data>
-  <data name="PathPolicy_Hint_Wildcard" xml:space="preserve">
-    <value>• Case-insensitive, supports wildcards: e.g. * and ?</value>
+  <data name="PathPolicy_Hint_WildcardPrefix" xml:space="preserve">
+    <value>• Case-insensitive, </value>
   </data>
-
-  <!-- Pattern 列占位符文本 -->
+  <data name="PathPolicy_Hint_WildcardLink" xml:space="preserve">
+    <value>wildcards are supported</value>
+  </data>
+  <data name="PathPolicy_Hint_WildcardSuffix" xml:space="preserve">
+    <value>, e.g. * and ?</value>
+  </data>
   <data name="PathPolicy_Pattern_Placeholder" xml:space="preserve">
     <value>e.g. C:\Projects\*\*.vb</value>
   </data>
-
-  <!-- 了解更多链接 -->
   <data name="LearnMore_Url" xml:space="preserve">
-    <value>https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator</value>
+    <value>https://learn.microsoft.com/en-us/dotnet/visual-basic/language-reference/operators/like-operator#pattern-options</value>
   </data>
-
-  <!-- 日志记录 -->
   <data name="LogPathPolicyMatch" xml:space="preserve">
     <value>Path policy matched: {0} - {1}</value>
   </data>

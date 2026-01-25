@@ -286,15 +286,13 @@
                                     <TextBlock Text="{x:Static res:Resources.PathPolicy_Hint_DenyPriority}" TextWrapping="Wrap" Margin="5,2"/>
                                     <TextBlock Text="{x:Static res:Resources.PathPolicy_Hint_Unmatched}" TextWrapping="Wrap" Margin="5,2"/>
                                     <StackPanel Orientation="Horizontal" Margin="5,2">
-                                        <TextBlock Text="{x:Static res:Resources.PathPolicy_Hint_Wildcard}" TextWrapping="Wrap"/>
-                                        <Button x:Name="BtnLearnMore" Content="{x:Static res:Resources.PermissionConfirm_LearnMore}"
-                                                Margin="5,0,0,0" Padding="5,0"
-                                                Click="BtnLearnMore_Click"
-                                                Cursor="Hand"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Foreground="#0078D4"
-                                                HorizontalAlignment="Left"/>
+                                        <TextBlock TextWrapping="Wrap">
+                                            <Run Text="{x:Static res:Resources.PathPolicy_Hint_WildcardPrefix}"/>
+                                            <Hyperlink RequestNavigate="OnLearnMoreClick" NavigateUri="">
+                                                <Run Text="{x:Static res:Resources.PathPolicy_Hint_WildcardLink}"/>
+                                            </Hyperlink>
+                                            <Run Text="{x:Static res:Resources.PathPolicy_Hint_WildcardSuffix}"/>
+                                        </TextBlock>
                                     </StackPanel>
                                 </StackPanel>
 
