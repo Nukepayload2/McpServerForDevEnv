@@ -38,7 +38,6 @@ Partial Public Class PermissionConfirmDialog
     ''' </summary>
     Public Sub New()
         InitializeComponent()
-        Me.Title = My.Resources.PermissionConfirm_Title
     End Sub
 
     ''' <summary>
