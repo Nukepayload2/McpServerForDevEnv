@@ -134,15 +134,8 @@ Public MustInherit Class VisualStudioToolBase
     ''' <returns>是否有权限</returns>
     Protected Function CheckFilePermission(filePath As String, accessType As FileAccessType) As Boolean
         Try
-            ' 通过反射调用文件权限检查方法
-            Dim filePermissionMethod = GetType(IMcpPermissionHandler).GetMethod("CheckFilePermission")
-            If filePermissionMethod IsNot Nothing Then
-                Dim result = filePermissionMethod.Invoke(_permissionHandler, New Object() {FeatureName, ToolDescription, filePath, accessType})
-                Return DirectCast(result, Boolean)
-            Else
-                ' 如果接口方法不存在，回退到基础权限检查
-                Return CheckPermission()
-            End If
+            ' 直接调用接口方法，IMcpPermissionHandler 处理弹框并返回最终 Boolean
+            Return _permissionHandler.CheckFilePermission(FeatureName, ToolDescription, filePath, accessType)
         Catch ex As Exception
             _logger?.LogMcpRequest(My.Resources.LogPermissionCheckException, My.Resources.LogException, ex.Message)
             Return False

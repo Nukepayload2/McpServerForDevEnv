@@ -361,10 +361,11 @@ UI: McpServiceNetFx/Views/MainWindow.VsInstances.vb
 模型: McpServiceNetFx.Core/Models/PermissionModels.vb
 模型: McpServiceNetFx.Core/Models/FileAccessType.vb
 模型: McpServiceNetFx.Core/Models/PathPermissionPolicy.vb
-模型: McpServiceNetFx.Core/Models/PolicyCheckResult.vb (新增)
+模型: McpServiceNetFx.Core/Models/PolicyCheckResult.vb (内部辅助类型)
 辅助: McpServiceNetFx.Core/Helpers/PathHelper.vb
 辅助: McpServiceNetFx.Core/Helpers/PathPolicyManager.vb (新增)
-UI: McpServiceNetFx/Views/MainWindow.Permissions.vb
+UI (独立应用): McpServiceNetFx/Views/MainWindow.Permissions.vb
+UI (VSIX 插件): McpServiceNetFx.VsixAsync/ToolWindows/McpWindowState.vb
 UI: McpServiceNetFx/Views/PermissionConfirmDialog.xaml
 转换器: McpServiceNetFx/Converters/PermissionLevelConverter.vb
 转换器: McpServiceNetFx/Converters/FileAccessTypeConverter.vb
@@ -372,6 +373,7 @@ UI: McpServiceNetFx/Views/PermissionConfirmDialog.xaml
 测试: McpServiceNetFx.Tests/PolicyCheckResultTests.vb (新增)
 测试: McpServiceNetFx.Tests/PathPolicyManagerTests.vb (新增)
 测试: McpServiceNetFx.Tests/PathPermissionPolicyTests.vb
+基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb (CheckFilePermission 方法)
 ```
 
 **权限级别**:
@@ -394,17 +396,18 @@ UI: McpServiceNetFx/Views/PermissionConfirmDialog.xaml
 
 **权限检查流程**:
 ```
-CheckFilePermission(filePath, accessType)
+CheckFilePermission(filePath, accessType) → Boolean
 │
-└─ 功能权限检查（顶级）
-    ├─ Allow → 允许
-    ├─ Deny → 拒绝
-    ├─ Ask → 进入路径策略检查
-    │   ├─ 拒绝列表 → 匹配 → 拒绝
-    │   ├─ 允许列表 → 匹配 → 允许
-    │   └─ 未匹配 → 弹增强对话框（可配置策略）
-    └─ AlwaysAsk → 弹基础对话框（无策略配置）
+├─ Allow → True
+├─ Deny → False
+├─ Ask → 路径策略检查
+│   ├─ 拒绝列表匹配 → False
+│   ├─ 允许列表匹配 → True
+│   └─ 未匹配 → 弹增强对话框 → 返回用户选择 (True/False)
+└─ AlwaysAsk → 弹基础对话框 → 返回用户选择 (True/False)
 ```
+
+**注意**: `CheckFilePermission` 返回 `Boolean`，所有弹框逻辑由 `IMcpPermissionHandler` 实现类内部处理，调用方无需反射。`PolicyCheckResult` 为内部辅助类型。
 
 **增强权限确认对话框**:
 - 显示功能名称、操作描述、文件路径
@@ -577,7 +580,7 @@ UI: McpServiceNetFx/Views/MainWindow.Logging.vb
 
 ### 查询权限相关功能
 - 关键词: permission, security, allow, deny, ask, always ask
-- 相关文件: IMcpPermissionHandler.vb, PermissionModels.vb, FileAccessType.vb, PathPermissionPolicy.vb, PathHelper.vb, MainWindow.Permissions.vb, PermissionConfirmDialog.xaml
+- 相关文件: IMcpPermissionHandler.vb, PermissionModels.vb, FileAccessType.vb, PathPermissionPolicy.vb, PathHelper.vb, MainWindow.Permissions.vb, McpWindowState.vb (VSIX), PermissionConfirmDialog.xaml, VisualStudioToolBase.vb (CheckFilePermission 方法)
 
 ### 查询路径策略相关功能
 - 关键词: path policy, wildcard, pattern, allow list, deny list
@@ -586,3 +589,40 @@ UI: McpServiceNetFx/Views/MainWindow.Logging.vb
 ### 查询 VS 集成相关功能
 - 关键词: VS, Visual Studio, instance, monitor, toolwindow
 - 相关文件: VisualStudioEnumerator.vb, VisualStudioMonitor.vb, McpToolWindow.vb
+
+## 变更历史
+
+### 2025-01-25 - 权限检查反射移除
+
+**修改内容**: 将 `IMcpPermissionHandler.CheckFilePermission` 返回类型从 `PolicyCheckResult` 简化为 `Boolean`，去除 `VisualStudioToolBase` 中的反射代码。
+
+**影响文件**:
+- `McpServiceNetFx.Core/Mcp/IMcpPermissionHandler.vb` - 接口返回类型改为 Boolean
+- `McpServiceNetFx/Views/MainWindow.Permissions.vb` - 实现类处理弹框逻辑并返回 Boolean
+- `McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb` - 去除反射，直接调用接口
+- `McpServiceNetFx.VsixAsync/ToolWindows/McpWindowState.vb` - 新增 CheckFilePermission 实现
+
+**设计变更**:
+- `PolicyCheckResult` 从公共返回类型改为内部辅助类型
+- 所有弹框逻辑由 `IMcpPermissionHandler` 实现类内部处理
+- 调用方（工具基类）无需反射，直接获取 Boolean 结果
+
+**相关工作记忆**: `MaintainerAgent/works/remove-reflection-permission-check.md`
+
+### 2025-01-25 - 路径策略 UI 同步修复
+
+**问题描述**: 用户在权限确认对话框中添加"总是允许"/"总是拒绝"策略后，策略未出现在文件权限列表中。
+
+**根本原因**: 双集合设计导致数据不同步 - `PathPolicyManager.AllowPolicies`（权限检查用）和 `_allowPolicyItems`（UI 绑定用）分离。
+
+**修复方案**: 采用单一数据源设计，UI 直接绑定到 `PathPolicyManager` 的 `ObservableCollection`，利用自动通知机制更新 UI。
+
+**影响文件**:
+- `McpServiceNetFx/Views/MainWindow.Permissions.vb` - 移除中间集合，直接绑定到 `_pathPolicyManager`
+
+**设计变更**:
+- 移除 `_allowPolicyItems`/`_denyPolicyItems` 字段
+- UI 直接绑定到 `_pathPolicyManager.AllowPolicies`/`_pathPolicyManager.DenyPolicies`
+- 添加策略后 UI 自动更新，无需手动同步
+
+**相关工作记忆**: `MaintainerAgent/works/path-policy-ui-sync-fix.md`

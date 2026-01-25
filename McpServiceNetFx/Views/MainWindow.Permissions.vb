@@ -4,8 +4,6 @@ Imports McpServiceNetFx.Models
 Partial Public Class MainWindow
     Private _permissionItems As New ObservableCollection(Of PermissionItem)()
     Private _pathPolicyManager As New PathPolicyManager()
-    Private _allowPolicyItems As New ObservableCollection(Of PathPermissionPolicy)()
-    Private _denyPolicyItems As New ObservableCollection(Of PathPermissionPolicy)()
 
     Private Sub LoadPermissions()
         Try
@@ -199,18 +197,18 @@ Partial Public Class MainWindow
     ''' <summary>
     ''' 检查文件权限（增强版本，支持路径策略）
     ''' </summary>
-    Public Function CheckFilePermission(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As PolicyCheckResult Implements IMcpPermissionHandler.CheckFilePermission
+    Public Function CheckFilePermission(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As Boolean Implements IMcpPermissionHandler.CheckFilePermission
         Dim permission = GetPermission(featureName)
         LogOperation(My.Resources.LogPermissionCheck, My.Resources.LogGetPermission, String.Format(My.Resources.LogFeaturePermissionValue, featureName, permission))
 
         Select Case permission
             Case PermissionLevel.Allow
                 LogOperation(featureName, My.Resources.LogAllowed, operationDescription)
-                Return PolicyCheckResult.NoMatch
+                Return True
 
             Case PermissionLevel.Deny
                 LogOperation(featureName, My.Resources.LogDenied, operationDescription)
-                Return PolicyCheckResult.NoMatch
+                Return False
 
             Case PermissionLevel.AlwaysAsk
                 ' AlwaysAsk 模式：跳过路径策略，每次弹基础对话框
@@ -224,7 +222,7 @@ Partial Public Class MainWindow
                     LogOperation(featureName, My.Resources.LogUserDenied, operationDescription)
                 End If
 
-                Return PolicyCheckResult.NoMatch
+                Return result
 
             Case PermissionLevel.Ask
                 ' Ask 模式：检查路径策略
@@ -232,7 +230,7 @@ Partial Public Class MainWindow
 
             Case Else
                 LogOperation(featureName, My.Resources.LogUnknownPermission, String.Format(My.Resources.LogPermissionValueDetails, permission))
-                Return PolicyCheckResult.NoMatch
+                Return False
         End Select
     End Function
 
@@ -240,17 +238,18 @@ Partial Public Class MainWindow
     ''' 检查路径策略或询问用户
     ''' Ask 模式下使用路径策略进行自动应答
     ''' </summary>
-    Private Function CheckPathPoliciesOrAsk(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As PolicyCheckResult
+    Private Function CheckPathPoliciesOrAsk(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As Boolean
         ' 1. 首先检查路径策略（拒绝优先）
         Dim policyResult = _pathPolicyManager.CheckPolicies(filePath, accessType)
 
         If policyResult.Matched Then
             If policyResult.IsAllowed = True Then
                 LogOperation(featureName, My.Resources.LogAllowed, String.Format(My.Resources.LogPathPolicyMatch, policyResult.MatchedPolicy.PolicyType, policyResult.MatchedPolicy.Pattern))
+                Return True
             Else
                 LogOperation(featureName, My.Resources.LogDenied, String.Format(My.Resources.LogPathPolicyMatch, policyResult.MatchedPolicy.PolicyType, policyResult.MatchedPolicy.Pattern))
+                Return False
             End If
-            Return policyResult
         End If
 
         ' 2. 未匹配任何策略，弹出增强对话框
@@ -261,7 +260,7 @@ Partial Public Class MainWindow
     ''' <summary>
     ''' 显示文件权限确认对话框
     ''' </summary>
-    Private Function ShowFilePermissionDialog(featureName As String, operationDescription As String, filePath As String) As PolicyCheckResult
+    Private Function ShowFilePermissionDialog(featureName As String, operationDescription As String, filePath As String) As Boolean
         Try
             Dim dialog As New PermissionConfirmDialog()
             dialog.SetContent(featureName, operationDescription, filePath)
@@ -275,33 +274,33 @@ Partial Public Class MainWindow
                 Select Case result
                     Case PermissionConfirmResult.Allow
                         LogOperation(featureName, My.Resources.LogUserAllowed, operationDescription)
-                        Return PolicyCheckResult.NoMatch
+                        Return True
 
                     Case PermissionConfirmResult.Deny
                         LogOperation(featureName, My.Resources.LogUserDenied, operationDescription)
-                        Return PolicyCheckResult.NoMatch
+                        Return False
 
                     Case PermissionConfirmResult.AllowWithPolicy
                         ' 添加允许策略
                         Dim pattern = dialog.GetPolicyPattern()
                         _pathPolicyManager.AddPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, pattern)
                         LogOperation(featureName, My.Resources.LogUserAllowed, String.Format(My.Resources.LogPathPolicyAdded, "Allow", pattern))
-                        Return PolicyCheckResult.NoMatch
+                        Return True
 
                     Case PermissionConfirmResult.DenyWithPolicy
                         ' 添加拒绝策略
                         Dim pattern = dialog.GetPolicyPattern()
                         _pathPolicyManager.AddPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, pattern)
                         LogOperation(featureName, My.Resources.LogUserDenied, String.Format(My.Resources.LogPathPolicyAdded, "Deny", pattern))
-                        Return PolicyCheckResult.NoMatch
+                        Return False
                 End Select
             End If
 
             ' 默认拒绝
-            Return PolicyCheckResult.NoMatch
+            Return False
         Catch ex As Exception
             LogOperation(featureName, My.Resources.LogFailed, String.Format(My.Resources.LogPermissionDialogFailed, ex.Message))
-            Return PolicyCheckResult.NoMatch
+            Return False
         End Try
     End Function
 
@@ -312,21 +311,17 @@ Partial Public Class MainWindow
         Try
             Dim loadedPolicies = PersistenceModule.LoadPathPolicies()
             _pathPolicyManager.ClearPolicies()
-            _allowPolicyItems.Clear()
-            _denyPolicyItems.Clear()
 
             For Each policy In loadedPolicies
                 If policy.PolicyType = PathPolicyType.Allow Then
                     _pathPolicyManager.AllowPolicies.Add(policy)
-                    _allowPolicyItems.Add(policy)
                 Else
                     _pathPolicyManager.DenyPolicies.Add(policy)
-                    _denyPolicyItems.Add(policy)
                 End If
             Next
 
-            DgAllowPolicies.ItemsSource = _allowPolicyItems
-            DgDenyPolicies.ItemsSource = _denyPolicyItems
+            DgAllowPolicies.ItemsSource = _pathPolicyManager.AllowPolicies
+            DgDenyPolicies.ItemsSource = _pathPolicyManager.DenyPolicies
             LogOperation(My.Resources.LogPermissions, My.Resources.LogCompleted, String.Format(My.Resources.LogPermissionsLoaded, loadedPolicies.Count))
         Catch ex As Exception
             UtilityModule.ShowError(Me, String.Format(My.Resources.MsgLoadPermissionsFailed, ex.Message))
@@ -339,18 +334,13 @@ Partial Public Class MainWindow
     Private Sub BtnAddPolicy_Click(sender As Object, e As RoutedEventArgs)
         Try
             Dim selectedTab = TabPathPolicies.SelectedIndex
-            Dim newPolicy As PathPermissionPolicy
 
             If selectedTab = 0 Then
                 ' 允许列表
-                newPolicy = New PathPermissionPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, String.Empty)
                 _pathPolicyManager.AddPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, String.Empty)
-                _allowPolicyItems.Add(newPolicy)
             Else
                 ' 拒绝列表
-                newPolicy = New PathPermissionPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, String.Empty)
                 _pathPolicyManager.AddPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, String.Empty)
-                _denyPolicyItems.Add(newPolicy)
             End If
 
             LogOperation(My.Resources.LogPermissionCheck, My.Resources.LogCompleted, "New policy added")

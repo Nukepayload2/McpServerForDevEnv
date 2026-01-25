@@ -556,6 +556,15 @@ Namespace ToolWindows
         End Function
 
         ''' <summary>
+        ''' 实现 IMcpPermissionHandler.CheckFilePermission
+        ''' VSIX 版本简化实现，回退到基础权限检查
+        ''' </summary>
+        Public Function CheckFilePermission(featureName As String, operationDescription As String, filePath As String, accessType As FileAccessType) As Boolean Implements IMcpPermissionHandler.CheckFilePermission
+            ' VSIX 版本不支持路径策略，回退到基础权限检查
+            Return CheckPermission(featureName, operationDescription)
+        End Function
+
+        ''' <summary>
         ''' 清空日志
         ''' </summary>
         Public Sub ClearLogItems()
