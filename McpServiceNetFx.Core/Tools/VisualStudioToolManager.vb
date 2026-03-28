@@ -86,6 +86,10 @@ Public Class VisualStudioToolManager
             RegisterTool(New AppendLinesTool(_logger, _permissionHandler))
             RegisterTool(New StringReplaceTool(_logger, _permissionHandler))
 
+            ' 文件搜索工具
+            RegisterTool(New FindFilesByNameTool(_logger, _permissionHandler))
+            RegisterTool(New FindFilesByTextContentTool(_logger, _permissionHandler))
+
             _logger?.LogMcpRequest("工具管理器", "工具预注册完成", $"共预注册 {_tools.Count} 个工具，等待数据上下文")
 
         Catch ex As Exception

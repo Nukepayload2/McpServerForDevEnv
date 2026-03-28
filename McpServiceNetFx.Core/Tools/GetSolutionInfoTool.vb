@@ -1,4 +1,4 @@
-''' <summary>
+﻿''' <summary>
 ''' 获取当前解决方案信息的工具
 ''' </summary>
 Public Class GetSolutionInfoTool
@@ -13,7 +13,7 @@ Public Class GetSolutionInfoTool
 
     Public Overrides ReadOnly Property ToolDefinition As New ToolDefinition With {
         .Name = "get_solution_info",
-        .Description = "获取当前解决方案信息",
+        .Description = "获取当前解决方案信息，如解决方案目录",
         .InputSchema = New InputSchema With {
             .Type = "object",
             .Properties = New Dictionary(Of String, PropertyDefinition)()

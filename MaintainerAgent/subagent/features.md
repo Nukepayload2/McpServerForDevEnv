@@ -250,6 +250,63 @@ output:
 **权限配置**: UI 中的 "String Replace" 权限项，支持 AlwaysAsk 级别
 **访问类型**: ReadWrite
 
+#### 4.6 按文件名查找 (Find Files By Name)
+
+**功能描述**: 按文件名查找文件，支持通配符和正则表达式匹配模式
+
+**源码范围**:
+```
+定义: McpServiceNetFx.Core/Tools/FindFilesByNameTool.vb
+模型: McpServiceNetFx.Core/Models/FileSearchModels.vb
+基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+```
+
+**MCP 工具名**: `find_files_by_name`
+
+**参数**:
+- `findWhat`: 查找词/模式（默认 `*`）
+- `lookIn`: 搜索目录（默认为解决方案目录）
+- `matchMode`: 匹配模式，`wildcard` 或 `regex`（默认 `wildcard`）
+- `searchMode`: 搜索模式，`recursive` 或 `topLevelOnly`（默认 `recursive`）
+
+**返回数据**:
+- `files`: 匹配的文件路径数组
+- `count`: 匹配数量
+- `searchDirectory`: 搜索目录
+- `matchMode`: 使用的匹配模式
+
+**权限配置**: UI 中的 "Find Files By Name" 权限项
+**访问类型**: Read（搜索目录在解决方案外时需要）
+
+#### 4.7 按文本内容查找 (Find Files By Text Content)
+
+**功能描述**: 在指定文件中按文本内容查找，支持纯文本、通配符和正则表达式匹配模式，多线程处理
+
+**源码范围**:
+```
+定义: McpServiceNetFx.Core/Tools/FindFilesByTextContentTool.vb
+模型: McpServiceNetFx.Core/Models/FileSearchModels.vb
+基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+```
+
+**MCP 工具名**: `find_files_by_text_content`
+
+**参数**:
+- `findWhat`: 查找内容（必需）
+- `lookIn`: 文件路径列表（必需）
+- `matchMode`: 匹配模式，`plainText`、`wildcard` 或 `regex`（默认 `plainText`）
+- `encoding`: 文件编码，`utf8` 或 `ansi`（默认 `utf8`）
+
+**返回数据**:
+- `matches`: 匹配结果数组，每个结果包含文件路径、行号列表和匹配次数
+- `filesSearched`: 搜索的文件数
+- `filesMatched`: 有匹配的文件数
+
+**权限配置**: UI 中的 "Find Files By Text Content" 权限项
+**访问类型**: Read（文件在解决方案外时需要）
+
+**多线程处理**: 使用 Task.Run + Parallel.ForEach + ConcurrentBag 实现并行处理
+
 ### 5. 解决方案信息 (Solution Information)
 
 #### 5.1 获取解决方案信息 (Get Solution Info)
