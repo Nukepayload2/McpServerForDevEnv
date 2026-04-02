@@ -118,7 +118,11 @@ Public Class FindFilesByNameTool
             Dim solutionInfo = Await _vsTools.GetSolutionInformationAsync()
             Dim solutionDir As String = Nothing
             If solutionInfo IsNot Nothing AndAlso Not String.IsNullOrEmpty(solutionInfo.FullName) Then
-                solutionDir = Path.GetDirectoryName(solutionInfo.FullName)
+                Dim sloPath = solutionInfo.FullName
+                If Not Directory.Exists(sloPath) Then
+                    sloPath = Path.GetDirectoryName(sloPath)
+                End If
+                solutionDir = sloPath
             End If
 
             ' 确定搜索目录
@@ -126,7 +130,7 @@ Public Class FindFilesByNameTool
             If String.IsNullOrEmpty(lookIn) Then
                 searchDir = solutionDir
             Else
-                searchDir = lookIn
+                searchDir = Path.GetFullPath(lookIn)
             End If
 
             ' 验证搜索目录

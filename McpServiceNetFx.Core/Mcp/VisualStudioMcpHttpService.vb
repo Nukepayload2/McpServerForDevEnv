@@ -1,4 +1,4 @@
-Imports System.ServiceModel
+﻿Imports System.ServiceModel
 Imports System.ServiceModel.Web
 Imports Newtonsoft.Json
 Imports System.ServiceModel.Activation
@@ -150,7 +150,7 @@ Public Class VisualStudioMcpHttpService
             ' 检查工具调用结果类型
             If TypeOf toolResult Is CallToolErrorResult Then
                 Dim errorResult = CType(toolResult, CallToolErrorResult)
-                Return CreateErrorResponse(-32603, "Tool execution failed", request.Id, errorResult.ErrorMessage)
+                Return CreateErrorResponse(-32603, errorResult.ErrorMessage, request.Id)
             End If
 
             ' 返回成功结果
