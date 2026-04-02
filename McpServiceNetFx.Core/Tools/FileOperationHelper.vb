@@ -1,4 +1,4 @@
-Imports System.IO
+﻿Imports System.IO
 Imports System.Security.Cryptography
 Imports System.Text
 Imports System.Text.RegularExpressions
@@ -11,7 +11,7 @@ Public NotInheritable Class FileOperationHelper
     ''' <summary>
     ''' 最大读取行数
     ''' </summary>
-    Public Const MAX_READ_LINES As Integer = 100
+    Public Const MAX_READ_LINES As Integer = 500
 
     ''' <summary>
     ''' 最大读取字节数 (1MB)

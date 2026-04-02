@@ -33,7 +33,7 @@ Public Class ReadLinesTool
     Private Function CreateToolDefinition() As ToolDefinition
         Return New ToolDefinition With {
             .Name = "read_lines_base" & _base,
-            .Description = "读取文件指定行范围的内容，最多100行，支持返回带行号或不带行号的格式",
+            .Description = $"读取文件指定行范围的内容，最多{FileOperationHelper.MAX_READ_LINES}行，支持返回带行号或不带行号的格式",
             .InputSchema = New InputSchema With {
                 .Type = "object",
                 .Properties = New Dictionary(Of String, PropertyDefinition) From {
@@ -56,8 +56,8 @@ Public Class ReadLinesTool
                         "length",
                         New PropertyDefinition With {
                             .Type = "number",
-                            .Description = "读取的行数（1-100），默认为100",
-                            .[Default] = "100"
+                            .Description = $"读取的行数（1-{FileOperationHelper.MAX_READ_LINES}），默认为{FileOperationHelper.MAX_READ_LINES}",
+                            .[Default] = $"{FileOperationHelper.MAX_READ_LINES}"
                         }
                     },
                     {
