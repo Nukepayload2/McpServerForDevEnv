@@ -1,4 +1,4 @@
-Imports System.Text
+﻿Imports System.Text
 Imports EnvDTE
 Imports EnvDTE80
 Imports VSLangProj
@@ -68,7 +68,7 @@ Public Class VisualStudioTools
 
                 ' 捕获输出
                 If buildPane.TextDocument IsNot Nothing Then
-                    Dim startPoint As TextPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
+                    Dim startPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
                     Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
                     buildOutput = startPoint.GetText(endPoint)
                 End If
@@ -159,7 +159,7 @@ Public Class VisualStudioTools
 
                 ' 捕获输出
                 If buildPane.TextDocument IsNot Nothing Then
-                    Dim startPoint As TextPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
+                    Dim startPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
                     Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
                     buildOutput = startPoint.GetText(endPoint)
                 End If
@@ -223,7 +223,7 @@ Public Class VisualStudioTools
                     Try
                         buildPane = outputWindow.OutputWindowPanes.Item("Build")
                         If buildPane?.TextDocument IsNot Nothing Then
-                            Dim startPoint As TextPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
+                            Dim startPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
                             Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
                             buildOutput = startPoint.GetText(endPoint)
                         End If

@@ -1,4 +1,4 @@
-Imports Microsoft.VisualStudio.Shell.Interop
+﻿Imports Microsoft.VisualStudio.Shell.Interop
 Imports Microsoft.VisualStudio.OLE.Interop
 Imports Microsoft.VisualStudio.TextManager.Interop
 Imports System.Runtime.InteropServices
@@ -303,8 +303,8 @@ Public Class UniversalSymbolSearchEngine
             If textDocument Is Nothing Then Return results
 
             ' 获取完整文档内容
-            Dim startPoint As EnvDTE.EditPoint = textDocument.StartPoint.CreateEditPoint()
-            Dim endPoint As EnvDTE.EditPoint = textDocument.EndPoint.CreateEditPoint()
+            Dim startPoint = textDocument.StartPoint.CreateEditPoint()
+            Dim endPoint = textDocument.EndPoint
             Dim resultText As String = startPoint.GetText(endPoint)
 
             If String.IsNullOrWhiteSpace(resultText) Then Return results
