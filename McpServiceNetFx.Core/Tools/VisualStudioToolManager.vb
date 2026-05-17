@@ -10,6 +10,7 @@ Public Class VisualStudioToolManager
     Private _vsTools As VisualStudioTools
     Private ReadOnly _permissionHandler As IMcpPermissionHandler
     Private _isInitialized As Boolean = False
+    Private _currentDte As EnvDTE80.DTE2
 
     ''' <summary>
     ''' 创建工具管理器实例（应用启动时使用）
@@ -36,12 +37,13 @@ Public Class VisualStudioToolManager
     ''' <param name="dispatcher">UI 线程调度器</param>
     Public Sub CreateVsTools(dte2 As EnvDTE80.DTE2, dispatcher As IDispatcher)
         Try
-            If _isInitialized Then
-                _logger?.LogMcpRequest("工具管理器", "数据上下文", "工具管理器已初始化，跳过重复创建")
+            ' 如果已使用相同 DTE 初始化，跳过
+            If _isInitialized AndAlso _currentDte IsNot Nothing AndAlso _currentDte Is dte2 Then
+                _logger?.LogMcpRequest("工具管理器", "数据上下文", "工具管理器已使用相同 DTE 初始化，跳过重复创建")
                 Return
             End If
 
-            ' 创建 Visual Studio 工具实例
+            ' 创建或重新创建 Visual Studio 工具实例
             _vsTools = New VisualStudioTools(dte2, dispatcher, _logger)
 
             ' 为所有已注册的工具设置数据上下文
@@ -50,6 +52,7 @@ Public Class VisualStudioToolManager
                 tool.SetVsTools(_vsTools)
             Next
 
+            _currentDte = dte2
             _isInitialized = True
             _logger?.LogMcpRequest("工具管理器", "数据上下文创建完成", $"Visual Studio 实例: {dte2.Name}, 工具数量: {_tools.Count}")
 

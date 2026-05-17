@@ -75,8 +75,6 @@ Public Class McpService
                 Throw New InvalidOperationException("工具管理器未传入，无法启动 MCP 服务")
             End If
 
-            ' 创建 Visual Studio 工具实例（用于服务内部使用）
-            Dim vsTools As New VisualStudioTools(_dte2, _dispatcher, _logger)
             Dim vsMcpHttp As New VisualStudioMcpHttpService(_toolManager)
             _serviceHost = New ServiceHost(vsMcpHttp, baseAddress)
 
