@@ -1,4 +1,4 @@
-Imports System.ServiceModel
+Imports System.Net
 Imports System.Windows.Threading
 
 Partial Public Class MainWindow
@@ -33,7 +33,7 @@ Partial Public Class MainWindow
         Try
             Await StartMcpService(port)
         Catch ex As Exception
-            If TypeOf ex IsNot AddressAccessDeniedException Then
+            If TypeOf ex IsNot HttpListenerException Then
                 UtilityModule.ShowError(Me, String.Format(My.Resources.MsgStartServiceFailed, ex.Message))
             End If
         End Try

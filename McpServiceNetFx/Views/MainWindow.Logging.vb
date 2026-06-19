@@ -49,8 +49,8 @@ Partial Public Class MainWindow
             .Details = details
         }
 
-        ' 仅添加到内存中的日志列表，不再立即保存到持久化存储
-        _logs.Add(entry)
+        ' 通过 dispatcher 在 UI 线程添加，_logs 绑定到 UI 且可能被后台线程（HTTP 请求处理）调用
+        UtilityModule.SafeBeginInvoke(Dispatcher, Sub() _logs.Add(entry))
     End Sub
 
     Private Sub MainWindow_Closing() Handles Me.Closing

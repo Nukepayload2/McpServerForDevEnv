@@ -1,12 +1,6 @@
-﻿Imports System.ServiceModel
-Imports System.ServiceModel.Web
-Imports Newtonsoft.Json
-Imports System.ServiceModel.Activation
+﻿Imports Newtonsoft.Json
 
-' MCP HTTP 服务契约 - 使用 Stream 自定义数据交互，完全控制 JSON 序列化和反序列化
-<ServiceContract>
-<AspNetCompatibilityRequirements(RequirementsMode:=AspNetCompatibilityRequirementsMode.Allowed)>
-<ServiceBehavior(InstanceContextMode:=InstanceContextMode.Single, ConcurrencyMode:=ConcurrencyMode.Multiple, Namespace:="")>
+' MCP HTTP 服务 - 纯逻辑类，由 McpService 通过 HttpListener 调用
 Public Class VisualStudioMcpHttpService
     Private ReadOnly _toolManager As VisualStudioToolManager
 
@@ -14,8 +8,7 @@ Public Class VisualStudioMcpHttpService
         _toolManager = toolManager
     End Sub
 
-    ' 处理 MCP 请求 - 使用对象参数配合自定义JSON格式化器
-    <WebInvoke(UriTemplate:="", Method:="POST", BodyStyle:=WebMessageBodyStyle.Bare)>
+    ' 处理 MCP 请求
     Public Async Function ProcessMcpRequest(request As JsonRpcRequest) As Task(Of JsonRpcResponse)
         Try
             ' 直接处理请求，JSON序列化由自定义格式化器处理
@@ -30,7 +23,6 @@ Public Class VisualStudioMcpHttpService
     End Function
 
     ' 获取服务状态 - 简单的健康检查端点
-    <WebGet(UriTemplate:="status")>
     Public Function GetStatus() As Dictionary(Of String, Object)
         Try
             Dim statusInfo = New Dictionary(Of String, Object) From {
