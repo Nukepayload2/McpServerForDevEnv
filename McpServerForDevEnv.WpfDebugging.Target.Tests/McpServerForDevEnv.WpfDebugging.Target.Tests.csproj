@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.Target.Tests</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.Target.Tests</RootNamespace>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <!-- 测试用 C#（被测 Target 是 VB）。VB 编译器在本环境对「WPF 全 ref + 测试 SDK」组合异常退出(MSB6006)，
+         C# 的 csc 稳定，故测试项目用 C# 引用 VB 被测库。 -->
+    <UseWPF>true</UseWPF>
+    <IsPackable>false</IsPackable>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.6.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.6.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\McpServerForDevEnv.WpfDebugging.Target\McpServerForDevEnv.WpfDebugging.Target.vbproj" />
+  </ItemGroup>
+
+</Project>

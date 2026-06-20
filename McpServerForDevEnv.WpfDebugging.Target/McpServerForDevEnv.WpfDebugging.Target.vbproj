@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.Target</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.Target</RootNamespace>
+    <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
+    <!-- 被控端在宿主 WPF 进程内运行，需要 WPF 类型（Application/Dispatcher/DependencyObject） -->
+    <UseWPF>true</UseWPF>
+    <OptionStrict>Off</OptionStrict>
+    <LangVersion>latest</LangVersion>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\McpServerForDevEnv.WpfDebugging.Core\McpServerForDevEnv.WpfDebugging.Core.vbproj" />
+  </ItemGroup>
+
+</Project>
