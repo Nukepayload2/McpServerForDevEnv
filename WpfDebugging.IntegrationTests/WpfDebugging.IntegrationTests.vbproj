@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    WPF 调试端到端集成测试（#24 联调）。
+    启动 SampleHost 进程（被控端）→ 主控 WpfDebugProxy 握手 → 调六 Method 验证链路。
+
+    【副作用与隔离】
+    本项目启进程、起 pipe server、碰 WPF GUI，有副作用且依赖交互桌面。
+    因此本项目【不加入 McpServerForDevEnv.sln】——默认 `dotnet test McpServerForDevEnv.sln`
+    完全不扫到这里，无副作用单测（Core.Tests / Target.Tests / McpServiceNetFx.Tests）保持纯净。
+    手动跑：dotnet test WpfDebugging.IntegrationTests\...vbproj
+    所有测试统一标 [TestCategory("Integration")]，便于按需 filter。
+
+    【桌面依赖】
+    WPF 窗口渲染需要交互桌面 session。在无桌面环境（CI / 服务 session）窗口可能起不来，
+    list_windows 可能无真实窗口、take_screenshot 渲染可能失败。测试做防御：
+    连接/握手超时即 Assert.Inconclusive 跳过并标注「本环境无桌面受限，留真实桌面验证」。
+  -->
+  <PropertyGroup>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.IntegrationTests</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.IntegrationTests</RootNamespace>
+    <TargetFramework>net472</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <OptionStrict>Off</OptionStrict>
+    <LangVersion>latest</LangVersion>
+    <!-- 集成测试串行依赖共享 SampleHost 进程；静默 MSTEST0001 并行化提示即可。 -->
+    <NoWarn>MSTEST0001</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 引主控连接层（WpfDebugProxy / WpfDebugResultReader / WpfDebugProtocol 常量）。 -->
+    <ProjectReference Include="..\McpServiceNetFx.Core\McpServiceNetFx.Core.vbproj" />
+  </ItemGroup>
+
+</Project>

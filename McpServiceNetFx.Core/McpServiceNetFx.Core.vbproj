@@ -17,6 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- 引用共享 IPC 契约库（WpfDebugRequest/Response/Event/MessageFramer/Method 常量）。
+         该库多目标 net472;net8.0-windows，这里取 net472。主控 WPF 调试 pipe client 复用其契约，不改契约。 -->
+    <ProjectReference Include="..\WpfDebugging.Core\WpfDebugging.Core.vbproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="My Project\Resources.Designer.vb">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

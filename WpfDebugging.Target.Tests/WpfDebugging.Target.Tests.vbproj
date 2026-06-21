@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.Target.Tests</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.Target.Tests</RootNamespace>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <OptionStrict>Off</OptionStrict>
+    <LangVersion>latest</LangVersion>
+    <!-- 测试用 VB（被测 Target 也是 VB）。当前环境 vbc 对 VB+UseWPF+TestSDK 组合已恢复稳定。 -->
+    <UseWPF>true</UseWPF>
+    <IsPackable>false</IsPackable>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.6.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.6.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WpfDebugging.Target\WpfDebugging.Target.vbproj" />
+  </ItemGroup>
+
+</Project>

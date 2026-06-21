@@ -7,6 +7,11 @@ Public MustInherit Class VisualStudioToolBase
     Protected _vsTools As VisualStudioTools ' 可以延迟设置
     Protected ReadOnly _permissionHandler As IMcpPermissionHandler
 
+    ' WPF 调试被控端代理（#22 新增 DC 注入扩展点）。
+    ' WPF 调试工具（#23）内部不调 _vsTools，改调 _wpfDebugProxy。
+    ' VS 工具不碰它；WPF 工具连上被控端后用它发请求。
+    Protected _wpfDebugProxy As WpfDebugProxy
+
     ''' <summary>
     ''' 创建工具实例（延迟数据上下文版本）
     ''' </summary>
@@ -24,6 +29,25 @@ Public MustInherit Class VisualStudioToolBase
     Public Sub SetVsTools(vsTools As VisualStudioTools)
         _vsTools = vsTools
     End Sub
+
+    ''' <summary>
+    ''' 设置 WPF 调试被控端代理（DC 注入扩展点，#22）。
+    ''' 在 WPF 调试 tab 连上被控端后由 VisualStudioToolManager.CreateWpfDebugTools 调用，
+    ''' 给所有工具注入当前 proxy。WPF 工具据此判断是否连上被控端。
+    ''' </summary>
+    Public Sub SetWpfDebugProxy(proxy As WpfDebugProxy)
+        _wpfDebugProxy = proxy
+    End Sub
+
+    ''' <summary>
+    ''' WPF 调试被控端是否已连接（proxy 非空且处于连接状态）。
+    ''' WPF 调试工具执行前用它判断，未连接时报"未连接被控端"风格错误。
+    ''' </summary>
+    Protected ReadOnly Property IsWpfDebugConnected As Boolean
+        Get
+            Return _wpfDebugProxy IsNot Nothing AndAlso _wpfDebugProxy.IsConnected
+        End Get
+    End Property
 
     ''' <summary>
     ''' 检查数据上下文是否已设置

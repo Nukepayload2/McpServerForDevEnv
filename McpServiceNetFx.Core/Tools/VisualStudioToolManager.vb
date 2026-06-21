@@ -93,6 +93,18 @@ Public Class VisualStudioToolManager
             RegisterTool(New FindFilesByNameTool(_logger, _permissionHandler))
             RegisterTool(New FindFilesByTextContentTool(_logger, _permissionHandler))
 
+            ' WPF 调试工具（#23，常驻注册）
+            ' 设计见 rough-plan 第九节第 4 点：不追求「连上才出现」，六个工具始终在工具列表里；
+            ' 没连被控端时调用按现有 VS 工具「未初始化」风格报「未连接被控端」（WpfDebugToolBase 主链路处理）。
+            ' 这里只 new + 注册，不注入 proxy——proxy 在 WPF 调试 tab 连上后由
+            ' CreateWpfDebugTools 经 SetWpfDebugProxy 注入；未注入时 IsWpfDebugConnected 为 False。
+            RegisterTool(New ListWindowsTool(_logger, _permissionHandler))
+            RegisterTool(New TakeSnapshotTool(_logger, _permissionHandler))
+            RegisterTool(New ClickTool(_logger, _permissionHandler))
+            RegisterTool(New FillTool(_logger, _permissionHandler))
+            RegisterTool(New EvaluateTool(_logger, _permissionHandler))
+            RegisterTool(New TakeScreenshotTool(_logger, _permissionHandler))
+
             _logger?.LogMcpRequest("工具管理器", "工具预注册完成", $"共预注册 {_tools.Count} 个工具，等待数据上下文")
 
         Catch ex As Exception
@@ -200,6 +212,42 @@ Public Class VisualStudioToolManager
         Else
             _logger?.LogMcpRequest("工具注册", "失败", $"工具 {tool.ToolName} 已存在")
         End If
+    End Sub
+
+    ''' <summary>
+    ''' 创建 WPF 调试数据上下文并注入给所有已注册工具（DC 注入扩展点，#22）。
+    ''' 照搬 CreateVsTools 的"注入 DC 给所有工具"模式：WPF 调试 tab 连上被控端后调用，
+    ''' 把当前 proxy 经 SetWpfDebugProxy 设置给每个工具。
+    ''' <para>
+    ''' 注意：WPF 调试工具常驻注册（rough-plan 第九节第 4 点），六个具体工具
+    ''' （list_windows/take_snapshot/click/fill/evaluate/take_screenshot）已在
+    ''' <see cref="RegisterAllToolsWithoutContext"/> 里随管理器构造时注册。本方法不 RegisterTool，
+    ''' 只负责把 proxy 注入给所有已注册工具——六工具据此判断 IsWpfDebugConnected，
+    ''' 调用时若未注入（未连接被控端）由 WpfDebugToolBase 主链路报「未连接被控端」。
+    ''' </para>
+    ''' </summary>
+    ''' <param name="proxy">当前 WPF 调试被控端代理（连接成功后传入）。</param>
+    ''' <param name="dispatcher">UI 线程调度器（与 CreateVsTools 对齐，#23 工具执行时按需用）。</param>
+    Public Sub CreateWpfDebugTools(proxy As WpfDebugProxy, dispatcher As IDispatcher)
+        If proxy Is Nothing Then Throw New ArgumentNullException(NameOf(proxy))
+
+        For Each tool In _tools.Values
+            tool.SetWpfDebugProxy(proxy)
+        Next
+
+        _logger?.LogMcpRequest("工具管理器", "WPF 调试 DC 注入", $"已为 {_tools.Count} 个工具注入 WPF 调试 proxy")
+    End Sub
+
+    ''' <summary>
+    ''' 清除所有工具的 WPF 调试 proxy 注入（断开被控端时调用）。
+    ''' 之后 IsWpfDebugConnected 判断回到 False，WPF 工具调用报"未连接被控端"。
+    ''' </summary>
+    Public Sub ClearWpfDebugProxy()
+        For Each tool In _tools.Values
+            tool.SetWpfDebugProxy(Nothing)
+        Next
+
+        _logger?.LogMcpRequest("工具管理器", "WPF 调试 DC 清除", "已清除所有工具的 WPF 调试 proxy")
     End Sub
 
     ''' <summary>

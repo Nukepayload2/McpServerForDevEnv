@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    WPF 调试被控端示例宿主（#24 端到端联调用）。
+    启动时调 WpfDebugHost.Start 起固定名 pipe server（mcpserverfordevenv.wpfdebug.v1），
+    主窗口放一批测试控件供主控 list_windows/take_snapshot/click/fill/evaluate/take_screenshot 操作，
+    退出时 WpfDebugHost.Stop 清理。
+    跟随 Target 多目标（net472 + net8.0-windows），保证与被控端运行时一致。
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.SampleHost</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.SampleHost</RootNamespace>
+    <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <OptionStrict>Off</OptionStrict>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WpfDebugging.Target\WpfDebugging.Target.vbproj" />
+  </ItemGroup>
+
+</Project>

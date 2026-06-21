@@ -506,13 +506,82 @@ CheckFilePermission(filePath, accessType) → Boolean
 ```
 实现: McpServiceNetFx.Core/Mcp/VisualStudioMcpTools.vb
 基类: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb
+WPF 调试工具中间基类: McpServiceNetFx.Core/Tools/WpfDebug/WpfDebugToolBase.vb（#23，继承 VisualStudioToolBase，内部调 _wpfDebugProxy 而非 _vsTools）
 管理: McpServiceNetFx.Core/Tools/VisualStudioToolManager.vb
 ```
 
 **工具注册方式**:
-- 每个工具继承 `VisualStudioToolBase`
-- 在 `VisualStudioTools.vb` 中注册
+- VS 工具继承 `VisualStudioToolBase`，WPF 调试工具继承 `WpfDebugToolBase`（中间基类，#23）
+- 在 `VisualStudioToolManager.RegisterAllToolsWithoutContext` 中常驻注册（含 VS 工具 + WPF 调试六工具）
 - 工具管理器负责调用和权限验证
+- WPF 调试工具的 proxy 注入由 `CreateWpfDebugTools` 在连上被控端后调用（DC 注入）
+
+### 17. WPF 调试连接层（主控侧，#22）
+
+**功能描述**: 主控连接被控 WPF 进程的 named pipe 通路层。只搭「通路」——pipe client + 连接管理 + 调试 tab + 工具 DC 注入扩展点。具体六个 WPF 调试工具（list_windows/take_snapshot/click/fill/evaluate/take_screenshot）的实现见 #23（第 18 条）。
+
+**源码范围**:
+```
+pipe client（被控端代理）: McpServiceNetFx.Core/WpfDebug/WpfDebugProxy.vb
+OkResult 嵌套解析纯函数: McpServiceNetFx.Core/WpfDebug/WpfDebugResultReader.vb
+连接握手快照: McpServiceNetFx.Core/WpfDebug/WpfDebugConnection.vb
+连接监控（判活/失效）: McpServiceNetFx/Helpers/WpfDebugConnectionMonitor.vb
+调试 tab partial: McpServiceNetFx/Views/MainWindow.WpfDebug.vb
+调试 tab UI: McpServiceNetFx/Views/MainWindow.xaml (WPF Debug TabItem)
+工具基类 DC 注入扩展点: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb (_wpfDebugProxy 字段 + SetWpfDebugProxy + IsWpfDebugConnected)
+工具管理器 DC 注入: McpServiceNetFx.Core/Tools/VisualStudioToolManager.vb (CreateWpfDebugTools / ClearWpfDebugProxy)
+共享 IPC 契约: McpServerForDevEnv.WpfDebugging.Core (WpfDebugRequest/Response/Event/MessageFramer/WpfDebugProtocol)
+测试: McpServiceNetFx.Tests/WpfDebugResultReaderTests.vb, WpfDebugHandshakeTests.vb
+```
+
+**关键约定（OkResult 嵌套）**:
+被控端 `WpfDebugPipeServer.OkResult` 把每个方法返回值统一包成 `Result = {"result": <JToken>}`，即 `WpfDebugResponse.Result` JObject 内部又有一层 "result" 键。主控取业务返回值必须按 `response.Result("result")` 嵌套取，由 `WpfDebugResultReader.GetPayload` 封装。
+
+**DC 注入扩展点**:
+- `VisualStudioToolBase.SetWpfDebugProxy(proxy)` / `IsWpfDebugConnected` 属性
+- `VisualStudioToolManager.CreateWpfDebugTools(proxy, dispatcher)` 连上后注入，`ClearWpfDebugProxy()` 断开时清除
+- WPF 工具常驻注册（不追求连上才出现），未连接时调用报"未连接被控端"风格错误
+
+### 18. WPF 调试 MVP 六工具（主控侧，#23）
+
+**功能描述**: 把 #22 的连接通路（WpfDebugProxy）接到具体 MCP 工具上。实现 WpfDebugToolBase 中间基类 + 六个 MVP 工具（list_windows/take_snapshot/click/fill/evaluate/take_screenshot），全部内部调 _wpfDebugProxy（不调 _vsTools）。主控侧实现的最后一块，做完 #24 即可端到端联调。
+
+**源码范围**:
+```
+WPF 工具中间基类: McpServiceNetFx.Core/Tools/WpfDebug/WpfDebugToolBase.vb
+  - 统一持有 _wpfDebugProxy / IsWpfDebugConnected（继承自 VisualStudioToolBase）
+  - 主链路: 未连接检查 → 权限 → BuildParams → SendRequest → GetPayload → FormatResult
+  - 抽 Method/BuildParams/FormatResult 三个 MustOverride，具体工具只关心参数构造和返回值格式化
+list_windows: McpServiceNetFx.Core/Tools/WpfDebug/ListWindowsTool.vb (无参，返窗口数组)
+take_snapshot: McpServiceNetFx.Core/Tools/WpfDebug/TakeSnapshotTool.vb (windowId?/maxDepth?/interestingOnly?，返 text+snapshot)
+  快照文本渲染纯函数: McpServiceNetFx.Core/Tools/WpfDebug/TakeSnapshotTool.vb 内 SnapshotFormatter 类
+click: McpServiceNetFx.Core/Tools/WpfDebug/ClickTool.vb (uid 必填)
+fill: McpServiceNetFx.Core/Tools/WpfDebug/FillTool.vb (uid+value 必填)
+evaluate: McpServiceNetFx.Core/Tools/WpfDebug/EvaluateTool.vb (script 必填 + timeoutMs?，权限 Ask 区别于其它 Allow)
+take_screenshot: McpServiceNetFx.Core/Tools/WpfDebug/TakeScreenshotTool.vb (windowId?/uid?，返 ScreenshotResult)
+工具注册: McpServiceNetFx.Core/Tools/VisualStudioToolManager.vb (RegisterAllToolsWithoutContext 里常驻注册六工具)
+共享契约: McpServerForDevEnv.WpfDebugging.Core (IWpfDebugTarget 方法签名 + WpfDebugMethods 常量 + SnapshotNode/WindowInfo/ScreenshotResult 模型)
+测试: McpServiceNetFx.Tests/WpfDebugToolsTests.vb (工具定义/参数构造/响应格式化/快照渲染的纯逻辑，无副作用)
+```
+
+**MCP 工具名 + Method 常量对照**:
+| 工具名 | Method 常量 | 参数 | 返回值 |
+|--------|------------|------|--------|
+| `list_windows` | `WpfDebugMethods.ListWindows` | 无 | WindowInfo 数组 |
+| `take_snapshot` | `WpfDebugMethods.TakeSnapshot` | windowId?/maxDepth?/interestingOnly? | { text, snapshot } |
+| `click` | `WpfDebugMethods.Click` | uid | { success, message } |
+| `fill` | `WpfDebugMethods.Fill` | uid, value | { success, message } |
+| `evaluate` | `WpfDebugMethods.Evaluate` | script, timeoutMs? | { result } |
+| `take_screenshot` | `WpfDebugMethods.TakeScreenshot` | windowId?, uid? | ScreenshotResult |
+
+**权限配置**: list_windows/take_snapshot/click/fill/take_screenshot 为 Allow；evaluate 为 Ask（脚本可执行任意代码，需用户确认）。
+
+**主链路（WpfDebugToolBase.ExecuteInternalAsync）**:
+未连接检查（IsWpfDebugConnected false → McpException "未连接被控端"）→ CheckPermission → BuildParams（具体工具做参数校验）→ _wpfDebugProxy.SendRequestAsync(Method, params, cts)（带 30s 超时）→ WpfDebugResultReader.GetPayload 解嵌套 → FormatResult 格式化。被控端报错（WpfDebugRemoteException）转 McpException InternalError。
+
+**未连接处理**: 工具常驻注册（在 RegisterAllToolsWithoutContext 里随管理器构造时注册），proxy 未注入时 IsWpfDebugConnected 为 False，调用时报「未连接被控端，请先在 WPF 调试 tab 连接」（McpErrorCode.InternalError，沿用现有 VS 工具「未初始化」风格）。不实现 listChanged 推送，不动现有 listChanged=False。
+
+**未覆盖、留 #24 端到端联调**: ExecuteInternalAsync 主链路（连真实 proxy + 被控端，有副作用），单测只覆盖 BuildParams/FormatResult/SnapshotFormatter 等纯逻辑。
 
 ## UI 功能
 

@@ -344,6 +344,47 @@
                 </Grid>
             </TabItem>
             
+            <!-- WPF 调试 tab：连接被控 WPF 进程（#22）。极简 UI：连接/断开 + 当前连接状态。 -->
+            <TabItem Header="WPF Debug">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
+                        <Button x:Name="BtnWpfDebugConnect" Content="连接" Width="80" Margin="0,0,10,0"/>
+                        <Button x:Name="BtnWpfDebugDisconnect" Content="断开" Width="80" Margin="0,0,10,0" IsEnabled="False"/>
+                    </StackPanel>
+
+                    <GroupBox Grid.Row="1" Header="被控端连接">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Row="0" Grid.Column="0" Content="状态" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtWpfDebugStatus" Grid.Row="0" Grid.Column="1"
+                                       Text="未连接" VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+                            <Label Grid.Row="1" Grid.Column="0" Content="PID" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                            <TextBlock x:Name="TxtWpfDebugPid" Grid.Row="1" Grid.Column="1"
+                                       Text="-" VerticalAlignment="Center" Margin="10,8,0,0"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" Content="主窗口" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                            <TextBlock x:Name="TxtWpfDebugTitle" Grid.Row="2" Grid.Column="1"
+                                       Text="-" VerticalAlignment="Center" Margin="10,8,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+
             <TabItem Header="{x:Static res:Resources.TabAbout}">
                 <Grid>
                     <Grid.RowDefinitions>

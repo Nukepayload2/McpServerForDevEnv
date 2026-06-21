@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.Core.Tests</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.Core.Tests</RootNamespace>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <OptionStrict>Off</OptionStrict>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WpfDebugging.Core\WpfDebugging.Core.vbproj" />
+  </ItemGroup>
+
+</Project>

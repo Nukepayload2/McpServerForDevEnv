@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>McpServerForDevEnv.WpfDebugging.Target</AssemblyName>
+    <RootNamespace>McpServerForDevEnv.WpfDebugging.Target</RootNamespace>
+    <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
+    <!-- 被控端在宿主 WPF 进程内运行，需要 WPF 类型（Application/Dispatcher/DependencyObject） -->
+    <UseWPF>true</UseWPF>
+    <OptionStrict>Off</OptionStrict>
+    <LangVersion>latest</LangVersion>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <!--
+      Roslyn VB 脚本编译（#21 evaluate）。
+      体积大（几十 MB），首次 evaluate 编译有延迟，故在 ScriptEngine 里做懒加载（Lazy(Of T)）：
+      不调 evaluate 的被控端进程不背启动成本（程序集按需加载，非静态字段引用）。
+      版本 4.8.0 同时支持 net472 与 net8.0，双目标兼容。
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="4.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WpfDebugging.Core\WpfDebugging.Core.vbproj" />
+  </ItemGroup>
+
+</Project>

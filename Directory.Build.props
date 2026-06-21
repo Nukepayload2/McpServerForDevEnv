@@ -1,0 +1,14 @@
+<Project>
+
+  <!--
+    提供 .NET Framework 引用程序集，使 net472 目标在未安装 .NET Framework Developer Pack / Targeting Pack
+    的机器上（本机 GAC 无 v4.7.2 引用程序集）也能编译，否则报 MSB3644。
+    仅当目标框架为 .NET Framework 时需要；net8.0-windows 目标 TargetFrameworkIdentifier=.NETCoreApp，
+    不命中条件，自动忽略。
+    PrivateAssets=all：该包只是编译期引用程序集来源，不随产物流向消费者。
+  -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
