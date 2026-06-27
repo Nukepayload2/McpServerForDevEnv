@@ -97,10 +97,8 @@ Public Class FindFilesByTextContentTool
     ''' </summary>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "findWhat", "lookIn")
 
-            ' 获取参数
             Dim findWhat = CStr(arguments("findWhat"))
             Dim lookInObj = arguments("lookIn")
             Dim matchModeStr = GetOptionalArgument(arguments, "matchMode", "plainText")
@@ -118,7 +116,6 @@ Public Class FindFilesByTextContentTool
                 }
             End If
 
-            ' 解析枚举
             Dim matchMode As TextMatchMode
             If Not [Enum].TryParse(matchModeStr, True, matchMode) Then
                 matchMode = TextMatchMode.plainText
@@ -220,7 +217,6 @@ Public Class FindFilesByTextContentTool
             Return {}
         End If
 
-        ' 处理数组类型
         If TypeOf lookInObj Is Object() Then
             Return DirectCast(lookInObj, Object()).Select(Function(o) CStr(o)).ToArray()
         ElseIf TypeOf lookInObj Is String() Then

@@ -43,12 +43,10 @@ Public Class VisualStudioToolManager
                 Return
             End If
 
-            ' 创建或重新创建 Visual Studio 工具实例
             _vsTools = New VisualStudioTools(dte2, dispatcher, _logger)
 
             ' 为所有已注册的工具设置数据上下文
             For Each tool In _tools.Values
-                ' 设置工具的数据上下文
                 tool.SetVsTools(_vsTools)
             Next
 
@@ -151,10 +149,9 @@ Public Class VisualStudioToolManager
     ''' <param name="arguments">工具参数</param>
     ''' <returns>执行结果</returns>
     Public Async Function ExecuteToolAsync(toolName As String, arguments As Dictionary(Of String, Object)) As Task(Of Object)
-        If Not _isInitialized Then
-            Throw New McpException("工具管理器未初始化，无法执行工具", McpErrorCode.InternalError)
-        End If
-
+        ' 不在此处检查 _isInitialized：服务支持无 VS 实例启动（_isInitialized 仅表示 VS 数据上下文已注入，
+        ' 工具本身在构造时已注册）。未就绪由各工具自行容错——VS 工具查 HasDataContext、WPF 工具查
+        ' IsWpfDebugConnected，返回准确简短的错误（如"未选择 VS 实例"/"未连接 WPF 被控端"）。
         If Not _tools.ContainsKey(toolName) Then
             Throw New McpException($"未找到工具: {toolName}", McpErrorCode.InvalidParams)
         End If

@@ -38,35 +38,28 @@ Public Class VisualStudioTools
                     Throw New Exception("没有打开的解决方案")
                 End If
 
-                ' 获取输出窗口
                 Dim outputWindow As OutputWindow = _dte2.ToolWindows.OutputWindow
                 Dim buildPane As OutputWindowPane = Nothing
 
                 Try
-                    ' 尝试获取现有的 Build 窗格
                     buildPane = outputWindow.OutputWindowPanes.Item("Build")
-                    buildPane.Clear() ' 清除之前的输出
+                    buildPane.Clear()
                 Catch
-                    ' 如果不存在则创建新的 Build 窗格
                     buildPane = outputWindow.OutputWindowPanes.Add("Build")
                 End Try
 
-                ' 设置构建配置
                 Dim solutionBuild2 As EnvDTE80.SolutionBuild2 = CType(_dte2.Solution.SolutionBuild, EnvDTE80.SolutionBuild2)
                 solutionBuild2.SolutionConfigurations.Item(configuration).Activate()
 
                 ' 执行构建（不等待完成）
                 solutionBuild2.Build(False)
 
-                ' 轮询构建状态
                 Do While solutionBuild2.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
                     Await Task.Delay(100)
                 Loop
 
-                ' 获取构建结果信息
                 lastBuildInfo = solutionBuild2.LastBuildInfo
 
-                ' 捕获输出
                 If buildPane.TextDocument IsNot Nothing Then
                     Dim startPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
                     Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
@@ -74,7 +67,6 @@ Public Class VisualStudioTools
                 End If
             End Function)
 
-            ' 设置构建输出和结果信息
             result.BuildOutput = buildOutput
             result.BuildTime = Date.Now - startTime
 
@@ -129,35 +121,29 @@ Public Class VisualStudioTools
                     Throw New Exception($"找不到项目: {projectName}")
                 End If
 
-                ' 获取输出窗口
                 Dim outputWindow As OutputWindow = _dte2.ToolWindows.OutputWindow
                 Dim buildPane As OutputWindowPane = Nothing
 
                 Try
-                    ' 尝试获取现有的 Build 窗格
                     buildPane = outputWindow.OutputWindowPanes.Item("Build")
-                    buildPane.Clear() ' 清除之前的输出
+                    buildPane.Clear()
                 Catch
                     ' 如果不存在则创建新的 Build 窗格
                     buildPane = outputWindow.OutputWindowPanes.Add("Build")
                 End Try
 
-                ' 设置构建配置
                 Dim solutionBuild2 As EnvDTE80.SolutionBuild2 = CType(_dte2.Solution.SolutionBuild, EnvDTE80.SolutionBuild2)
                 solutionBuild2.SolutionConfigurations.Item(configuration).Activate()
 
                 ' 构建特定项目（不等待完成）
                 solutionBuild2.BuildProject(configuration, targetProject.UniqueName, False)
 
-                ' 轮询构建状态
                 Do While solutionBuild2.BuildState = EnvDTE.vsBuildState.vsBuildStateInProgress
                     Await Task.Delay(100)
                 Loop
 
-                ' 获取构建结果信息
                 lastBuildInfo = solutionBuild2.LastBuildInfo
 
-                ' 捕获输出
                 If buildPane.TextDocument IsNot Nothing Then
                     Dim startPoint = buildPane.TextDocument.StartPoint.CreateEditPoint()
                     Dim endPoint As TextPoint = buildPane.TextDocument.EndPoint
@@ -165,7 +151,6 @@ Public Class VisualStudioTools
                 End If
             End Function)
 
-            ' 设置构建输出和结果信息
             result.BuildOutput = buildOutput
             result.BuildTime = Date.Now - startTime
 
@@ -237,11 +222,9 @@ Public Class VisualStudioTools
                 ' 如果 OutputWindow 没有输出，回退到 ErrorList（旧的备用策略）
                 If String.IsNullOrEmpty(buildOutput) Then
                     Try
-                        ' 获取错误列表工具窗口
                         Dim errorList = _dte2.ToolWindows.ErrorList
 
                         If errorList IsNot Nothing Then
-                            ' 获取错误项集合
                             Dim errorItems = errorList.ErrorItems
 
                             If errorItems IsNot Nothing Then
@@ -257,7 +240,6 @@ Public Class VisualStudioTools
                                             Dim errorLevel = errorItem.ErrorLevel
                                             Dim projectName As String = If(errorItem.Project, "")
 
-                                            ' 转换错误级别为字符串
                                             Dim severity As String
                                             Select Case errorLevel
                                                 Case vsBuildErrorLevel.vsBuildErrorLevelLow
@@ -270,12 +252,10 @@ Public Class VisualStudioTools
                                                     severity = "Unknown"
                                             End Select
 
-                                            ' 应用过滤器
                                             If severityFilter <> "All" AndAlso severity <> severityFilter Then
                                                 Continue For
                                             End If
 
-                                            ' 创建 CompilationError 对象
                                             Dim compilationError As New CompilationError With {
                                                 .Message = description,
                                                 .File = fileName,
@@ -352,7 +332,6 @@ Public Class VisualStudioTools
 
             response.Projects = projectsList.ToArray()
 
-            ' 添加当前构建配置信息
             If _dte2.Solution IsNot Nothing AndAlso _dte2.Solution.SolutionBuild IsNot Nothing Then
                 Dim activeConfig = _dte2.Solution.SolutionBuild.ActiveConfiguration
                 If activeConfig IsNot Nothing Then
@@ -378,7 +357,6 @@ Public Class VisualStudioTools
         Await _dispatcher.InvokeAsync(
         Async Function()
             Try
-                ' 检查是否有活动文档
                 If _dte2.ActiveDocument IsNot Nothing Then
                     documentPath = _dte2.ActiveDocument.FullName
                 End If
@@ -387,7 +365,6 @@ Public Class VisualStudioTools
             End Try
         End Function)
 
-        ' 创建响应对象
         Dim response As New ActiveDocumentResponse With {
             .HasActiveDocument = Not String.IsNullOrEmpty(documentPath)
         }
@@ -409,7 +386,6 @@ Public Class VisualStudioTools
         Await _dispatcher.InvokeAsync(
         Async Function()
             Try
-                ' 遍历所有打开的文档
                 For Each document As EnvDTE.Document In _dte2.Documents
                     If document IsNot Nothing Then
                         Dim docInfo As New DocumentInfo With {
@@ -437,7 +413,6 @@ Public Class VisualStudioTools
             End Try
         End Function)
 
-        ' 创建响应对象
         Dim response As New OpenDocumentsResponse With {
             .Documents = documentsList.ToArray(),
             .TotalCount = documentsList.Count
@@ -461,7 +436,6 @@ Public Class VisualStudioTools
                 ' 在UI线程上执行DTE操作
                 Await _dispatcher.InvokeAsync(
                 Async Function()
-                    ' 查找指定项目
                     Dim targetProject As EnvDTE.Project = Nothing
                     For Each project As EnvDTE.Project In _dte2.Solution.Projects
                         If String.Equals(project.Name, projectName, StringComparison.OrdinalIgnoreCase) Then
@@ -503,7 +477,6 @@ Public Class VisualStudioTools
         If project Is Nothing Then Return
 
         Try
-            ' 处理项目中的所有项目项
             For Each item As EnvDTE.ProjectItem In project.ProjectItems
                 ProcessProjectItemForCustomTools(item, errors, processedFiles)
             Next
@@ -526,7 +499,6 @@ Public Class VisualStudioTools
             Else
                 Dim customToolValue = CStr(item.Properties.Item("CustomTool").Value)
                 If Not String.IsNullOrEmpty(customToolValue) Then
-                    ' 运行自定义工具
                     CType(item.Object, VSProjectItem).RunCustomTool()
                     processedFiles.Add(item.Name)
                     Debug.WriteLine($"已为 {item.Name} 运行自定义工具")

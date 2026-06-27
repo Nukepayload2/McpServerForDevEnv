@@ -112,13 +112,10 @@ Public Class ReplaceLinesTool
     ''' <returns>执行结果</returns>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "filePath", "hash", "start", "length", "content")
 
-            ' 获取参数
             Dim filePath = CStr(arguments("filePath"))
 
-            ' 检查文件权限
             If Not CheckFilePermission(filePath, FileAccessType.ReadWrite) Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -129,12 +126,10 @@ Public Class ReplaceLinesTool
             Dim content = CStr(arguments("content"))
             Dim encoding = GetOptionalArgument(arguments, "encoding", "UTF-8")
 
-            ' 编码验证（目前只支持UTF-8）
             If Not String.Equals(encoding, "UTF-8", StringComparison.OrdinalIgnoreCase) Then
                 Throw New McpException($"当前仅支持UTF-8编码，请求的编码: {encoding}", McpErrorCode.InvalidParams)
             End If
 
-            ' 参数验证
             If start < _base Then
                 Throw New McpException($"起始行号不能小于{_base}", McpErrorCode.InvalidParams)
             End If
@@ -145,26 +140,21 @@ Public Class ReplaceLinesTool
 
             LogOperation("替换文件行", "开始", $"文件: {filePath}, 起始行: {start}, 行号基数: {_base}, 行数: {length}")
 
-            ' 调用文件操作辅助类
             Dim replaceResult = FileOperationHelper.ReplaceLinesInFile(filePath, start - _base, length, content, expectedHash)
 
-            ' 计算新内容的行数
             Dim newLinesCount = 0
             If Not String.IsNullOrEmpty(content) Then
                 newLinesCount = content.Split({vbCrLf, vbLf}, StringSplitOptions.None).Length
             End If
 
-            ' 获取文件总行数
             Dim totalLines As Integer = 0
             If System.IO.File.Exists(filePath) AndAlso replaceResult.Success Then
                 Try
                     totalLines = System.IO.File.ReadAllLines(filePath, System.Text.Encoding.UTF8).Length
                 Catch
-                    ' 如果无法读取行数，保持为0
                 End Try
             End If
 
-            ' 转换为工具结果
             Dim toolResult As New ReplaceLinesResult With {
                 .Success = replaceResult.Success,
                 .LinesReplaced = replaceResult.ReplacementsCount,

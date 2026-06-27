@@ -44,7 +44,6 @@ Public Class BuildResult
     Public Property BuildOutput As String
 End Class
 
-' 构建结果强类型
 Public Class BuildResultResponse
     <JsonProperty("success")>
     Public Property Success As Boolean
@@ -68,7 +67,6 @@ Public Class BuildResultResponse
     Public Property BuildOutput As String
 End Class
 
-' 解决方案信息强类型
 Public Class SolutionInfoResponse
     <JsonProperty("fullName")>
     Public Property FullName As String
@@ -108,7 +106,6 @@ Public Class ConfigurationInfo
     Public Property PlatformName As String
 End Class
 
-' 错误列表强类型
 Public Class ErrorListResponse
     <JsonProperty("errors", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Errors As CompilationError()
@@ -120,7 +117,6 @@ Public Class ErrorListResponse
     Public Property TotalCount As Integer
 End Class
 
-' 活动文档响应强类型
 Public Class ActiveDocumentResponse
     <JsonProperty("path", DefaultValueHandling:=DefaultValueHandling.Ignore)>
     Public Property Path As String
@@ -129,7 +125,6 @@ Public Class ActiveDocumentResponse
     Public Property HasActiveDocument As Boolean
 End Class
 
-' 打开文档响应强类型
 Public Class OpenDocumentsResponse
     <JsonProperty("documents")>
     Public Property Documents As DocumentInfo()
@@ -138,7 +133,6 @@ Public Class OpenDocumentsResponse
     Public Property TotalCount As Integer
 End Class
 
-' 文档信息强类型
 Public Class DocumentInfo
     <JsonProperty("path")>
     Public Property Path As String

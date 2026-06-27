@@ -24,7 +24,6 @@ Namespace Helpers
             Try
                 Dim settingsStore = _settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
 
-                ' 创建集合（如果不存在）
                 If Not settingsStore.CollectionExists(PermissionsCollectionName) Then
                     settingsStore.CreateCollection(PermissionsCollectionName)
                 End If
@@ -49,19 +48,15 @@ Namespace Helpers
                 Dim settingsStore = _settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
                 Dim permissions As New Dictionary(Of String, PermissionLevel)()
 
-                ' 检查集合是否存在
                 If Not settingsStore.CollectionExists(PermissionsCollectionName) Then
-                    Return permissions ' 返回空字典
+                    Return permissions
                 End If
 
-                ' 获取所有属性名（工具名称）
                 Dim propertyNames = settingsStore.GetPropertyNames(PermissionsCollectionName)
 
-                ' 解析权限项
                 For Each featureName In propertyNames
                     Dim permissionValue = settingsStore.GetString(PermissionsCollectionName, featureName)
 
-                    ' 解析权限级别
                     Dim parsedPermission As PermissionLevel
                     If [Enum].TryParse(Of PermissionLevel)(permissionValue, parsedPermission) Then
                         permissions(featureName) = parsedPermission
@@ -84,7 +79,6 @@ Namespace Helpers
             Try
                 Dim settingsStore = _settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
 
-                ' 创建集合（如果不存在）
                 If Not settingsStore.CollectionExists(ConfigurationCollectionName) Then
                     settingsStore.CreateCollection(ConfigurationCollectionName)
                 End If
@@ -105,17 +99,15 @@ Namespace Helpers
             Try
                 Dim settingsStore = _settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings)
 
-                ' 检查集合是否存在
                 If Not settingsStore.CollectionExists(ConfigurationCollectionName) Then
-                    Return New ServerConfiguration() ' 返回默认配置
+                    Return New ServerConfiguration()
                 End If
 
-                ' 尝试获取端口号
                 If settingsStore.PropertyExists(ConfigurationCollectionName, "Port") Then
                     Dim port = settingsStore.GetInt32(ConfigurationCollectionName, "Port")
                     Return New ServerConfiguration() With {.Port = port}
                 Else
-                    Return New ServerConfiguration() ' 返回默认配置
+                    Return New ServerConfiguration()
                 End If
 
             Catch ex As Exception

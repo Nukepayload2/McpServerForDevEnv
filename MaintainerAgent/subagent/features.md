@@ -522,15 +522,16 @@ WPF 调试工具中间基类: McpServiceNetFx.Core/Tools/WpfDebug/WpfDebugToolBa
 
 **源码范围**:
 ```
-pipe client（被控端代理）: McpServiceNetFx.Core/WpfDebug/WpfDebugProxy.vb
-OkResult 嵌套解析纯函数: McpServiceNetFx.Core/WpfDebug/WpfDebugResultReader.vb
-连接握手快照: McpServiceNetFx.Core/WpfDebug/WpfDebugConnection.vb
+pipe client（被控端代理）: McpServiceNetFx.Core/WpfDebug/WpfDebugProxy.vb（New(targetPid)/New(pipeName)/New() 三构造；ConnectAsync 无参时枚举连第一个候选）
+OkResult 嵌套解析 + 握手解析: McpServiceNetFx.Core/WpfDebug/WpfDebugResultReader.vb（ParseHandshake 解析 processPath）
+连接握手快照（pid/title/version/processPath）: McpServiceNetFx.Core/WpfDebug/WpfDebugConnection.vb
+被控端发现（枚举 pipe 解析 PID，不连 pipe）: McpServiceNetFx.Core/WpfDebug/WpfDebugTargetEnumerator.vb（DiscoverCandidates + WpfDebugTargetInfo POCO）
 连接监控（判活/失效）: McpServiceNetFx/Helpers/WpfDebugConnectionMonitor.vb
 调试 tab partial: McpServiceNetFx/Views/MainWindow.WpfDebug.vb
 调试 tab UI: McpServiceNetFx/Views/MainWindow.xaml (WPF Debug TabItem)
 工具基类 DC 注入扩展点: McpServiceNetFx.Core/Tools/VisualStudioToolBase.vb (_wpfDebugProxy 字段 + SetWpfDebugProxy + IsWpfDebugConnected)
 工具管理器 DC 注入: McpServiceNetFx.Core/Tools/VisualStudioToolManager.vb (CreateWpfDebugTools / ClearWpfDebugProxy)
-共享 IPC 契约: McpServerForDevEnv.WpfDebugging.Core (WpfDebugRequest/Response/Event/MessageFramer/WpfDebugProtocol)
+共享 IPC 契约: McpServerForDevEnv.WpfDebugging.Core (WpfDebugRequest/Response/Event/MessageFramer/WpfDebugProtocol[PipeNamePrefix/GetPipeNameForPid])
 测试: McpServiceNetFx.Tests/WpfDebugResultReaderTests.vb, WpfDebugHandshakeTests.vb
 ```
 

@@ -10,7 +10,6 @@ Partial Public Class MainWindow
             Dim loadedPermissions = PersistenceModule.LoadPermissions()
             _permissionItems.Clear()
 
-            ' 添加已加载的权限
             For Each permission In loadedPermissions
                 _permissionItems.Add(New PermissionItem With {
                     .FeatureName = permission.FeatureName,
@@ -19,7 +18,6 @@ Partial Public Class MainWindow
                 })
             Next
 
-            ' 同步工具管理器中的权限（如果工具管理器已初始化）
             SyncPermissionsWithToolManager()
 
             DgPermissions.ItemsSource = _permissionItems
@@ -35,26 +33,22 @@ Partial Public Class MainWindow
     ''' </summary>
     Private Sub SyncPermissionsWithToolManager()
         Try
-            ' 获取工具管理器实例（如果已创建）
             Dim toolManager = GetCurrentToolManager()
             If toolManager Is Nothing Then
                 LogOperation(My.Resources.LogPermissionSync, My.Resources.LogSkipped, My.Resources.LogToolManagerNotInitialized)
                 Return
             End If
 
-            ' 获取工具管理器中的默认权限配置
             Dim defaultPermissions = toolManager.GetDefaultPermissions()
             If defaultPermissions Is Nothing OrElse defaultPermissions.Count = 0 Then
                 LogOperation(My.Resources.LogPermissionSync, My.Resources.LogSkipped, My.Resources.LogNoPermissionConfig)
                 Return
             End If
 
-            ' 同步权限：添加缺失的工具权限项
             Dim addedCount = 0
             For Each defaultPermission In defaultPermissions
                 Dim existingPermission = _permissionItems.FirstOrDefault(Function(p) p.FeatureName = defaultPermission.FeatureName)
                 If existingPermission Is Nothing Then
-                    ' 添加新工具的权限项
                     _permissionItems.Add(New PermissionItem With {
                         .FeatureName = defaultPermission.FeatureName,
                         .Description = defaultPermission.Description,
@@ -68,13 +62,6 @@ Partial Public Class MainWindow
                     existingPermission.IsFileTool = defaultPermission.IsFileTool
                 End If
             Next
-
-            ' 清理已不存在的工具的权限项（可选）
-            ' Dim removedPermissions = _permissionItems.Where(Function(p)
-            '     Not defaultPermissions.Any(Function(dp) dp.FeatureName = p.FeatureName)).ToList()
-            ' For Each removed In removedPermissions
-            '     _permissionItems.Remove(removed)
-            ' Next
 
             LogOperation(My.Resources.LogPermissionSync, My.Resources.LogCompleted, String.Format(My.Resources.LogAddedNewToolPermissions, addedCount))
         Catch ex As Exception
@@ -110,7 +97,6 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub SetAllPermissions(permission As PermissionLevel)
-        ' 更新所有权限项
         For Each item In _permissionItems
             item.Permission = permission
         Next
@@ -120,10 +106,8 @@ Partial Public Class MainWindow
 
     Private Sub BtnSavePermissions_Click() Handles BtnSavePermissions.Click
         Try
-            ' 保存功能权限配置
             PersistenceModule.SavePermissions(_permissionItems)
 
-            ' 保存路径策略配置
             Dim allPolicies = New List(Of PathPermissionPolicy)()
             allPolicies.AddRange(_pathPolicyManager.AllowPolicies)
             allPolicies.AddRange(_pathPolicyManager.DenyPolicies)
@@ -281,14 +265,12 @@ Partial Public Class MainWindow
                         Return False
 
                     Case PermissionConfirmResult.AllowWithPolicy
-                        ' 添加允许策略
                         Dim pattern = dialog.GetPolicyPattern()
                         _pathPolicyManager.AddPolicy(PathPolicyType.Allow, FileAccessType.ReadWrite, pattern)
                         LogOperation(featureName, My.Resources.LogUserAllowed, String.Format(My.Resources.LogPathPolicyAdded, "Allow", pattern))
                         Return True
 
                     Case PermissionConfirmResult.DenyWithPolicy
-                        ' 添加拒绝策略
                         Dim pattern = dialog.GetPolicyPattern()
                         _pathPolicyManager.AddPolicy(PathPolicyType.Deny, FileAccessType.ReadWrite, pattern)
                         LogOperation(featureName, My.Resources.LogUserDenied, String.Format(My.Resources.LogPathPolicyAdded, "Deny", pattern))

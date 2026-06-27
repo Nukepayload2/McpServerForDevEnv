@@ -64,12 +64,10 @@ Public NotInheritable Class FileOperationHelper
         Try
             Dim fullPath = Path.GetFullPath(filePath)
 
-            ' 检查是否为绝对路径
             If Not Path.IsPathRooted(filePath) Then
                 Return False
             End If
 
-            ' 检查路径中是否包含危险字符
             Dim dangerousChars = {"..", "<", ">", "|", """", "*"}
             For Each dangerousChar In dangerousChars
                 If fullPath.Contains(dangerousChar) Then
@@ -77,7 +75,6 @@ Public NotInheritable Class FileOperationHelper
                 End If
             Next
 
-            ' 检查是否尝试访问系统目录
             Dim systemDirs = {
                 Environment.GetFolderPath(Environment.SpecialFolder.Windows),
                 Environment.GetFolderPath(Environment.SpecialFolder.System),
@@ -138,7 +135,6 @@ Public NotInheritable Class FileOperationHelper
         End If
 
         Try
-            ' 检查文件大小
             Dim fileInfo As New FileInfo(filePath)
             If fileInfo.Length > MAX_READ_SIZE Then
                 result.Error = $"文件过大，超过{MAX_READ_SIZE}字节限制"
@@ -146,14 +142,11 @@ Public NotInheritable Class FileOperationHelper
                 Return result
             End If
 
-            ' 计算HASH值
             result.Hash = CalculateFileHash(filePath)
 
-            ' 读取所有行
             Dim allLines = File.ReadAllLines(filePath, Encoding.UTF8)
             result.TotalLines = allLines.Length
 
-            ' 计算实际读取范围
             If start >= result.TotalLines Then
                 result.Success = True
                 result.Lines = Array.Empty(Of String)
@@ -223,7 +216,6 @@ Public NotInheritable Class FileOperationHelper
         End If
 
         Try
-            ' 检查目录是否存在，不存在则创建
             Dim directoryPath = Path.GetDirectoryName(filePath)
             If Not String.IsNullOrWhiteSpace(directoryPath) AndAlso Not Directory.Exists(directoryPath) Then
                 Directory.CreateDirectory(directoryPath)
@@ -239,13 +231,10 @@ Public NotInheritable Class FileOperationHelper
                 End If
             End If
 
-            ' 创建临时文件
             Dim tempPath = filePath & ".tmp." & Guid.NewGuid().ToString("N")
 
-            ' 写入临时文件
             File.WriteAllText(tempPath, content, Encoding.UTF8)
 
-            ' 验证临时文件写入成功
             If Not File.Exists(tempPath) Then
                 result.Error = "创建临时文件失败"
                 result.ErrorCode = "TEMP_FILE_ERROR"
@@ -253,10 +242,9 @@ Public NotInheritable Class FileOperationHelper
             End If
 
             ' 原子性替换原文件
-            File.Delete(filePath) ' 如果原文件存在则删除
+            File.Delete(filePath)
             File.Move(tempPath, filePath)
 
-            ' 计算新的HASH值
             result.NewHash = CalculateFileHash(filePath)
             result.LinesWritten = content.Split({vbCrLf, vbLf}, StringSplitOptions.None).Length
             result.BytesWritten = contentBytes.Length
@@ -314,16 +302,13 @@ Public NotInheritable Class FileOperationHelper
         End If
 
         Try
-            ' 检查目录是否存在，不存在则创建
             Dim directoryPath = Path.GetDirectoryName(filePath)
             If Not String.IsNullOrWhiteSpace(directoryPath) AndAlso Not Directory.Exists(directoryPath) Then
                 Directory.CreateDirectory(directoryPath)
             End If
 
-            ' 追加内容到文件
             File.AppendAllText(filePath, content, Encoding.UTF8)
 
-            ' 计算新的HASH值和统计信息
             result.NewHash = CalculateFileHash(filePath)
             result.LinesWritten = content.Split({vbCrLf, vbLf}, StringSplitOptions.None).Length
             result.BytesWritten = contentBytes.Length
@@ -383,7 +368,6 @@ Public NotInheritable Class FileOperationHelper
         End If
 
         Try
-            ' 验证HASH值
             If Not String.IsNullOrWhiteSpace(expectedHash) Then
                 Dim currentHash = CalculateFileHash(filePath)
                 If Not String.Equals(currentHash, expectedHash, StringComparison.OrdinalIgnoreCase) Then
@@ -393,13 +377,11 @@ Public NotInheritable Class FileOperationHelper
                 End If
             End If
 
-            ' 读取文件内容
             Dim content = File.ReadAllText(filePath, Encoding.UTF8)
             Dim originalContent = content
 
             ' 执行替换
             If options.UseRegex Then
-                ' 构建正则表达式选项
                 Dim regexOptions As RegexOptions = RegexOptions.ECMAScript
                 If options.IgnoreCase Then regexOptions = regexOptions Or RegexOptions.IgnoreCase
                 If options.Multiline Then regexOptions = regexOptions Or RegexOptions.Multiline
@@ -423,14 +405,11 @@ Public NotInheritable Class FileOperationHelper
                     comparison = StringComparison.Ordinal
                 End If
 
-                ' 计算替换次数
                 result.ReplacementsCount = CountOccurrences(originalContent, oldText, comparison)
 
-                ' 执行替换
                 content = ReplaceWithComparison(originalContent, oldText, newText, comparison)
             End If
 
-            ' 检查是否有实际更改
             If String.Equals(content, originalContent, StringComparison.Ordinal) Then
                 result.Success = True
                 result.NewHash = CalculateFileHash(filePath)
@@ -439,7 +418,6 @@ Public NotInheritable Class FileOperationHelper
                 Return result
             End If
 
-            ' 写入新内容
             Dim writeResult = WriteFileSafely(filePath, content, expectedHash)
             If writeResult.Success Then
                 result.Success = True
@@ -503,7 +481,6 @@ Public NotInheritable Class FileOperationHelper
         End If
 
         Try
-            ' 验证HASH值
             If Not String.IsNullOrWhiteSpace(expectedHash) Then
                 Dim currentHash = CalculateFileHash(filePath)
                 If Not String.Equals(currentHash, expectedHash, StringComparison.OrdinalIgnoreCase) Then
@@ -513,11 +490,9 @@ Public NotInheritable Class FileOperationHelper
                 End If
             End If
 
-            ' 读取文件所有行
             Dim allLines = File.ReadAllLines(filePath, Encoding.UTF8)
             Dim totalLines = allLines.Length
 
-            ' 验证行号范围
             If start > totalLines Then
                 result.Error = "起始行号超出文件范围"
                 result.ErrorCode = "START_BEYOND_EOF"
@@ -534,18 +509,14 @@ Public NotInheritable Class FileOperationHelper
 
             Dim endLine = start + actualLength - 1
 
-            ' 分割新内容为行
             Dim newLines = newContent.Split({vbCrLf, vbLf}, StringSplitOptions.None)
 
-            ' 构建新的行数组
             Dim newFileLines(totalLines - actualLength + newLines.Length - 1) As String
 
-            ' 复制替换前的行
             If start > 0 Then
                 Array.Copy(allLines, 0, newFileLines, 0, start)
             End If
 
-            ' 插入新行
             Array.Copy(newLines, 0, newFileLines, start, newLines.Length)
 
             ' 复制替换后的行（只在actualLength > 0时执行）
@@ -556,7 +527,6 @@ Public NotInheritable Class FileOperationHelper
                 Array.Copy(allLines, start, newFileLines, start + newLines.Length, totalLines - start)
             End If
 
-            ' 写入新内容
             Dim newFileContent = String.Join(vbCrLf, newFileLines)
             Dim writeResult = WriteFileSafely(filePath, newFileContent, expectedHash)
 

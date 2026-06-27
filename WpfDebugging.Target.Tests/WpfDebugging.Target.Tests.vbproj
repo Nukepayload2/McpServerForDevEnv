@@ -4,12 +4,9 @@
     <AssemblyName>McpServerForDevEnv.WpfDebugging.Target.Tests</AssemblyName>
     <RootNamespace>McpServerForDevEnv.WpfDebugging.Target.Tests</RootNamespace>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <OptionStrict>Off</OptionStrict>
     <LangVersion>latest</LangVersion>
-    <!-- 测试用 VB（被测 Target 也是 VB）。当前环境 vbc 对 VB+UseWPF+TestSDK 组合已恢复稳定。 -->
     <UseWPF>true</UseWPF>
     <IsPackable>false</IsPackable>
-    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

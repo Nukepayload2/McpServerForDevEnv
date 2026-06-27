@@ -34,15 +34,12 @@ Public Class RunProjectCustomToolsTool
 
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
             If Not CheckPermission() Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "projectName")
 
-            ' 获取参数
             Dim projectName = arguments("projectName").ToString()
 
             If String.IsNullOrEmpty(projectName) Then

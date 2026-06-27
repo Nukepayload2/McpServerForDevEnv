@@ -4,10 +4,6 @@
     <AssemblyName>McpServerForDevEnv.WpfDebugging.Core</AssemblyName>
     <RootNamespace>McpServerForDevEnv.WpfDebugging</RootNamespace>
     <TargetFrameworks>net472;net8.0-windows</TargetFrameworks>
-    <!-- 纯 POCO + 接口契约库，零 WPF 强依赖、零 EnvDTE 依赖 -->
-    <UseWpf>false</UseWpf>
-    <OptionStrict>Off</OptionStrict>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

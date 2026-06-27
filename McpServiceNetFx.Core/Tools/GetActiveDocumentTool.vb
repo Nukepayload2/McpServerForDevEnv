@@ -28,14 +28,12 @@ Public Class GetActiveDocumentTool
 
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
             If Not CheckPermission() Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
             LogOperation("获取活动文档", "开始", "获取当前活动文档信息")
 
-            ' 使用异步方法
             Dim result = Await _vsTools.GetActiveDocumentAsync()
 
             If result.HasActiveDocument Then

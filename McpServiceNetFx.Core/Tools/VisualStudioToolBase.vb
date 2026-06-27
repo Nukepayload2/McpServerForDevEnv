@@ -59,6 +59,18 @@ Public MustInherit Class VisualStudioToolBase
     End Property
 
     ''' <summary>
+    ''' 执行前是否要求 VS 数据上下文（_vsTools 非空）。
+    ''' 默认 True：VS 工具未选实例时报「未选择 VS 实例」。
+    ''' WPF 调试工具（WpfDebugToolBase）覆盖为 False：它们走 _wpfDebugProxy，不依赖 DTE，
+    ''' 由各自 IsWpfDebugConnected 检查负责未连接容错。
+    ''' </summary>
+    Protected Overridable ReadOnly Property RequiresVsDataContext As Boolean
+        Get
+            Return True
+        End Get
+    End Property
+
+    ''' <summary>
     ''' 获取工具定义
     ''' </summary>
     Public MustOverride ReadOnly Property ToolDefinition As ToolDefinition
@@ -112,12 +124,10 @@ Public MustInherit Class VisualStudioToolBase
     ''' <returns>执行结果</returns>
     Public Async Function ExecuteAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查数据上下文
-            If Not HasDataContext Then
-                Throw New McpException(My.Resources.LogToolDataContextNotSet, McpErrorCode.InternalError)
+            If RequiresVsDataContext AndAlso Not HasDataContext Then
+                Throw New McpException(My.Resources.LogNoVsInstance, McpErrorCode.InternalError)
             End If
 
-            ' 调用具体的执行实现
             Return Await ExecuteInternalAsync(arguments)
         Catch ex As Exception
             If TypeOf ex Is McpException Then

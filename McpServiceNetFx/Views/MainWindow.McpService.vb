@@ -22,11 +22,6 @@ Partial Public Class MainWindow
             Return
         End If
 
-        If _selectedVsInstance Is Nothing Then
-            UtilityModule.ShowWarning(Me, My.Resources.MsgSelectVsInstance, My.Resources.TitleHint)
-            Return
-        End If
-
         Dim port = UtilityModule.GetValidPort(TxtPort.Text, 8080)
         TxtPort.Text = port.ToString()
 
@@ -99,35 +94,29 @@ Partial Public Class MainWindow
 
     Private Async Function StartMcpService(port As Integer) As Task
         Try
-            ' 创建 Visual Studio 监控器
-            _vsMonitor = New VisualStudioMonitor(_selectedVsInstance.DTE2)
-            AddHandler _vsMonitor.VisualStudioExited, AddressOf OnVisualStudioExited
-            AddHandler _vsMonitor.VisualStudioShutdown, AddressOf OnVisualStudioShutdown
+            ' 仅在已选 VS 实例时建立监控；无实例启动时跳过（_vsMonitor 允许为 Nothing）。
+            If _selectedVsInstance IsNot Nothing Then
+                _vsMonitor = New VisualStudioMonitor(_selectedVsInstance.DTE2)
+                AddHandler _vsMonitor.VisualStudioExited, AddressOf OnVisualStudioExited
+                AddHandler _vsMonitor.VisualStudioShutdown, AddressOf OnVisualStudioShutdown
+            End If
 
-            ' 验证工具管理器已创建并初始化
             If _toolManager Is Nothing Then
                 Throw New InvalidOperationException("工具管理器未创建，无法启动 MCP 服务")
             End If
 
-            If Not _toolManager.IsInitialized Then
-                Throw New InvalidOperationException("工具管理器未初始化，请先选择 Visual Studio 实例")
-            End If
-
-            ' 创建并启动 MCP 服务，传入工具管理器
-            _mcpService = New McpService(_selectedVsInstance.DTE2, port, Me, New DispatcherService(Dispatcher), _toolManager, New ClipboardService, New InteractionService)
+            ' 服务层不再依赖 DTE2。dte2 仅在工具数据上下文层（VisualStudioTools）使用，
+            ' 用户后续选 VS 实例时由 CreateToolManagerDataContext→CreateVsTools 热注入，无需重启服务。
+            _mcpService = New McpService(Nothing, port, Me, New DispatcherService(Dispatcher), _toolManager, New ClipboardService, New InteractionService)
             Await _mcpService.StartAsync()
 
-            ' 更新 UI 状态
             _isServiceRunning = True
             UpdateServiceUI(True)
 
-            ' 保存配置
             PersistenceModule.SaveServiceConfig(port)
 
-            ' 记录日志
-            LogServiceAction(My.Resources.LogServiceStarted, My.Resources.LogSuccess, String.Format(My.Resources.LogServiceStartedWithDetails, port, _selectedVsInstance.Caption, _toolManager.GetToolCount()))
-
-            ' 权限已在选择实例时同步，无需再次同步
+            Dim instanceCaption = If(_selectedVsInstance?.Caption, My.Resources.MsgNoInstanceSelected)
+            LogServiceAction(My.Resources.LogServiceStarted, My.Resources.LogSuccess, String.Format(My.Resources.LogServiceStartedWithDetails, port, instanceCaption, _toolManager.GetToolCount()))
         Catch ex As Exception
             CleanupService()
             Throw
@@ -149,11 +138,9 @@ Partial Public Class MainWindow
                 _vsMonitor = Nothing
             End If
 
-            ' 更新 UI 状态
             _isServiceRunning = False
             UpdateServiceUI(False)
 
-            ' 记录日志
             LogServiceAction(My.Resources.LogServiceStopped, My.Resources.LogSuccess, My.Resources.LogUserStopped)
         Catch ex As Exception
             CleanupService()
@@ -207,16 +194,17 @@ Partial Public Class MainWindow
             BtnStartService.IsEnabled = False
             BtnStopService.IsEnabled = True
             TxtPort.IsEnabled = False
-            DgVsInstances.IsEnabled = False
-            BtnRefresh.IsEnabled = False
-            TxtSearch.IsEnabled = False
+            ' 服务运行时仍允许切换 VS 实例（CreateToolManagerDataContext 会热注入数据上下文，不重启服务）。
+            DgVsInstances.IsEnabled = True
+            BtnRefresh.IsEnabled = True
+            TxtSearch.IsEnabled = True
 
             ' 服务启动时，显示配置选项并生成配置
             TabClientConfig.Visibility = Visibility.Visible
             GenerateMcpConfig()
         Else
             TxtServiceStatus.Text = "服务未启动"
-            BtnStartService.IsEnabled = _selectedVsInstance IsNot Nothing
+            BtnStartService.IsEnabled = True
             BtnStopService.IsEnabled = False
             TxtPort.IsEnabled = True
             DgVsInstances.IsEnabled = True
@@ -234,7 +222,6 @@ Partial Public Class MainWindow
     End Sub
 
     Public Sub LogServiceAction(action As String, result As String, details As String) Implements IMcpLogger.LogServiceAction
-        ' 使用统一的日志操作方法
         LogOperation(action, result, details)
     End Sub
 
@@ -251,8 +238,6 @@ Partial Public Class MainWindow
             Dim serverName = $"@nukepayload2/devenv.wrapper"
             Dim port = TxtPort.Text
 
-            ' 生成配置
-            ' 生成 JSON 配置
             Dim jsonConfig As String = $"{{
   ""mcpServers"": {{
     ""{serverName}"": {{
@@ -262,7 +247,6 @@ Partial Public Class MainWindow
   }}
 }}"
 
-            ' 生成 Claude CLI 配置
             Dim claudeConfig As String = $"claude mcp add --transport http devenv ""http://localhost:{port}/mcp/"""
 
             TxtJsonConfig.Text = jsonConfig
@@ -272,7 +256,6 @@ Partial Public Class MainWindow
             TxtClaudeConfig.Text = $"生成配置失败: {ex.Message}"
         End Try
     End Sub
-
 
     Protected Overrides Sub OnClosed(e As EventArgs)
         MyBase.OnClosed(e)

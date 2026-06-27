@@ -142,9 +142,10 @@ McpServiceNetFx.Core/
 │   ├── PathPolicyManager.vb      # 路径权限策略管理器（新增）
 │   └── Abstractions.vb           # 抽象类定义
 ├── WpfDebug/                     # WPF 调试连接层（#22 新增）
-│   ├── WpfDebugProxy.vb          # named pipe client（被控端代理）
-│   ├── WpfDebugResultReader.vb   # OkResult 嵌套解析纯函数
-│   └── WpfDebugConnection.vb     # 连接握手快照
+│   ├── WpfDebugProxy.vb          # named pipe client（被控端代理；支持指定 PID / 枚举 / 直连 pipe 名）
+│   ├── WpfDebugResultReader.vb   # OkResult 嵌套解析纯函数 + ParseHandshake（含 processPath）
+│   ├── WpfDebugConnection.vb     # 连接握手快照（pid/title/version/processPath）
+│   └── WpfDebugTargetEnumerator.vb # 被控端发现（枚举系统 pipe 按前缀解析 PID，不连 pipe）
 ├── My Project/                   # VB 项目资源
 │   ├── Resources.Designer.vb     # 资源管理器
 │   ├── Resources.resx            # 资源文件（默认）
@@ -162,9 +163,10 @@ McpServiceNetFx.Core/
 **WPF 调试连接层（主控侧，命名空间 `McpServiceNetFx`）**:
 
 `WpfDebug/` 文件夹下是主控连接被控 WPF 进程的 pipe client + 解析辅助（#22/#23）:
-- `WpfDebugProxy.vb` — named pipe client，连固定 pipe 名，握手，发请求收响应，后台读循环配对响应/缓存事件
-- `WpfDebugResultReader.vb` — OkResult 嵌套解析纯函数（`GetPayload` 取 `response.Result("result")`）
-- `WpfDebugConnection.vb` — 连接握手快照
+- `WpfDebugProxy.vb` — named pipe client。pipe 名带 PID：支持 `New(targetPid)` 指定 PID、`New(pipeName)` 直连、`New()` 无参（ConnectAsync 时枚举系统 pipe 连第一个候选，向后兼容）。握手含 processPath 字段。
+- `WpfDebugResultReader.vb` — OkResult 嵌套解析纯函数（`GetPayload` 取 `response.Result("result")`）+ `ParseHandshake`（解析 pid/title/version/processPath）
+- `WpfDebugConnection.vb` — 连接握手快照（pid/title/version/processPath 四字段）
+- `WpfDebugTargetEnumerator.vb` — 被控端发现：`DiscoverCandidates()` 枚举 `\\.\pipe\` 按 `WpfDebugProtocol.PipeNamePrefix` 前缀过滤解析 PID，用 `Process.GetProcessById` 查 title/path，**不连 pipe**（不占被控端连接位）。POCO `WpfDebugTargetInfo`（Pid/MainWindowTitle/ProcessPath）
 
 主控侧的六个 WPF 调试工具（list_windows/take_snapshot/click/fill/evaluate/take_screenshot）实现在
 `Tools/WpfDebug/` 文件夹（`WpfDebugToolBase` 中间基类 + 六个工具），注册在 `VisualStudioToolManager`，
@@ -264,8 +266,8 @@ McpServiceNetFx.VsixAsync/
 ```
 WpfDebugging.Core/
 ├── Protocol/
-│   ├── WpfDebugProtocol.vb        # 固定常量（PipeName / ProtocolVersion）
-│   ├── WpfDebugProtocol.vb        # WpfDebugRequest/Response/Event/Error POCO
+│   ├── WpfDebugProtocol.vb        # 同文件含常量类 WpfDebugProtocol（PipeNamePrefix/PipeName/ProtocolVersion + GetPipeNameForPid）
+│   │                              #   与 POCO 类 WpfDebugRequest/Response/Event/Error
 │   ├── WpfDebugMethods.vb         # Method 名常量（list_windows/take_snapshot/...）
 │   └── MessageFramer.vb           # 长度前缀分帧器（读写 JSON 消息）
 ├── IWpfDebugTarget.vb             # 被控端能力接口（13 个方法签名）
@@ -315,7 +317,7 @@ WpfDebugging.Target/
 **技术栈**: VB.NET + 多目标 `net472;net8.0-windows` + WPF
 
 **主要职责**（#24 端到端联调用）:
-- 启动时调 `WpfDebugHost.Start()` 起固定名 pipe server
+- 启动时调 `WpfDebugHost.Start()` 起 PID 名 pipe server（`GetPipeNameForPid(自身pid)`）
 - 主窗口放一批测试控件（TextBox/Button/CheckBox/ComboBox/Slider/ListBox/Label 等）供联调
 - 关键控件给 x:Name，方便 list_windows/take_snapshot 定位、click/fill 找目标、evaluate 脚本操作
 - 退出时 `WpfDebugHost.Stop()` 清理

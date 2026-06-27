@@ -7,11 +7,9 @@ Class MainWindow
 
     Private Async Sub MainWindow_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
         Try
-            ' 初始化数据绑定
             _viewModel = New MainViewModel()
             Me.DataContext = _viewModel
 
-            ' 初始化UI
             InitializeUI()
 
             ' 异步初始化搜索引擎
@@ -34,23 +32,17 @@ Class MainWindow
 
     Private Sub InitializeUI()
         Try
-            ' 设置搜索范围选项
             SearchScopeComboBox.SelectedIndex = 0 ' 解决方案
 
-            ' 设置搜索类型选项
             SearchTypeComboBox.SelectedIndex = 0 ' 定义
 
-            ' 设置事件处理
             AddHandler SearchScopeComboBox.SelectionChanged, AddressOf SearchScopeComboBox_SelectionChanged
             AddHandler SearchTypeComboBox.SelectionChanged, AddressOf SearchTypeComboBox_SelectionChanged
 
-            ' 绑定双击事件
             AddHandler ResultsDataGrid.MouseDoubleClick, AddressOf ResultsDataGrid_MouseDoubleClick
 
-            ' 绑定进度条可见性
             AddHandler _viewModel.PropertyChanged, AddressOf ViewModel_PropertyChanged
 
-            ' 设置焦点到搜索文本框
             SymbolNameTextBox.Focus()
 
         Catch ex As Exception
@@ -107,7 +99,6 @@ Class MainWindow
     Private Sub ResultsDataGrid_MouseDoubleClick(sender As Object, e As MouseButtonEventArgs)
         Try
             If _viewModel.SelectedResult IsNot Nothing Then
-                ' 调用打开文件命令
                 _viewModel.OpenFileCommand.Execute(Nothing)
             End If
         Catch ex As Exception
@@ -117,7 +108,6 @@ Class MainWindow
 
     Private Sub SymbolNameTextBox_KeyDown(sender As Object, e As KeyEventArgs) Handles SymbolNameTextBox.KeyDown
         Try
-            ' 按Enter键触发搜索
             If e.Key = Key.Enter AndAlso _viewModel IsNot Nothing Then
                 e.Handled = True
                 If _viewModel.SearchCommand.CanExecute(Nothing) Then
@@ -131,7 +121,6 @@ Class MainWindow
 
     Private Sub Window_Closing(sender As Object, e As ComponentModel.CancelEventArgs) Handles Me.Closing
         Try
-            ' 清理资源
             _viewModel?.Dispose()
         Catch ex As Exception
             Debug.WriteLine($"关闭窗口时清理资源失败: {ex.Message}")
@@ -140,7 +129,6 @@ Class MainWindow
 
     Private Async Sub Window_Activated(sender As Object, e As EventArgs) Handles Me.Activated
         Try
-            ' 每次窗口激活时检查Visual Studio连接状态
             If _viewModel IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(_viewModel.StatusText) Then
                 If _viewModel.StatusText.Contains("初始化失败") OrElse _viewModel.StatusText.Contains("连接") Then
                     Await _viewModel.InitializeAsync()

@@ -18,11 +18,9 @@ Namespace Converters
             ' values(0) 是 PermissionItem 对象
             Dim item = TryCast(values(0), McpServiceNetFx.PermissionItem)
             If item Is Nothing Then
-                ' 如果转换失败，返回默认的所有权限级别
                 Return McpServiceNetFx.PermissionLevels.All
             End If
 
-            ' 根据工具类型返回对应的权限级别集合
             Return item.AvailablePermissionLevels
         End Function
 

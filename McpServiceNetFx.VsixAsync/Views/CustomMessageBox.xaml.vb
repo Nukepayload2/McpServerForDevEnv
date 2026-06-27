@@ -44,7 +44,6 @@ Partial Public Class CustomMessageBox
     End Sub
 
     Private Sub SetupMessage(message As String, type As MessageBoxType, showYesNo As Boolean)
-        ' Set icon and message text
         Select Case type
             Case MessageBoxType.Information
                 IconTextBlock.Text = SR.IconInformation
@@ -62,7 +61,6 @@ Partial Public Class CustomMessageBox
 
         MessageTextBlock.Text = message
 
-        ' Set button visibility
         If showYesNo Then
             YesButton.Visibility = Visibility.Visible
             NoButton.Visibility = Visibility.Visible

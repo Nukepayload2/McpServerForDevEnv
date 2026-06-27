@@ -60,31 +60,23 @@ Namespace ToolWindows
             _state = state
             InitializeComponent()
 
-            ' 初始化数据绑定
             InitializeDataBindings()
 
-            ' 记录初始化日志
             _state.LogInfo("System", SR.LogMcpServiceManagerStarted)
         End Sub
 
         Private Sub InitializeDataBindings()
-            ' 绑定工具数据
             ToolsDataGrid.ItemsSource = _state.Tools
 
-            ' 绑定日志数据
             ActivityLogDataGrid.ItemsSource = _state.LogItems
 
-            ' 初始化配置示例
             McpJsonConfigTextBox.Text = _state.GetMcpJsonConfig()
             ClaudeCliConfigTextBox.Text = _state.GetClaudeCliConfig()
 
-            ' 初始化端口号显示
             PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
 
-            ' 更新服务状态显示
             UpdateServiceStatusDisplay()
 
-            ' 更新状态文本
             UpdateStatusBar()
         End Sub
 
@@ -135,14 +127,12 @@ Namespace ToolWindows
                     ServiceToggleButton.IsChecked = True
                     ServiceToggleButton.Content = SR.ButtonStopService
                     ServiceToggleButton.Background = New SolidColorBrush(Colors.Red)
-                    ' 禁用端口号输入框和重置按钮
                     PortNumberTextBox.IsEnabled = False
                     ResetPortButton.IsEnabled = False
                 Else
                     ServiceToggleButton.IsChecked = False
                     ServiceToggleButton.Content = SR.ButtonStartService
                     ServiceToggleButton.Background = New SolidColorBrush(Color.FromRgb(40, 167, 69))
-                    ' 启用端口号输入框和重置按钮
                     PortNumberTextBox.IsEnabled = True
                     ResetPortButton.IsEnabled = True
                 End If
@@ -154,7 +144,6 @@ Namespace ToolWindows
             If ToolsDataGrid.SelectedItem IsNot Nothing Then
                 Dim tool = CType(ToolsDataGrid.SelectedItem, PermissionItem)
                 If tool IsNot Nothing Then
-                    ' 记录工具权限变更
                     _state.LogToolOperation("UpdateToolPermission", "Success", String.Format(SR.LogToolPermissionUpdated, tool.FeatureName, tool.Permission))
                 End If
             End If
@@ -162,12 +151,9 @@ Namespace ToolWindows
             UpdateStatusBar()
         End Sub
 
-
         Private Sub UpdateStatusBar()
-            ' 更新工具计数
             ToolCountText.Text = _state.GetToolSummary()
 
-            ' 更新服务计数
             ServiceCountText.Text = _state.GetServiceSummary()
         End Sub
 
@@ -216,7 +202,6 @@ Namespace ToolWindows
                 Dim newPort As Integer
                 If Integer.TryParse(PortNumberTextBox.Text, newPort) Then
                     If newPort > 0 AndAlso newPort <= 65535 Then
-                        ' 检查服务是否正在运行
                         If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
                             CustomMessageBox.Show(Nothing, SR.MsgStopServiceBeforePortChange, SR.TitleHint, CustomMessageBox.MessageBoxType.Information)
                             PortNumberTextBox.Text = _state.ServerConfiguration.Port.ToString()
@@ -228,15 +213,12 @@ Namespace ToolWindows
                             Return
                         End If
 
-                        ' 保存新的端口号
                         _state.ServerConfiguration.Port = newPort
                         _state.SaveServerConfiguration()
 
-                        ' 更新配置示例
                         McpJsonConfigTextBox.Text = _state.GetMcpJsonConfig()
                         ClaudeCliConfigTextBox.Text = _state.GetClaudeCliConfig()
 
-                        ' 更新服务状态显示
                         UpdateServiceStatusDisplay()
 
                         ShowStatusMessage(String.Format(SR.MsgPortNumberSaved, newPort))
@@ -258,24 +240,19 @@ Namespace ToolWindows
 
         Private Sub ResetPortButton_Click() Handles ResetPortButton.Click
             Try
-                ' 检查服务是否正在运行
                 If _state.Services.Count > 0 AndAlso _state.Services(0).IsRunning Then
                     CustomMessageBox.Show(Nothing, SR.MsgStopServiceBeforePortChange, SR.TitleHint, CustomMessageBox.MessageBoxType.Information)
                     Return
                 End If
 
-                ' 重置为默认端口
                 _state.ServerConfiguration.Port = 38080
                 _state.SaveServerConfiguration()
 
-                ' 更新界面
                 PortNumberTextBox.Text = "38080"
 
-                ' 更新配置示例
                 McpJsonConfigTextBox.Text = _state.GetMcpJsonConfig()
                 ClaudeCliConfigTextBox.Text = _state.GetClaudeCliConfig()
 
-                ' 更新服务状态显示
                 UpdateServiceStatusDisplay()
 
                 ShowStatusMessage(String.Format(SR.MsgPortNumberReset, 38080))

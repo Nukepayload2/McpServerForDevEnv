@@ -160,6 +160,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 Refresh Targets 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property ButtonRefreshWpfTargets() As String
+            Get
+                Return ResourceManager.GetString("ButtonRefreshWpfTargets", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Reload 的本地化字符串。
         '''</summary>
         Public ReadOnly Property ButtonReload() As String
@@ -579,6 +588,33 @@ Namespace My.Resources
         Public ReadOnly Property HeaderWindowCaption() As String
             Get
                 Return ResourceManager.GetString("HeaderWindowCaption", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Process Path 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderWpfPath() As String
+            Get
+                Return ResourceManager.GetString("HeaderWpfPath", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 PID 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderWpfPid() As String
+            Get
+                Return ResourceManager.GetString("HeaderWpfPid", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Window Title 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property HeaderWpfWindow() As String
+            Get
+                Return ResourceManager.GetString("HeaderWpfWindow", resourceCulture)
             End Get
         End Property
         
@@ -1231,6 +1267,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  查找类似 No Visual Studio instance selected. Please select one in Service Management. 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogNoVsInstance() As String
+            Get
+                Return ResourceManager.GetString("LogNoVsInstance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 WPF debug target not connected. Please connect in Service Management. 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property LogNoWpfTarget() As String
+            Get
+                Return ResourceManager.GetString("LogNoWpfTarget", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  查找类似 Opened ActivityLog help documentation 的本地化字符串。
         '''</summary>
         Public ReadOnly Property LogOpenedActivityLogHelp() As String
@@ -1650,15 +1704,6 @@ Namespace My.Resources
         Public ReadOnly Property LogSuccess() As String
             Get
                 Return ResourceManager.GetString("LogSuccess", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  查找类似 Tool data context not set, cannot execute tool 的本地化字符串。
-        '''</summary>
-        Public ReadOnly Property LogToolDataContextNotSet() As String
-            Get
-                Return ResourceManager.GetString("LogToolDataContextNotSet", resourceCulture)
             End Get
         End Property
         
@@ -2685,6 +2730,33 @@ Namespace My.Resources
         Public ReadOnly Property TabServiceManagement() As String
             Get
                 Return ResourceManager.GetString("TabServiceManagement", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 Service Settings 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabServiceSettings() As String
+            Get
+                Return ResourceManager.GetString("TabServiceSettings", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 VS Instances 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabVsInstances() As String
+            Get
+                Return ResourceManager.GetString("TabVsInstances", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  查找类似 WPF Targets 的本地化字符串。
+        '''</summary>
+        Public ReadOnly Property TabWpfTargets() As String
+            Get
+                Return ResourceManager.GetString("TabWpfTargets", resourceCulture)
             End Get
         End Property
         

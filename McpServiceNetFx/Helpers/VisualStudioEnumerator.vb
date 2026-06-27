@@ -89,13 +89,11 @@ Public Module VisualStudioEnumerator
 
             Dim displayName As String = GetDisplayName(moniker, bindCtx)
             Debug.WriteLine("ROT lookup " & displayName)
-            ' 检查是否是 Visual Studio 实例
             ' 预期是 !VisualStudio.DTE.18.0:17752 这种格式的
             If Not displayName.StartsWith("!VisualStudio.DTE.") Then
                 Return Nothing
             End If
 
-            ' 获取进程ID
             Dim colonIndex = displayName.IndexOf(":"c)
             If colonIndex = -1 Then
                 Return Nothing
@@ -120,12 +118,10 @@ Public Module VisualStudioEnumerator
                     Return Nothing
                 End If
 
-                ' 检查主窗口是否有效
                 If Not IsMainWindowValid(dte2) Then
                     Return Nothing
                 End If
 
-                ' 创建实例对象
                 Dim instance As New VisualStudioInstance() With {
                     .DTE2 = dte2,
                     .ProcessId = processId,

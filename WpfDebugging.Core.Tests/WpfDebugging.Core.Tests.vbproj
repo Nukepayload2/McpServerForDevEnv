@@ -5,8 +5,6 @@
     <RootNamespace>McpServerForDevEnv.WpfDebugging.Core.Tests</RootNamespace>
     <TargetFramework>net10.0-windows</TargetFramework>
     <IsPackable>false</IsPackable>
-    <OptionStrict>Off</OptionStrict>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

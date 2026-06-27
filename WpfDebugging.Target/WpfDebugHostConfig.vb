@@ -1,4 +1,4 @@
-' 被控端启动配置。pipe 名固定（见 WpfDebugProtocol.PipeName），不由 config 指定。
+' 被控端启动配置。pipe 名由 WpfDebugProtocol.GetPipeNameForPid(自身pid) 得出，不由 config 指定。
 
 ''' <summary>
 ''' <see cref="WpfDebugHost.Start"/> 的启动配置。

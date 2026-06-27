@@ -25,7 +25,6 @@ Public Class MainViewModel
         End Get
         Set(value As String)
             SetProperty(_symbolName, value)
-            ' 清除搜索按钮命令重新评估
             SearchCommand?.RaiseCanExecuteChanged()
         End Set
     End Property
@@ -85,13 +84,11 @@ Public Class MainViewModel
         End Set
     End Property
 
-    ' 命令
     Public ReadOnly Property SearchCommand As RelayCommand
     Public ReadOnly Property ClearCommand As RelayCommand
     Public ReadOnly Property OpenFileCommand As RelayCommand
 
     Public Sub New()
-        ' 初始化命令
         SearchCommand = New RelayCommand(AddressOf ExecuteSearchAsync, Function() CanExecuteSearch())
         ClearCommand = New RelayCommand(AddressOf ExecuteClear)
         OpenFileCommand = New RelayCommand(AddressOf ExecuteOpenFile, Function() CanExecuteOpenFile())
@@ -160,10 +157,8 @@ Public Class MainViewModel
                     results = New List(Of SymbolLocation)
             End Select
 
-            ' 过滤重复结果
             results = FilterDuplicateResults(results)
 
-            ' 添加到结果集合
             For Each result In results
                 SearchResults.Add(result)
             Next
@@ -203,7 +198,6 @@ Public Class MainViewModel
             Dim result = SelectedResult
             If String.IsNullOrWhiteSpace(result.FilePath) Then Return
 
-            ' 打开文件
             Process.Start(New ProcessStartInfo With {
                 .FileName = result.FilePath,
                 .UseShellExecute = True

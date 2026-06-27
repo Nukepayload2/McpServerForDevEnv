@@ -9,7 +9,6 @@ Public Class PathPolicyManager
     Private _denyPolicies As New ObservableCollection(Of PathPermissionPolicy)
 
     Public Sub New()
-        ' 初始化为空集合
     End Sub
 
     ''' <summary>

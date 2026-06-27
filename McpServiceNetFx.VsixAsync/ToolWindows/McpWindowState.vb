@@ -60,28 +60,23 @@ Namespace ToolWindows
         Private ReadOnly _joinableTaskFactory As JoinableTaskFactory
 
         Public Sub New(package As AsyncPackage)
-            ' 初始化设置持久化辅助类
             _settingsHelper = New SettingsPersistenceHelper(package)
 
-            ' 获取 ActivityLog 服务
             Try
                 _activityLog = package.GetService(Of SVsActivityLog, IVsActivityLog)()
             Catch ex As Exception
                 System.Diagnostics.Debug.WriteLine(String.Format(SR.LogCannotGetActivityLog, ex.Message))
             End Try
 
-            ' 获取 DTE2 服务（简化版本）
             Try
                 _dte2 = package.GetService(Of SDTE, DTE2)()
             Catch ex As Exception
                 LogError(SR.LogCategoryServiceError, String.Format(SR.LogCannotGetDte2, ex.Message))
             End Try
             _joinableTaskFactory = package.JoinableTaskFactory
-            ' 创建工具管理器（简化版本）
             Try
                 _toolManager = New VisualStudioToolManager(Me, Me)
 
-                ' 初始化工具管理器，传入 DTE2 和调度器
                 If _dte2 IsNot Nothing Then
                     _toolManager.CreateVsTools(_dte2, New DispatcherService(_joinableTaskFactory))
                     LogInfo(SR.LogCategoryToolManager, SR.LogToolManagerInitialized)
@@ -92,7 +87,6 @@ Namespace ToolWindows
                 LogError(SR.LogCategoryServiceError, String.Format(SR.LogCannotCreateToolManager, ex.Message))
             End Try
 
-            ' 加载服务器配置
             LoadServerConfiguration()
 
             InitializeTools()
@@ -135,7 +129,6 @@ Namespace ToolWindows
                         Tools.Add(permission)
                     Next
 
-                    ' 添加保存的权限中存在但默认权限中没有的工具
                     For Each kvp In savedPermissionDict
                         Dim featureName = kvp.Key
                         Dim savedPermission = kvp.Value
@@ -212,7 +205,6 @@ Namespace ToolWindows
         End Sub
 
         Private Sub InitializeServices()
-            ' 初始化单个MCP服务，使用配置的端口
             Services.Add(New McpServiceState With {
                 .IsRunning = False,
                 .Port = ServerConfiguration.Port,
@@ -220,7 +212,6 @@ Namespace ToolWindows
                 .StartTime = Nothing
             })
         End Sub
-
 
         ''' <summary>
         ''' 记录工具操作日志
@@ -232,7 +223,6 @@ Namespace ToolWindows
             Try
                 Dim message = $"Tool Operation: {operation}, Result: {result}, Details: {details}"
 
-                ' 记录到 ActivityLog
                 If _activityLog IsNot Nothing Then
                     _activityLog.LogEntry(CUInt(__ACTIVITYLOG_ENTRYTYPE.ALE_INFORMATION), "ToolOperation", message)
                 End If
@@ -251,7 +241,6 @@ Namespace ToolWindows
         ''' <param name="message">日志消息</param>
         Public Sub LogError(category As String, message As String)
             Try
-                ' 记录到 ActivityLog
                 If _activityLog IsNot Nothing Then
                     _activityLog.LogEntry(CUInt(__ACTIVITYLOG_ENTRYTYPE.ALE_ERROR), category, message)
                 End If
@@ -270,7 +259,6 @@ Namespace ToolWindows
         ''' <param name="message">日志消息</param>
         Public Sub LogWarning(category As String, message As String)
             Try
-                ' 记录到 ActivityLog
                 If _activityLog IsNot Nothing Then
                     _activityLog.LogEntry(CUInt(__ACTIVITYLOG_ENTRYTYPE.ALE_WARNING), category, message)
                 End If
@@ -289,7 +277,6 @@ Namespace ToolWindows
         ''' <param name="message">日志消息</param>
         Public Sub LogInfo(category As String, message As String)
             Try
-                ' 记录到 ActivityLog
                 If _activityLog IsNot Nothing Then
                     _activityLog.LogEntry(CUInt(__ACTIVITYLOG_ENTRYTYPE.ALE_INFORMATION), category, message)
                 End If
@@ -380,13 +367,11 @@ Namespace ToolWindows
                     ' 确保服务使用当前配置的端口
                     service.Port = ServerConfiguration.Port
 
-                    ' 创建并启动真实的 MCP 服务
                     _mcpService = New McpService(_dte2, service.Port, Me,
                                                  New DispatcherService(_joinableTaskFactory),
                                                  _toolManager, New ClipboardService(), New InteractionService())
                     Await _mcpService.StartAsync()
 
-                    ' 更新服务状态
                     service.IsRunning = True
                     service.Status = SR.StatusRunning
                     service.StartTime = DateTime.Now
@@ -433,7 +418,6 @@ Namespace ToolWindows
                 Dim serverName = "@nukepayload2/devenv.wrapper"
                 Dim port = ServerConfiguration.Port
 
-                ' 生成 JSON 配置
                 Return $"{{
   ""mcpServers"": {{
     ""{serverName}"": {{
@@ -453,7 +437,6 @@ Namespace ToolWindows
             Try
                 Dim port = ServerConfiguration.Port
 
-                ' 生成 Claude CLI 配置
                 Return $"claude mcp add --transport http devenv ""http://localhost:{port}/mcp/"""
             Catch ex As Exception
                 Return $"# {String.Format(SR.LogConfigGenerationFailed, ex.Message)}"
@@ -584,7 +567,6 @@ Namespace ToolWindows
         ''' </summary>
         Private Sub LogEntry(entryType As __ACTIVITYLOG_ENTRYTYPE, category As String, message As String)
             Try
-                ' 记录到 ActivityLog
                 If _activityLog IsNot Nothing Then
                     _activityLog.LogEntry(CUInt(entryType), category, message)
                 End If
@@ -656,10 +638,8 @@ Namespace ToolWindows
 
         Public Sub ShowCopyCommandDialog(title As String, message As String, command As String) Implements IInteraction.ShowCopyCommandDialog
             Try
-                ' 尝试复制到剪贴板
                 Dim clipboardSuccess = TryCopyToClipboard(command, SR.CommandDescription)
 
-                ' 根据复制结果调整消息
                 Dim displayMessage As String
                 If clipboardSuccess Then
                     displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}{SR.CopyCommandSuccess}"
@@ -667,7 +647,6 @@ Namespace ToolWindows
                     displayMessage = $"{message}{Environment.NewLine}{Environment.NewLine}{SR.CopyCommandFailed}"
                 End If
 
-                ' 显示用户消息窗口
                 ShowUserMessageWindow(title, displayMessage, command)
             Catch ex As Exception
             End Try

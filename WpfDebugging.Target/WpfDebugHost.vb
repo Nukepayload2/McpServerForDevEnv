@@ -4,7 +4,8 @@ Imports System
 ' 在 Application.Exit 里调返回实例的 Stop()（或 Dispose）。
 '
 ' 职责：组装 WpfDispatcher / UidRegistry / WpfDebugTargetImpl / WpfDebugPipeServer，
-' 启动固定 pipe 名监听，管理生命周期。pipe 名固定（WpfDebugProtocol.PipeName），不由 config 指定。
+' 启动以 PID 拼出的 pipe 名监听，管理生命周期。pipe 名由 WpfDebugProtocol.GetPipeNameForPid(自身pid) 得出，
+' 不由 config 指定；同机多 WPF 被控进程各自占自己 PID 的 pipe。
 
 ''' <summary>
 ''' 被控端宿主。组合各部件并管理生命周期。

@@ -31,7 +31,6 @@ Public Class VisualStudioMonitor
 
     Private Sub SetupDTEEvents()
         Try
-            ' 监听 DTE 事件
             AddHandler _dte2.Events.DTEEvents.OnBeginShutdown, AddressOf OnVisualStudioShutdown
         Catch ex As Exception
             ' 如果无法添加事件处理器，说明 DTE 可能已失效
@@ -50,7 +49,6 @@ Public Class VisualStudioMonitor
 
         Dim isExited As Boolean = False
 
-        ' 检查窗口句柄是否有效
         If Not IsWindow(_cachedHWnd) Then
             isExited = True
         End If
@@ -101,12 +99,10 @@ Public Class VisualStudioMonitor
 
     Public Function IsAlive() As Boolean
         Try
-            ' 检查 DTE 是否仍然有效
             If _dte2 Is Nothing OrElse _dte2.MainWindow Is Nothing Then
                 Return False
             End If
 
-            ' 检查窗口句柄是否仍然有效
             Return IsWindow(_cachedHWnd)
         Catch ex As Exception
             Return False
@@ -127,7 +123,6 @@ Public Class VisualStudioMonitor
                 _timer = Nothing
             End If
 
-            ' 移除 DTE 事件处理器
             Try
                 If _dte2 IsNot Nothing Then
                     RemoveHandler _dte2.Events.DTEEvents.OnBeginShutdown, AddressOf OnVisualStudioShutdown

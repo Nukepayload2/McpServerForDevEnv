@@ -78,13 +78,10 @@ Public Class AppendLinesTool
     ''' <returns>执行结果</returns>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "filePath", "content")
 
-            ' 获取参数
             Dim filePath = CStr(arguments("filePath"))
 
-            ' 检查文件权限
             If Not CheckFilePermission(filePath, FileAccessType.Write) Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -99,10 +96,8 @@ Public Class AppendLinesTool
 
             LogOperation("追加文件", "开始", $"文件: {filePath}, 大小: {content.Length} 字符")
 
-            ' 调用文件操作辅助类
             Dim appendResult = FileOperationHelper.AppendToFileSafely(filePath, content)
 
-            ' 获取文件总行数
             Dim totalLines As Integer = 0
             If System.IO.File.Exists(filePath) Then
                 Try
@@ -112,7 +107,6 @@ Public Class AppendLinesTool
                 End Try
             End If
 
-            ' 转换为工具结果
             Dim toolResult As New AppendLinesResult With {
                 .Success = appendResult.Success,
                 .LinesAppended = appendResult.LinesWritten,

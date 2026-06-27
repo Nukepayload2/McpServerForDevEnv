@@ -34,12 +34,10 @@ Public Class BuildSolutionTool
 
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
             If Not CheckPermission() Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
-            ' 获取配置参数
             Dim configuration = GetOptionalArgument(Of String)(arguments, "configuration", "Debug")
 
             LogOperation("构建解决方案", "开始", $"配置: {configuration}")
@@ -48,7 +46,6 @@ Public Class BuildSolutionTool
 
             LogOperation("构建解决方案", If(result.Success, "成功", "失败"), result.Message)
 
-            ' 转换为强类型响应
             Return New BuildResultResponse With {
                 .Success = result.Success,
                 .Message = result.Message,

@@ -7,7 +7,6 @@ Imports System.Threading
 Public Class McpService
     Implements IDisposable
 
-    Private ReadOnly _dte2 As DTE2
     Private ReadOnly _port As Integer
     Private ReadOnly _logger As IMcpLogger
     Private ReadOnly _dispatcher As IDispatcher
@@ -21,8 +20,15 @@ Public Class McpService
     Private _listenerTask As Task
     Private ReadOnly _httpHandler As VisualStudioMcpHttpService
 
+    ''' <summary>
+    ''' 创建 MCP 服务实例。
+    ''' </summary>
+    ''' <param name="dte2">
+    ''' 已废弃参数，保留仅为兼容 VSIX 调用方（McpWindowState.vb）。
+    ''' dte2 只在工具数据上下文层（VisualStudioTools）使用，不应注入服务层。
+    ''' 新调用方（独立 WPF 应用）请传 Nothing。
+    ''' </param>
     Sub New(dte2 As DTE2, port As Integer, logger As IMcpLogger, dispatcher As IDispatcher, toolManager As VisualStudioToolManager, clipboard As IClipboard, interaction As IInteraction)
-        _dte2 = dte2
         _port = port
         _logger = logger
         _dispatcher = dispatcher
@@ -48,7 +54,6 @@ Public Class McpService
         End If
 
         Try
-            ' 启动 HttpListener HTTP 服务
             Await StartHttpListenerAsync()
 
             _isRunning = True
@@ -68,13 +73,12 @@ Public Class McpService
     Private Async Function StartHttpListenerAsync() As Task
         Dim accessErr As HttpListenerException = Nothing
         Try
-            ' 验证工具管理器已传入
             If _toolManager Is Nothing Then
                 Throw New InvalidOperationException("工具管理器未传入，无法启动 MCP 服务")
             End If
 
             _listener = New HttpListener()
-            _listener.Prefixes.Add($"http://+:{_port}/")
+            _listener.Prefixes.Add($"http://+:{_port}/mcp/")
             _listener.Start()
 
             _cts = New CancellationTokenSource()
@@ -91,10 +95,8 @@ Public Class McpService
             Dim command = $"netsh http add urlacl url=http://+:{_port}/mcp/ user=""%USERDOMAIN%\%USERNAME%""
 netsh http add iplisten ipaddress=127.0.0.1:{_port}"
 
-            ' 尝试复制到剪贴板
             Dim clipboardSuccess = TryCopyToClipboard(command, "MCP服务")
 
-            ' 构建用户提示信息
             Dim userMessage As String
             If clipboardSuccess Then
                 userMessage = $"端口 {_port} 需要授权。已将命令复制到剪贴板，请以管理员身份运行命令提示符并粘贴执行："
@@ -153,7 +155,6 @@ netsh http add iplisten ipaddress=127.0.0.1:{_port}"
     End Function
 
     Private Async Function HandleMcpRequestAsync(ctx As HttpListenerContext) As Task
-        ' 读取请求体
         Dim requestBody As String
         Dim encoding = If(ctx.Request.ContentEncoding, System.Text.Encoding.UTF8)
         Using reader As New StreamReader(ctx.Request.InputStream, encoding)

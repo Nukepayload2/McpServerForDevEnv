@@ -85,13 +85,10 @@ Public Class WriteLinesTool
     ''' <returns>执行结果</returns>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "filePath", "content")
 
-            ' 获取参数
             Dim filePath = CStr(arguments("filePath"))
 
-            ' 检查文件权限
             If Not CheckFilePermission(filePath, FileAccessType.Write) Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -100,17 +97,14 @@ Public Class WriteLinesTool
             Dim expectedHash = GetOptionalArgument(arguments, "hash", String.Empty)
             Dim encoding = GetOptionalArgument(arguments, "encoding", "UTF-8")
 
-            ' 编码验证（目前只支持UTF-8）
             If Not String.Equals(encoding, "UTF-8", StringComparison.OrdinalIgnoreCase) Then
                 Throw New McpException($"当前仅支持UTF-8编码，请求的编码: {encoding}", McpErrorCode.InvalidParams)
             End If
 
             LogOperation("写入文件", "开始", $"文件: {filePath}, 大小: {content.Length} 字符")
 
-            ' 调用文件操作辅助类
             Dim writeResult = FileOperationHelper.WriteFileSafely(filePath, content, expectedHash)
 
-            ' 转换为工具结果
             Dim toolResult As New WriteLinesResult With {
                 .Success = writeResult.Success,
                 .LinesWritten = writeResult.LinesWritten,

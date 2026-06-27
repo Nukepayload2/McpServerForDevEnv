@@ -76,6 +76,21 @@ Public Class WpfDebugHandshakeTests
         Assert.IsNull(info.ProtocolVersion)
         Assert.IsNull(info.MainWindowTitle)
     End Sub
+
+    ''' <summary>握手帧带 processPath token 时应解析到 ProcessPath 字段。</summary>
+    <TestMethod>
+    Public Sub ParseHandshake_WithProcessPath_ParsesPath()
+        Dim frame As New JObject()
+        frame("protocolVersion") = "1"
+        frame("pid") = 5599
+        frame("processPath") = "C:\Apps\MyWpfApp.exe"
+
+        Dim info As WpfDebugHandshakeInfo = WpfDebugResultReader.ParseHandshake(frame)
+
+        Assert.IsNotNull(info)
+        Assert.AreEqual("C:\Apps\MyWpfApp.exe", info.ProcessPath)
+        Assert.AreEqual(5599, info.Pid)
+    End Sub
 End Class
 
 ''' <summary>
@@ -99,6 +114,22 @@ Public Class WpfDebugConnectionTests
         Assert.AreEqual("1", connection.ProtocolVersion)
         Assert.AreEqual(4321, connection.Pid)
         Assert.AreEqual("Target Window", connection.MainWindowTitle)
+    End Sub
+
+    ''' <summary>握手信息带 ProcessPath 时应透传暴露到 WpfDebugConnection.ProcessPath。</summary>
+    <TestMethod>
+    Public Sub New_FromHandshake_ExposesProcessPath()
+        Dim handshake As New WpfDebugHandshakeInfo With {
+            .ProtocolVersion = "1",
+            .Pid = 8812,
+            .MainWindowTitle = "App",
+            .ProcessPath = "C:\Apps\TargetApp.exe"
+        }
+
+        Dim connection As New WpfDebugConnection(handshake)
+
+        Assert.AreEqual("C:\Apps\TargetApp.exe", connection.ProcessPath)
+        Assert.AreEqual(8812, connection.Pid)
     End Sub
 
     ''' <summary>Nothing 握手信息应抛 ArgumentNullException。</summary>

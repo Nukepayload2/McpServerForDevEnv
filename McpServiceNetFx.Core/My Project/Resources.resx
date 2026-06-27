@@ -132,8 +132,29 @@
   <data name="TabAbout" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="TabVsInstances" xml:space="preserve">
+    <value>VS Instances</value>
+  </data>
+  <data name="TabWpfTargets" xml:space="preserve">
+    <value>WPF Targets</value>
+  </data>
+  <data name="TabServiceSettings" xml:space="preserve">
+    <value>Service Settings</value>
+  </data>
   <data name="ButtonRefresh" xml:space="preserve">
     <value>Refresh</value>
+  </data>
+  <data name="ButtonRefreshWpfTargets" xml:space="preserve">
+    <value>Refresh Targets</value>
+  </data>
+  <data name="HeaderWpfWindow" xml:space="preserve">
+    <value>Window Title</value>
+  </data>
+  <data name="HeaderWpfPath" xml:space="preserve">
+    <value>Process Path</value>
+  </data>
+  <data name="HeaderWpfPid" xml:space="preserve">
+    <value>PID</value>
   </data>
   <data name="ButtonStartService" xml:space="preserve">
     <value>Start Service</value>
@@ -582,9 +603,6 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="LogMissingRequiredParameter" xml:space="preserve">
     <value>Missing required parameter: {0}</value>
-  </data>
-  <data name="LogToolDataContextNotSet" xml:space="preserve">
-    <value>Tool data context not set, cannot execute tool</value>
   </data>
   <data name="LogPermissionCheckException" xml:space="preserve">
     <value>Permission check</value>
@@ -1095,5 +1113,11 @@ This software does not support remote information transmission, only local netwo
   </data>
   <data name="PermissionType_File" xml:space="preserve">
     <value>File Permissions</value>
+  </data>
+  <data name="LogNoVsInstance" xml:space="preserve">
+    <value>No Visual Studio instance selected. Please select one in Service Management.</value>
+  </data>
+  <data name="LogNoWpfTarget" xml:space="preserve">
+    <value>WPF debug target not connected. Please connect in Service Management.</value>
   </data>
 </root>

@@ -10,15 +10,17 @@ Imports Newtonsoft.Json.Linq
 ' 发请求收响应、握手、订阅缓存事件。作为 WPF 调试工具（#23）的数据上下文。
 '
 ' 【设计要点】
-' 1. 固定 pipe 名（WpfDebugProtocol.PipeName）连被控端，连上即发现被控端。
-'    单被控端语义：同时只持有一个连接。
+' 1. pipe 名带 PID（WpfDebugProtocol.GetPipeNameForPid）。两种连接入口（构造时必须指定目标）：
+'    - New(targetPid) + ConnectAsync() ：连指定 PID 的被控端（用户从候选列表选了目标，生产路径）。
+'    - New(pipeName) + ConnectAsync()  ：直接指定 pipe 名（测试/定制用）。
+'    单活跃连接语义：同时只持有一个连接。
 ' 2. 全程异步（ConnectAsync / ReadAsync / WriteAsync），连接等待可超时可取消，
 '    绝不 .Result / .Wait() 同步阻塞（避免 UI 线程死锁）。
 ' 3. 后台读循环收两类帧：WpfDebugResponse（按 id 配对 pending 请求）和
 '    WpfDebugEvent（被控端主动推，缓存供 list_events 工具读）。
 '    用 JObject 先读再按字段判断类型——响应有 "id"，事件有 "event"。
 ' 4. 握手：连接成功后被控端先发一帧握手（JObject，非响应），主控先读这一帧解析出
-'    pid/主窗口标题/协议版本。之后才进入请求/响应循环。
+'    pid/主窗口标题/协议版本/可执行路径。之后才进入请求/响应循环。
 ' 5. 连接失败/握手失败/读写异常：置为断开状态 + 抛异常给调用方（UI 报"未连接被控端"风格），
 '    不裸崩。后台读循环异常会触发 Disconnected 事件，由 WpfDebugConnectionMonitor 处理清理。
 
@@ -28,7 +30,8 @@ Imports Newtonsoft.Json.Linq
 Public Class WpfDebugProxy
     Implements IDisposable
 
-    Private ReadOnly _pipeName As String
+    ' 构造时由 PID/pipeName 指定；非 ReadOnly 仅为构造赋值便利。
+    Private _pipeName As String
 
     Private _client As NamedPipeClientStream
     ' 注意：读写全程直接用底层 _client stream + MessageFramer，不套 StreamReader/StreamWriter——
@@ -57,13 +60,15 @@ Public Class WpfDebugProxy
     Public Event Disconnected As EventHandler(Of EventArgs)
 
     ''' <summary>
-    ''' 用固定 pipe 名构造（<see cref="WpfDebugProtocol.PipeName"/>）。
+    ''' 指定目标 PID 构造。<see cref="ConnectAsync()"/> 会连 <see cref="WpfDebugProtocol.GetPipeNameForPid"/>(targetPid)。
+    ''' 生产路径：主控 UI 从候选列表选中目标 PID 后用此构造。
     ''' </summary>
-    Public Sub New()
-        Me.New(WpfDebugProtocol.PipeName)
+    Public Sub New(targetPid As Integer)
+        If targetPid <= 0 Then Throw New ArgumentOutOfRangeException(NameOf(targetPid))
+        _pipeName = WpfDebugProtocol.GetPipeNameForPid(targetPid)
     End Sub
 
-    ''' <summary>指定 pipe 名构造（测试或定制用；生产路径用固定名）。</summary>
+    ''' <summary>指定 pipe 名构造（测试或定制用；生产路径用 PID 构造）。</summary>
     Public Sub New(pipeName As String)
         If String.IsNullOrEmpty(pipeName) Then Throw New ArgumentNullException(NameOf(pipeName))
         _pipeName = pipeName
@@ -83,7 +88,9 @@ Public Class WpfDebugProxy
         End Get
     End Property
 
-    ''' <summary>实际使用的 pipe 名。</summary>
+    ''' <summary>
+    ''' 实际使用的 pipe 名。构造时（按 PID 或直接 pipe 名）指定。
+    ''' </summary>
     Public ReadOnly Property PipeName As String
         Get
             Return _pipeName
@@ -94,21 +101,36 @@ Public Class WpfDebugProxy
     ''' 异步连接被控端 pipe server 并完成握手。
     ''' 连接等待可超时（默认 5 秒），可取消。
     ''' 连接失败/握手失败抛异常给调用方（UI 报"未连接被控端"风格）。
+    '''
+    ''' 连接的 pipe 名由构造时指定（<c>New(targetPid)</c> 或 <c>New(pipeName)</c>）。
+    ''' 若未指定（_pipeName 为空，理论上构造后不会发生）抛 <see cref="ArgumentNullException"/> 作防御。
     ''' </summary>
-    ''' <param name="connectTimeoutMs">连接等待超时（毫秒）。被控端未启动时在此时间内连不上即抛 TimeoutException。</param>
+    ''' <param name="connectTimeoutMs">单次连接尝试的等待超时（毫秒）。被控端未启动时在此时间内连不上即抛 TimeoutException。</param>
     ''' <param name="cancellationToken">取消令牌。</param>
     Public Async Function ConnectAsync(Optional connectTimeoutMs As Integer = 5000, Optional cancellationToken As CancellationToken = Nothing) As Task
         If _disposed Then Throw New ObjectDisposedException(NameOf(WpfDebugProxy))
         If IsConnected Then Return
 
+        ' 构造必须指定目标 pid 或 pipeName；_pipeName 为空是构造误用，防御抛异常。
+        If String.IsNullOrEmpty(_pipeName) Then
+            Throw New ArgumentNullException(NameOf(_pipeName), "WpfDebugProxy 构造时未指定目标 pipe 名；请用 New(targetPid) 或 New(pipeName) 构造。")
+        End If
+
         ' 清理可能的旧状态。
         DisconnectInternal()
 
+        Await ConnectCoreAsync(_pipeName, connectTimeoutMs, cancellationToken).ConfigureAwait(False)
+    End Function
+
+    ''' <summary>
+    ''' 实际连接 + 握手 + 起读循环的核心逻辑（与 pipe 名来源解耦）。
+    ''' </summary>
+    Private Async Function ConnectCoreAsync(pipeName As String, connectTimeoutMs As Integer, cancellationToken As CancellationToken) As Task
         Dim client As NamedPipeClientStream = Nothing
         Try
             client = New NamedPipeClientStream(
                 ".",
-                _pipeName,
+                pipeName,
                 PipeDirection.InOut,
                 PipeOptions.Asynchronous)
 

@@ -1,9 +1,9 @@
 Imports System.Windows
 
 ' SampleHost 应用入口。
-' OnStartup 启动 WpfDebugHost（起固定名 pipe server），OnExit 停止清理。
-' pipe 名固定（WpfDebugProtocol.PipeName），主控 WpfDebugProxy 用同名连接。
-' 单被控语义：第二个 SampleHost 启动时同名 pipe 已占用会抛 IOException，直接报错退出。
+' OnStartup 启动 WpfDebugHost（起以 PID 拼名的 pipe server），OnExit 停止清理。
+' pipe 名由 WpfDebugProtocol.GetPipeNameForPid(自身pid) 得出，主控枚举/指定 PID 连接。
+' 同机多 SampleHost 各占自己 PID 的 pipe 互不撞名。
 
 Partial Class Application
 

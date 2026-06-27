@@ -1,10 +1,10 @@
 ' WPF 调试连接快照（主控侧）。
 '
-' 一次成功握手后，被控端回报的 pid / 主窗口标题 / 协议版本的不可变容器。
+' 一次成功握手后，被控端回报的 pid / 主窗口标题 / 协议版本 / 可执行路径的不可变容器。
 ' 放在 Core（而非主控 UI 项目），因为它是纯 POCO、零 UI 依赖、零外部依赖，
 ' 便于单测构造（Tests 项目引用 Core 即可测，无需引用 WPF UI 项目）。
 '
-' 单被控端 + 固定 pipe 名：同一时刻主控只持有一个 WpfDebugConnection，不需要列表/持久化。
+' pipe 名带 PID 后同机可挂多个被控端，但主控一次仍只持一个活跃连接（多连接列表由 UI 层管理）。
 
 ''' <summary>
 ''' 一次 WPF 调试连接的握手信息快照。握手成功后由 <see cref="WpfDebugProxy.Handshake"/> 构造。
@@ -36,6 +36,13 @@ Public Class WpfDebugConnection
     Public ReadOnly Property ProtocolVersion As String
         Get
             Return _handshakeInfo.ProtocolVersion
+        End Get
+    End Property
+
+    ''' <summary>被控进程可执行文件全路径（握手时回报，拿不到时为空字符串）。</summary>
+    Public ReadOnly Property ProcessPath As String
+        Get
+            Return _handshakeInfo.ProcessPath
         End Get
     End Property
 End Class

@@ -53,13 +53,10 @@ Public NotInheritable Class McpServiceNetFx
         ' Do any initialization that requires the UI thread after switching to the UI thread.
         Await JoinableTaskFactory.SwitchToMainThreadAsync()
 
-        ' 初始化 MCP 窗口状态
         _mcpWindowState = New ToolWindows.McpWindowState(Me)
 
-        ' 初始化我们的命令
         Await Commands.ShowMcpToolWindowCommand.InitializeAsync(Me)
 
-        ' 记录包初始化日志
         _mcpWindowState.LogInfo("Package", "MCP Service Init")
     End Function
 

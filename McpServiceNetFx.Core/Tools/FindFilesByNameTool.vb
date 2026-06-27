@@ -97,13 +97,11 @@ Public Class FindFilesByNameTool
     ''' </summary>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 获取参数
             Dim findWhat = GetOptionalArgument(arguments, "findWhat", "*")
             Dim lookIn = GetOptionalArgument(arguments, "lookIn", "")
             Dim matchModeStr = GetOptionalArgument(arguments, "matchMode", "wildcard")
             Dim searchModeStr = GetOptionalArgument(arguments, "searchMode", "recursive")
 
-            ' 解析枚举
             Dim matchMode As FileNameMatchMode
             If Not [Enum].TryParse(matchModeStr, True, matchMode) Then
                 matchMode = FileNameMatchMode.Wildcard
@@ -114,7 +112,6 @@ Public Class FindFilesByNameTool
                 searchMode = SearchMode.Recursive
             End If
 
-            ' 获取解决方案目录作为默认值
             Dim solutionInfo = Await _vsTools.GetSolutionInformationAsync()
             Dim solutionDir As String = Nothing
             If solutionInfo IsNot Nothing AndAlso Not String.IsNullOrEmpty(solutionInfo.FullName) Then
@@ -125,7 +122,6 @@ Public Class FindFilesByNameTool
                 solutionDir = sloPath
             End If
 
-            ' 确定搜索目录
             Dim searchDir As String
             If String.IsNullOrEmpty(lookIn) Then
                 searchDir = solutionDir
@@ -133,7 +129,6 @@ Public Class FindFilesByNameTool
                 searchDir = Path.GetFullPath(lookIn)
             End If
 
-            ' 验证搜索目录
             If String.IsNullOrEmpty(searchDir) OrElse Not Directory.Exists(searchDir) Then
                 Return New FindFilesByNameResult With {
                     .Success = False,
@@ -146,7 +141,6 @@ Public Class FindFilesByNameTool
                 }
             End If
 
-            ' 权限检查：如果搜索目录在解决方案目录外，检查权限
             Dim needPermissionCheck As Boolean = False
             If solutionDir IsNot Nothing Then
                 needPermissionCheck = Not searchDir.StartsWith(solutionDir, StringComparison.OrdinalIgnoreCase)
@@ -162,10 +156,8 @@ Public Class FindFilesByNameTool
 
             LogOperation("按文件名查找", "开始", $"目录: {searchDir}, 模式: {findWhat}, 匹配模式: {matchMode}, 搜索模式: {searchMode}")
 
-            ' 确定搜索选项
             Dim searchOption As SearchOption = If(searchMode = SearchMode.Recursive, SearchOption.AllDirectories, SearchOption.TopDirectoryOnly)
 
-            ' 执行搜索
             Dim files As String()
             If matchMode = FileNameMatchMode.Wildcard Then
                 ' 通配符模式：直接使用 Directory.GetFiles

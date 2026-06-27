@@ -20,7 +20,6 @@ Partial Public Class MainWindow
     End Sub
 
     Private Sub InitializeApplication()
-        ' 初始化各个功能模块
         InitializeVsInstances()
         InitializeToolManager()
         InitializePermissions()

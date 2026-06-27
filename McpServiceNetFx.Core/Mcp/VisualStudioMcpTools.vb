@@ -22,7 +22,6 @@ Public Class VisualStudioMcpTools
         <Description("构建配置 (Debug/Release)")> Optional configuration As String = "Debug"
     ) As Task(Of BuildResult)
         Try
-            ' 检查权限
             If Not CheckPermission("build_solution", "构建解决方案") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -49,7 +48,6 @@ Public Class VisualStudioMcpTools
         <Description("构建配置 (Debug/Release)")> Optional configuration As String = "Debug"
     ) As Task(Of BuildResult)
         Try
-            ' 检查权限
             If Not CheckPermission("build_project", "构建项目") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -79,7 +77,6 @@ Public Class VisualStudioMcpTools
         <Description("过滤级别 (Error/Warning/Message/All)")> Optional severity As String = "All"
     ) As Task(Of ErrorListResponse)
         Try
-            ' 检查权限
             If Not CheckPermission("get_error_list", "获取错误列表") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -103,7 +100,6 @@ Public Class VisualStudioMcpTools
     ''' </summary>
     Public Async Function GetSolutionInfoAsync() As Task(Of SolutionInfoResponse)
         Try
-            ' 检查权限
             If Not CheckPermission("get_solution_info", "获取解决方案信息") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -121,7 +117,6 @@ Public Class VisualStudioMcpTools
     ''' </summary>
     Public Async Function GetActiveDocumentAsync() As Task(Of ActiveDocumentResponse)
         Try
-            ' 检查权限
             If Not CheckPermission("get_active_document", "获取活动文档") Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If

@@ -124,13 +124,10 @@ Public Class StringReplaceTool
     ''' <returns>执行结果</returns>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "filePath", "hash", "oldText", "newText")
 
-            ' 获取参数
             Dim filePath = CStr(arguments("filePath"))
 
-            ' 检查文件权限
             If Not CheckFilePermission(filePath, FileAccessType.ReadWrite) Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -144,17 +141,14 @@ Public Class StringReplaceTool
             Dim singleline = GetOptionalArgument(arguments, "singleline", False)
             Dim encoding = GetOptionalArgument(arguments, "encoding", "UTF-8")
 
-            ' 编码验证（目前只支持UTF-8）
             If Not String.Equals(encoding, "UTF-8", StringComparison.OrdinalIgnoreCase) Then
                 Throw New McpException($"当前仅支持UTF-8编码，请求的编码: {encoding}", McpErrorCode.InvalidParams)
             End If
 
-            ' 参数验证
             If String.IsNullOrEmpty(oldText) Then
                 Throw New McpException("要替换的文本不能为空", McpErrorCode.InvalidParams)
             End If
 
-            ' 构建替换选项
             Dim options As New StringReplaceOptions With {
                 .UseRegex = useRegex,
                 .IgnoreCase = ignoreCase,
@@ -165,10 +159,8 @@ Public Class StringReplaceTool
             Dim operationType = If(useRegex, "正则表达式替换", "字符串替换")
             LogOperation("替换文件内容", "开始", $"文件: {filePath}, 操作: {operationType}, 忽略大小写: {ignoreCase}")
 
-            ' 调用文件操作辅助类
             Dim replaceResult = FileOperationHelper.ReplaceInFile(filePath, oldText, newText, options, expectedHash)
 
-            ' 转换为工具结果
             Dim toolResult As New StringReplaceResult With {
                 .Success = replaceResult.Success,
                 .ReplacementsCount = replaceResult.ReplacementsCount,

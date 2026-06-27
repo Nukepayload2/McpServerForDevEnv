@@ -99,13 +99,10 @@ Public Class ReadLinesTool
     ''' <returns>执行结果</returns>
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 验证必需参数
             ValidateRequiredArguments(arguments, "filePath")
 
-            ' 获取参数
             Dim filePath = CStr(arguments("filePath"))
 
-            ' 检查文件权限
             If Not CheckFilePermission(filePath, FileAccessType.Read) Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
@@ -113,7 +110,6 @@ Public Class ReadLinesTool
             Dim length = GetOptionalArgument(arguments, "length", 100)
             Dim withLineNumbers = GetOptionalArgument(arguments, "withLineNumbers", False)
 
-            ' 参数验证
             If start < _base Then
                 Throw New McpException($"起始行号不能小于{_base}", McpErrorCode.InvalidParams)
             End If
@@ -124,10 +120,8 @@ Public Class ReadLinesTool
 
             LogOperation("读取文件行", "开始", $"文件: {filePath}, 起始: {start}, 行号基数: {_base}, 行数: {length}")
 
-            ' 调用文件操作辅助类
             Dim readResult = FileOperationHelper.ReadFileLinesSafely(filePath, start - _base, length)
 
-            ' 转换为工具结果
             Dim toolResult As New ReadLinesResult With {
                 .Success = readResult.Success,
                 .TotalLines = readResult.TotalLines,

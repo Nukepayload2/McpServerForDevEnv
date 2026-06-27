@@ -19,12 +19,9 @@ Public Module PathHelper
             Return String.Empty
         End If
 
-        ' 检查路径是否包含通配符
         Dim hasWildcards = path.Contains("*"c) OrElse path.Contains("?"c)
 
-        ' 处理用户目录 (~)
         If path.StartsWith("~") Then
-            ' 移除 ~ 和可能紧跟的路径分隔符
             Dim remainingPath = path.Substring(1)
             If remainingPath.StartsWith("/") OrElse remainingPath.StartsWith("\") Then
                 remainingPath = remainingPath.Substring(1)
@@ -83,10 +80,8 @@ Public Module PathHelper
             Return False
         End If
 
-        ' 只标准化实际文件路径，pattern 保持原始形式
         Dim normalizedPath = NormalizePath(filePath)
 
-        ' 使用 Like 运算符进行匹配
         Return normalizedPath Like pathPattern
     End Function
 
@@ -101,7 +96,6 @@ Public Module PathHelper
             Return False
         End If
 
-        ' 检查是否匹配包含模式
         Dim isIncluded As Boolean = False
         For Each includePattern In pathPattern.IncludePatterns
             If LikePath(filePath, includePattern) Then

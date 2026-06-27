@@ -50,83 +50,156 @@
             <TabItem Header="{x:Static res:Resources.TabServiceManagement}">
                 <Grid>
                     <Grid.RowDefinitions>
+                        <!-- Row0：服务启停按钮（一行） -->
                         <RowDefinition Height="Auto"/>
+                        <!-- Row1：主体，按被控端类型 / 服务设置分子 tab（VS 实例 / WPF 程序 / 服务设置） -->
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
-                        <TextBox x:Name="TxtSearch" Width="300" Margin="0,0,10,0"/>
-                        <Button x:Name="BtnRefresh" Content="{x:Static res:Resources.ButtonRefresh}" Width="80"/>
+                    <!-- Row0：仅放启停服务按钮，避免占用过多纵向空间 -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button x:Name="BtnStartService" Content="{x:Static res:Resources.ButtonStartService}" Width="100"/>
+                        <Button x:Name="BtnStopService" Content="{x:Static res:Resources.ButtonStopService}" Width="100" Margin="10,0,0,0" IsEnabled="False"/>
                     </StackPanel>
 
-                    <ui:DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
-                              IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
-                              GridLinesVisibility="Horizontal" HeadersVisibility="Column">
-                        <ui:DataGrid.Columns>
-                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderWindowCaption}" Binding="{Binding Caption}" Width="*" FontSize="12"/>
-                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderSolutionPath}" Binding="{Binding SolutionPath}" Width="2*" FontSize="12"/>
-                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderVersion}" Binding="{Binding Version}"/>
-                            <DataGridTextColumn Header="{x:Static res:Resources.HeaderProcessId}" Binding="{Binding ProcessId}"/>
-                        </ui:DataGrid.Columns>
-                    </ui:DataGrid>
-      
-                    <GroupBox Grid.Row="2" Header="{x:Static res:Resources.GroupServiceSettings}" Margin="0,0,0,0">
-                        <Grid Margin="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                    <!-- 被控端实例分子 tab：VS 实例 + WPF 程序 + 服务设置 -->
+                    <TabControl x:Name="TabInstances" Grid.Row="1" Margin="0,8,0,0">
 
-                            <Label Grid.Row="0" Grid.Column="0" Content="{x:Static res:Resources.LabelInstance}" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="TxtSelectedInstance" Grid.Row="0" Grid.Column="1"
-                                       Text="{x:Static res:Resources.TextSelectInstance}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <!-- 子 tab：Visual Studio 实例 -->
+                        <TabItem Header="{x:Static res:Resources.TabVsInstances}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                            <Label Grid.Row="1" Grid.Column="0" Content="{x:Static res:Resources.LabelPort}" VerticalAlignment="Center"
-                                    Margin="0,10,0,0"/>
-                            <TextBox x:Name="TxtPort" Grid.Row="1" Grid.Column="1"
-                                     Margin="10,10,10,0" Text="38080"/>
-                            <Button x:Name="BtnStartService" Grid.Row="1" Grid.Column="2"
-                                    Content="{x:Static res:Resources.ButtonStartService}" Width="100" Margin="0,10,0,0"/>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBox x:Name="TxtSearch" Width="300" Margin="0,0,10,0"/>
+                                    <Button x:Name="BtnRefresh" Content="{x:Static res:Resources.ButtonRefresh}" Width="80"/>
+                                </StackPanel>
 
-                            <Label Grid.Row="2" Grid.Column="0" Content="{x:Static res:Resources.LabelStatus}" VerticalAlignment="Center"
-                                    Margin="0,10,0,0"/>
-                            <TextBlock x:Name="TxtServiceStatus" Grid.Row="2" Grid.Column="1"
-                                       Text="{x:Static res:Resources.TextServiceNotStarted}" VerticalAlignment="Center" Margin="10,10,0,0"/>
-                            <Button x:Name="BtnStopService" Grid.Row="2" Grid.Column="2"
-                                    Content="{x:Static res:Resources.ButtonStopService}" Width="100" Margin="0,10,0,0"
-                                    IsEnabled="False"/>
-
-                            <Label Grid.Row="3" Grid.Column="0" Content="{x:Static res:Resources.LabelClientConfig}" VerticalAlignment="Center"
-                                    Margin="0,10,0,0"/>
-                            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,0">
-                                <TabControl x:Name="TabClientConfig" Visibility="Collapsed">
-                                    <TabItem Header="{x:Static res:Resources.TabJsonConfig}">
-                                        <TextBox x:Name="TxtJsonConfig" Margin="5"
-                                                 IsReadOnly="True" VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"
-                                                 FontFamily="Consolas" FontSize="11"
-                                                 Text="{x:Static res:Resources.TextJsonConfigHint}"/>
-                                    </TabItem>
-                                    <TabItem Header="{x:Static res:Resources.TabClaudeConfig}">
-                                        <TextBox x:Name="TxtClaudeConfig" Margin="5"
-                                                 IsReadOnly="True" VerticalScrollBarVisibility="Auto"
-                                                 HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"
-                                                 FontFamily="Consolas" FontSize="11"
-                                                 Text="{x:Static res:Resources.TextClaudeConfigHint}"/>
-                                    </TabItem>
-                                </TabControl>
+                                <ui:DataGrid x:Name="DgVsInstances" Grid.Row="1" AutoGenerateColumns="False"
+                                          IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                                          GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+                                    <ui:DataGrid.Columns>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderWindowCaption}" Binding="{Binding Caption}" Width="*" FontSize="12"/>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderSolutionPath}" Binding="{Binding SolutionPath}" Width="2*" FontSize="12"/>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderVersion}" Binding="{Binding Version}"/>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderProcessId}" Binding="{Binding ProcessId}"/>
+                                    </ui:DataGrid.Columns>
+                                </ui:DataGrid>
                             </Grid>
-                        </Grid>
-                    </GroupBox>
+                        </TabItem>
+
+                        <!-- 子 tab：WPF 调试被控端 -->
+                        <TabItem Header="{x:Static res:Resources.TabWpfTargets}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- 刷新候选列表（枚举系统 named pipe，不连接） + 连接/断开 -->
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                    <Button x:Name="BtnRefreshWpfTargets" Content="{x:Static res:Resources.ButtonRefreshWpfTargets}" Width="110" Margin="0,0,10,0"/>
+                                    <Button x:Name="BtnWpfDebugConnect" Content="连接" Width="80" Margin="0,0,10,0"/>
+                                    <Button x:Name="BtnWpfDebugDisconnect" Content="断开" Width="80" Margin="0,0,10,0" IsEnabled="False"/>
+                                </StackPanel>
+
+                                <!-- 候选被控端列表：选中一项后点"连接" -->
+                                <ui:DataGrid x:Name="DgWpfDebugTargets" Grid.Row="1" AutoGenerateColumns="False"
+                                          IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                                          GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+                                    <ui:DataGrid.Columns>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderWpfWindow}" Binding="{Binding MainWindowTitle}" Width="*"/>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderWpfPath}" Binding="{Binding ProcessPath}" Width="2*"/>
+                                        <DataGridTextColumn Header="{x:Static res:Resources.HeaderWpfPid}" Binding="{Binding Pid}"/>
+                                    </ui:DataGrid.Columns>
+                                </ui:DataGrid>
+
+                                <!-- 当前连接状态（Pid/Title 来自握手；ProcessPath 可选） -->
+                                <GroupBox Grid.Row="2" Header="被控端连接" Margin="0,8,0,0">
+                                    <Grid Margin="10">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Row="0" Grid.Column="0" Content="状态" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="TxtWpfDebugStatus" Grid.Row="0" Grid.Column="1"
+                                                   Text="未连接" VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+                                        <Label Grid.Row="1" Grid.Column="0" Content="PID" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                        <TextBlock x:Name="TxtWpfDebugPid" Grid.Row="1" Grid.Column="1"
+                                                   Text="-" VerticalAlignment="Center" Margin="10,8,0,0"/>
+
+                                        <Label Grid.Row="2" Grid.Column="0" Content="主窗口" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                        <TextBlock x:Name="TxtWpfDebugTitle" Grid.Row="2" Grid.Column="1"
+                                                   Text="-" VerticalAlignment="Center" Margin="10,8,0,0" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- 子 tab：服务设置（端口 / 状态 / 客户端配置），从原 GroupServiceSettings 迁入 -->
+                        <TabItem Header="{x:Static res:Resources.TabServiceSettings}">
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Row="0" Grid.Column="0" Content="{x:Static res:Resources.LabelInstance}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TxtSelectedInstance" Grid.Row="0" Grid.Column="1"
+                                           Text="{x:Static res:Resources.TextSelectInstance}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+
+                                <Label Grid.Row="1" Grid.Column="0" Content="{x:Static res:Resources.LabelPort}" VerticalAlignment="Center"
+                                        Margin="0,10,0,0"/>
+                                <TextBox x:Name="TxtPort" Grid.Row="1" Grid.Column="1"
+                                         Margin="10,10,10,0" Text="38080"/>
+
+                                <Label Grid.Row="2" Grid.Column="0" Content="{x:Static res:Resources.LabelStatus}" VerticalAlignment="Center"
+                                        Margin="0,10,0,0"/>
+                                <TextBlock x:Name="TxtServiceStatus" Grid.Row="2" Grid.Column="1"
+                                           Text="{x:Static res:Resources.TextServiceNotStarted}" VerticalAlignment="Center" Margin="10,10,0,0"/>
+
+                                <Label Grid.Row="3" Grid.Column="0" Content="{x:Static res:Resources.LabelClientConfig}" VerticalAlignment="Center"
+                                        Margin="0,10,0,0"/>
+                                <!-- 客户端配置 Visibility=Collapsed 保持，由 code-behind 控制 -->
+                                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                                    <TabControl x:Name="TabClientConfig" Visibility="Collapsed">
+                                        <TabItem Header="{x:Static res:Resources.TabJsonConfig}">
+                                            <TextBox x:Name="TxtJsonConfig" Margin="5"
+                                                     IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                                                     HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"
+                                                     FontFamily="Consolas" FontSize="11"
+                                                     Text="{x:Static res:Resources.TextJsonConfigHint}"/>
+                                        </TabItem>
+                                        <TabItem Header="{x:Static res:Resources.TabClaudeConfig}">
+                                            <TextBox x:Name="TxtClaudeConfig" Margin="5"
+                                                     IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                                                     HorizontalScrollBarVisibility="Auto" TextWrapping="NoWrap"
+                                                     FontFamily="Consolas" FontSize="11"
+                                                     Text="{x:Static res:Resources.TextClaudeConfigHint}"/>
+                                        </TabItem>
+                                    </TabControl>
+                                </Grid>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
                 </Grid>
             </TabItem>
 
@@ -341,47 +414,6 @@
                             <DataGridTextColumn Header="{x:Static res:Resources.HeaderDetails}" Binding="{Binding Details}" Width="2*"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
-            </TabItem>
-            
-            <!-- WPF 调试 tab：连接被控 WPF 进程（#22）。极简 UI：连接/断开 + 当前连接状态。 -->
-            <TabItem Header="WPF Debug">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,8">
-                        <Button x:Name="BtnWpfDebugConnect" Content="连接" Width="80" Margin="0,0,10,0"/>
-                        <Button x:Name="BtnWpfDebugDisconnect" Content="断开" Width="80" Margin="0,0,10,0" IsEnabled="False"/>
-                    </StackPanel>
-
-                    <GroupBox Grid.Row="1" Header="被控端连接">
-                        <Grid Margin="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Label Grid.Row="0" Grid.Column="0" Content="状态" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="TxtWpfDebugStatus" Grid.Row="0" Grid.Column="1"
-                                       Text="未连接" VerticalAlignment="Center" Margin="10,0,0,0"/>
-
-                            <Label Grid.Row="1" Grid.Column="0" Content="PID" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                            <TextBlock x:Name="TxtWpfDebugPid" Grid.Row="1" Grid.Column="1"
-                                       Text="-" VerticalAlignment="Center" Margin="10,8,0,0"/>
-
-                            <Label Grid.Row="2" Grid.Column="0" Content="主窗口" VerticalAlignment="Center" Margin="0,8,0,0"/>
-                            <TextBlock x:Name="TxtWpfDebugTitle" Grid.Row="2" Grid.Column="1"
-                                       Text="-" VerticalAlignment="Center" Margin="10,8,0,0" TextWrapping="Wrap"/>
-                        </Grid>
-                    </GroupBox>
                 </Grid>
             </TabItem>
 

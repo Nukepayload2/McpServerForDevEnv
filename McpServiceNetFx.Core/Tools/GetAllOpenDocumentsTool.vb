@@ -28,14 +28,12 @@ Public Class GetAllOpenDocumentsTool
 
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
             If Not CheckPermission() Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
             LogOperation("获取所有打开文档", "开始", "获取所有打开文档信息")
 
-            ' 使用异步方法
             Dim result = Await _vsTools.GetAllOpenDocumentsAsync()
 
             If result.TotalCount > 0 Then

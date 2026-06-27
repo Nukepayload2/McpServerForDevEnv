@@ -10,7 +10,6 @@ Partial Public Class MainWindow
             _vsInstances = VisualStudioEnumerator.GetRunningInstances().ToList()
             DgVsInstances.ItemsSource = _vsInstances
 
-            ' 更新选中实例信息
             If _selectedVsInstance IsNot Nothing Then
                 Dim stillExists = _vsInstances.Any(Function(inst) inst.ProcessId = _selectedVsInstance.ProcessId)
                 If Not stillExists Then
@@ -49,7 +48,6 @@ Partial Public Class MainWindow
         _selectedVsInstance = TryCast(DgVsInstances.SelectedItem, VisualStudioInstance)
 
         If _selectedVsInstance IsNot Nothing Then
-            ' 为工具管理器创建数据上下文
             CreateToolManagerDataContext()
         Else
             ' 工具管理器保持存在，只是没有数据上下文
@@ -72,7 +70,6 @@ Partial Public Class MainWindow
                 Throw New InvalidOperationException("工具管理器框架未创建")
             End If
 
-            ' 创建数据上下文并注册工具
             _toolManager.CreateVsTools(_selectedVsInstance.DTE2, New DispatcherService(Dispatcher))
 
             LogOperation(My.Resources.LogToolManager, My.Resources.LogCompleted, String.Format(My.Resources.LogInstanceAndToolCount, _selectedVsInstance.Caption, _toolManager.GetToolCount()))

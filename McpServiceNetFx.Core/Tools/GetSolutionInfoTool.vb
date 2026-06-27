@@ -28,14 +28,12 @@ Public Class GetSolutionInfoTool
 
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
             If Not CheckPermission() Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
             LogOperation("获取解决方案信息", "开始", "获取解决方案详细信息")
 
-            ' 使用异步方法
             Dim result = Await _vsTools.GetSolutionInformationAsync()
 
             LogOperation("获取解决方案信息", "完成", $"项目数: {result.Count}")

@@ -69,8 +69,8 @@ Public NotInheritable Class WpfDebugResultReader
     End Function
 
     ''' <summary>
-    ''' 把握手帧（被控端连接后第一帧发的 JObject）解析成 pid / 主窗口标题 / 协议版本。
-    ''' 握手帧不是 WpfDebugResponse，是直接的 JObject（字段：protocolVersion / pid / mainWindowTitle），
+    ''' 把握手帧（被控端连接后第一帧发的 JObject）解析成 pid / 主窗口标题 / 协议版本 / 可执行路径。
+    ''' 握手帧不是 WpfDebugResponse，是直接的 JObject（字段：protocolVersion / pid / mainWindowTitle / processPath），
     ''' 与 OkResult 的嵌套无关。
     ''' </summary>
     Public Shared Function ParseHandshake(frame As JObject) As WpfDebugHandshakeInfo
@@ -88,17 +88,22 @@ Public NotInheritable Class WpfDebugResultReader
         Dim titleToken As JToken = frame("mainWindowTitle")
         If titleToken IsNot Nothing Then title = titleToken.Value(Of String)()
 
+        Dim processPath As String = Nothing
+        Dim pathToken As JToken = frame("processPath")
+        If pathToken IsNot Nothing Then processPath = pathToken.Value(Of String)()
+
         Return New WpfDebugHandshakeInfo With {
             .ProtocolVersion = version,
             .Pid = pid,
-            .MainWindowTitle = title
+            .MainWindowTitle = title,
+            .ProcessPath = processPath
         }
     End Function
 End Class
 
 ''' <summary>
 ''' WPF 调试握手信息（被控端连接后第一帧回报）。主控侧镜像类型，
-''' 与被控端 HandshakeInfo 字段一一对应，靠 JSON 字段名（protocolVersion/pid/mainWindowTitle）反序列化。
+''' 与被控端 HandshakeInfo 字段一一对应，靠 JSON 字段名（protocolVersion/pid/mainWindowTitle/processPath）反序列化。
 ''' </summary>
 Public Class WpfDebugHandshakeInfo
 
@@ -110,4 +115,7 @@ Public Class WpfDebugHandshakeInfo
 
     ''' <summary>被控进程主窗口标题（握手瞬间抓取，可能为空）。</summary>
     Public Property MainWindowTitle As String
+
+    ''' <summary>被控进程可执行文件全路径（握手时回报，拿不到时为空字符串或 Nothing）。</summary>
+    Public Property ProcessPath As String
 End Class

@@ -11,15 +11,13 @@ Imports Newtonsoft.Json.Linq
 ' 自己的参数构造和返回值格式化，不再各自重写样板。
 '
 ' 【和 VisualStudioToolBase 的分工】
-' - VS 工具（GetSolutionInfoTool 等）走 _vsTools + HasDataContext 检查。
+' - VS 工具（GetSolutionInfoTool 等）走 _vsTools + HasDataContext 检查（RequiresVsDataContext=True）。
 ' - WPF 工具走 _wpfDebugProxy + IsWpfDebugConnected 检查；内部绝不碰 _vsTools（被控端没有 DTE）。
-'   注意：基类 VisualStudioToolBase.ExecuteAsync 仍会检查 HasDataContext（_vsTools 非空）。
-'   WPF 工具的 _vsTools 由工具管理器在 CreateVsTools 时一并注入（哪怕该工具用不到 VS），
-'   因此 HasDataContext 判断对 WPF 工具天然成立，不会误拦——这条等价于「VS 实例必须先选过」，
-'   与 rough-plan 第 117 行「WPF 调试 tab 在主窗口里、选 VS 实例后才出现」一致。
+'   本类覆盖 RequiresVsDataContext=False，使基类 ExecuteAsync 跳过 HasDataContext 拦截，
+'   避免未选 VS 实例时误报「未选择 VS 实例」。未连接被控端的容错由本类 IsWpfDebugConnected 负责。
 '
-' 【错误风格】未连接被控端时报「未连接被控端，请先在 WPF 调试 tab 连接」，沿用现有 VS 工具
-' 「未初始化」的 McpException + McpErrorCode.InternalError 风格（见 VisualStudioToolBase.ExecuteAsync）。
+' 【错误风格】未连接被控端时报资源串 LogNoWpfTarget（「未连接 WPF 被控端，请在服务管理连接」），
+' 沿用现有 VS 工具「未初始化」的 McpException + McpErrorCode.InternalError 风格（见 VisualStudioToolBase.ExecuteAsync）。
 
 ''' <summary>
 ''' WPF 调试 MCP 工具的中间基类。统一封装「未连接检查 + 发请求 + 解析业务返回值」主链路。
@@ -40,6 +38,16 @@ Public MustInherit Class WpfDebugToolBase
     Protected Sub New(logger As IMcpLogger, permissionHandler As IMcpPermissionHandler)
         MyBase.New(logger, permissionHandler)
     End Sub
+
+    ''' <summary>
+    ''' WPF 调试工具不依赖 VS 数据上下文：走 _wpfDebugProxy，由 IsWpfDebugConnected 负责未连接容错。
+    ''' 覆盖为 False，避免基类 ExecuteAsync 在未选 VS 实例时误报「未选择 VS 实例」。
+    ''' </summary>
+    Protected Overrides ReadOnly Property RequiresVsDataContext As Boolean
+        Get
+            Return False
+        End Get
+    End Property
 
     ''' <summary>
     ''' 本工具调用的被控端 Method 名（取 <see cref="WpfDebugMethods"/> 常量）。
@@ -71,7 +79,7 @@ Public MustInherit Class WpfDebugToolBase
             ' 未连接被控端：沿用现有 VS 工具「未初始化」的错误返回风格。
             If Not IsWpfDebugConnected Then
                 Throw New McpException(
-                    "未连接被控端，请先在 WPF 调试 tab 连接",
+                    My.Resources.LogNoWpfTarget,
                     McpErrorCode.InternalError)
             End If
 

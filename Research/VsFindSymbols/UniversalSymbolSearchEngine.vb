@@ -12,23 +12,19 @@ Imports System.Diagnostics
 Public Class UniversalSymbolSearchEngine
     Implements IDisposable
 
-    ' 常量定义
     Private Shared ReadOnly SVsObjectSearchGuid As New Guid("44A39218-81BD-4669-9DE0-F282A8BAEE34")
     Private Shared ReadOnly SVsShellGuid As New Guid("7B935E31-2695-11D1-BD43-00A0C911CE51")
     Private Shared ReadOnly SID_VsUIShell As New Guid("B61FC35B-EEBF-4DFB-9D8F-6A9496D279F2")
     Private Shared ReadOnly STD_MK As New Guid("{00020400-0000-0000-C000-000000000046}")
 
-    ' Visual Studio版本ProgId
     Private Shared ReadOnly VS2022ProgId As String = "VisualStudio.DTE.18.0"
     Private Shared ReadOnly VS2019ProgId As String = "VisualStudio.DTE.16.0"
     Private Shared ReadOnly VS2017ProgId As String = "VisualStudio.DTE.15.0"
 
-    ' 搜索范围GUID
     Private Shared ReadOnly SolutionScopeGuid As New Guid("53544C4D-883C-4141-8824-8C76228A237F")
     Private Shared ReadOnly ProjectScopeGuid As New Guid("53544C4D-883C-4141-8824-8C76228A237E")
     Private Shared ReadOnly FrameworkScopeGuid As New Guid("53544C4D-883C-4141-8824-8C76228A237C")
 
-    ' 私有字段
     Private _serviceProvider As IServiceProvider
     Private _findSymbol As IVsFindSymbol
     Private _findSymbol2 As IVsFindSymbol2
@@ -44,25 +40,21 @@ Public Class UniversalSymbolSearchEngine
     Public Async Function InitializeAsync() As Task
         Await Task.Run(Async Function()
             Try
-                ' 获取Visual Studio实例
                 _dte = GetRunningVisualStudioInstance()
                 If _dte Is Nothing Then
                     Throw New InvalidOperationException("未找到运行的Visual Studio实例。请确保Visual Studio已启动并加载了解决方案。")
                 End If
 
-                ' 获取服务提供程序
                 _serviceProvider = TryCast(_dte, IServiceProvider)
                 If _serviceProvider Is Nothing Then
                     Throw New InvalidOperationException("无法获取Visual Studio服务提供程序")
                 End If
 
-                ' 获取Visual Studio服务提供程序
                 Dim oleServiceProvider As Microsoft.VisualStudio.OLE.Interop.IServiceProvider = TryCast(_serviceProvider, Microsoft.VisualStudio.OLE.Interop.IServiceProvider)
                 If oleServiceProvider Is Nothing Then
                     Throw New InvalidOperationException("无法获取OLE服务提供程序")
                 End If
 
-                ' 获取UI Shell服务
                 Dim uiShellPtr As IntPtr
                 Dim uiShellGuid As Guid = SID_VsUIShell
                 Dim uiShellIID As Guid = GetType(IVsUIShell).GUID
@@ -73,7 +65,6 @@ Public Class UniversalSymbolSearchEngine
                     Marshal.Release(uiShellPtr)
                 End If
 
-                ' 获取符号搜索服务
                 Dim searchServicePtr As IntPtr
                 Dim searchServiceGuid As Guid = SVsObjectSearchGuid
                 Dim findSymbolIID As Guid = GetType(IVsFindSymbol).GUID
@@ -89,10 +80,8 @@ Public Class UniversalSymbolSearchEngine
                     Throw New InvalidOperationException("无法获取符号搜索服务。请确保已安装Visual Studio SDK。")
                 End If
 
-                ' 创建事件处理器
                 _eventHandler = New UniversalFindSymbolEventHandler()
 
-                ' 验证解决方案是否已加载
                 Dim solution As EnvDTE.Solution = _dte.Solution
                 If solution Is Nothing OrElse String.IsNullOrWhiteSpace(solution.FullName) Then
                     Throw New InvalidOperationException("请确保Visual Studio中已加载解决方案。")
@@ -114,7 +103,6 @@ Public Class UniversalSymbolSearchEngine
 
         Await _searchSemaphore.WaitAsync()
         Try
-            ' 使用Visual Studio的FindSymbol功能进行搜索
             Dim results = Await PerformSymbolSearchAsync(symbolName, searchScope, False)
 
             Return results
@@ -134,7 +122,6 @@ Public Class UniversalSymbolSearchEngine
 
         Await _searchSemaphore.WaitAsync()
         Try
-            ' 使用Visual Studio的FindSymbol功能进行搜索
             Dim results = Await PerformSymbolSearchAsync(symbolName, searchScope, True)
 
             Return results
@@ -149,7 +136,6 @@ Public Class UniversalSymbolSearchEngine
     ''' </summary>
     Private Async Function PerformSymbolSearchAsync(symbolName As String, searchScope As SearchScope, includeReferences As Boolean) As Task(Of List(Of SymbolLocation))
         Try
-            ' 设置搜索条件
             Dim searchCriteria As VSOBSEARCHCRITERIA2() = New VSOBSEARCHCRITERIA2(0) {}
             searchCriteria(0) = New VSOBSEARCHCRITERIA2() With {
                 .szName = symbolName.Trim(),
@@ -159,10 +145,8 @@ Public Class UniversalSymbolSearchEngine
                 .pIVsNavInfo = Nothing
             }
 
-            ' 根据搜索范围设置GUID
             Dim scopeGuid As Guid = GetScopeGuid(searchScope)
 
-            ' 执行搜索并等待结果
             Dim results = New List(Of SymbolLocation)
 
             ' 使用DTE的Find功能作为备用方案
@@ -186,11 +170,9 @@ Public Class UniversalSymbolSearchEngine
         Try
             If _dte Is Nothing Then Return results
 
-            ' 使用DTE的Find功能
             Dim find As EnvDTE.Find = _dte.Find
             If find Is Nothing Then Return results
 
-            ' 设置搜索条件
             find.FindWhat = symbolName
             find.Target = EnvDTE.vsFindTarget.vsFindTargetSolution
             find.MatchCase = False
@@ -198,16 +180,13 @@ Public Class UniversalSymbolSearchEngine
             find.PatternSyntax = EnvDTE.vsFindPatternSyntax.vsFindPatternSyntaxLiteral
             find.ResultsLocation = EnvDTE.vsFindResultsLocation.vsFindResults1
 
-            ' 执行搜索
             Dim searchResult As EnvDTE.vsFindResult = find.Execute()
 
-            ' 循环等待搜索完成
             Dim timeoutCancellationToken = New Threading.CancellationTokenSource(TimeSpan.FromSeconds(30))
             Dim startTime = DateTime.Now
 
             While Not timeoutCancellationToken.Token.IsCancellationRequested
                 Try
-                    ' 检查Find状态
                     Dim currentResult = find.Execute()
 
                     Select Case currentResult
@@ -240,7 +219,6 @@ Public Class UniversalSymbolSearchEngine
                             Debug.WriteLine($"DTE搜索状态: {currentResult}")
                     End Select
 
-                    ' 等待一段时间再检查
                     Await Task.Delay(200, timeoutCancellationToken.Token)
 
                 Catch ex As OperationCanceledException
@@ -269,7 +247,6 @@ Public Class UniversalSymbolSearchEngine
             ' 获取Find结果窗口 - 尝试多个可能的窗口类型
             Dim findResultsWindow As EnvDTE.Window = Nothing
 
-            ' 尝试不同的结果窗口
             Dim windowKinds As String() = {
                 EnvDTE.Constants.vsWindowKindFindResults1,
                 EnvDTE.Constants.vsWindowKindFindResults2,
@@ -291,25 +268,20 @@ Public Class UniversalSymbolSearchEngine
                 Return results
             End If
 
-            ' 等待窗口完全加载
             Await Task.Delay(100)
 
-            ' 获取文档对象
             Dim document As EnvDTE.Document = findResultsWindow.Document
             If document Is Nothing Then Return results
 
-            ' 获取文本对象
             Dim textDocument As EnvDTE.TextDocument = TryCast(document.Object("TextDocument"), EnvDTE.TextDocument)
             If textDocument Is Nothing Then Return results
 
-            ' 获取完整文档内容
             Dim startPoint = textDocument.StartPoint.CreateEditPoint()
             Dim endPoint = textDocument.EndPoint
             Dim resultText As String = startPoint.GetText(endPoint)
 
             If String.IsNullOrWhiteSpace(resultText) Then Return results
 
-            ' 解析结果文本
             results = ParseFindResultsText(resultText)
             Debug.WriteLine($"从Find结果窗口解析出 {results.Count} 个结果")
 

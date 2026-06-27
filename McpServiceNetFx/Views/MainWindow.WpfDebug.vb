@@ -14,16 +14,23 @@ Partial Public Class MainWindow
     ' 连接监控（判活/失效）。
     Private _wpfDebugMonitor As WpfDebugConnectionMonitor
 
-    ''' <summary>连接按钮：异步连被控端 pipe server。</summary>
+    ''' <summary>连接按钮：从候选列表取选中项 PID，异步连被控端 pipe server。</summary>
     Private Async Sub BtnWpfDebugConnect_Click() Handles BtnWpfDebugConnect.Click
         If _wpfDebugProxy IsNot Nothing AndAlso _wpfDebugProxy.IsConnected Then
             UtilityModule.ShowWarning(Me, "WPF 调试被控端已连接", "提示")
             Return
         End If
 
+        ' 选中连接语义：必须先在候选列表选一个目标。
+        Dim selected As WpfDebugTargetInfo = TryCast(DgWpfDebugTargets.SelectedItem, WpfDebugTargetInfo)
+        If selected Is Nothing Then
+            UtilityModule.ShowWarning(Me, "请先在列表中选择一个 WPF 调试目标（必要时先点""刷新目标""）", "提示")
+            Return
+        End If
+
         BtnWpfDebugConnect.IsEnabled = False
         Try
-            Await ConnectWpfDebugAsync()
+            Await ConnectWpfDebugAsync(selected.Pid)
         Catch ex As Exception
             ' 连接失败/握手失败：报"未连接被控端"风格，不裸崩。
             TxtWpfDebugStatus.Text = "连接失败"
@@ -33,17 +40,28 @@ Partial Public Class MainWindow
         End Try
     End Sub
 
+    ''' <summary>刷新目标按钮：枚举系统 named pipe，填候选列表（不连接）。</summary>
+    Private Sub BtnRefreshWpfTargets_Click() Handles BtnRefreshWpfTargets.Click
+        Try
+            Dim candidates As IList(Of WpfDebugTargetInfo) = WpfDebugTargetEnumerator.DiscoverCandidates()
+            DgWpfDebugTargets.ItemsSource = candidates
+        Catch ex As Exception
+            UtilityModule.ShowError(Me, $"刷新 WPF 调试目标失败：{ex.Message}")
+        End Try
+    End Sub
+
     ''' <summary>断开按钮。</summary>
     Private Sub BtnWpfDebugDisconnect_Click() Handles BtnWpfDebugDisconnect.Click
         DisconnectWpfDebug()
     End Sub
 
     ''' <summary>异步连接被控端、握手、建监控、注入 DC。</summary>
-    Private Async Function ConnectWpfDebugAsync() As Task
+    ''' <param name="targetPid">用户在候选列表选中的被控进程 PID。</param>
+    Private Async Function ConnectWpfDebugAsync(targetPid As Integer) As Task
         ' 清理旧状态（重复连接场景）。
         TeardownWpfDebug()
 
-        _wpfDebugProxy = New WpfDebugProxy()
+        _wpfDebugProxy = New WpfDebugProxy(targetPid)
         Await _wpfDebugProxy.ConnectAsync()
 
         ' 握手成功：建连接快照。
@@ -109,7 +127,13 @@ Partial Public Class MainWindow
         If connected AndAlso _wpfDebugConnection IsNot Nothing Then
             TxtWpfDebugStatus.Text = "已连接"
             TxtWpfDebugPid.Text = _wpfDebugConnection.Pid.ToString()
-            TxtWpfDebugTitle.Text = If(_wpfDebugConnection.MainWindowTitle, "-")
+            ' 主窗口标题为主显示；可选附带可执行路径（握手有则显示）。
+            Dim titleDisplay As String = If(_wpfDebugConnection.MainWindowTitle, "-")
+            Dim procPath As String = _wpfDebugConnection.ProcessPath
+            If Not String.IsNullOrEmpty(procPath) Then
+                titleDisplay &= "  (" & procPath & ")"
+            End If
+            TxtWpfDebugTitle.Text = titleDisplay
             BtnWpfDebugConnect.IsEnabled = False
             BtnWpfDebugDisconnect.IsEnabled = True
         Else

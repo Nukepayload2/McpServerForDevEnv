@@ -44,7 +44,6 @@ Namespace Converters
 
             Dim stringValue = DirectCast(value, String)
 
-            ' 将本地化字符串映射到枚举值
             If stringValue.Equals(My.Resources.PermissionLevel_Allow, StringComparison.Ordinal) Then
                 Return PermissionLevel.Allow
             ElseIf stringValue.Equals(My.Resources.PermissionLevel_Ask, StringComparison.Ordinal) Then
@@ -55,7 +54,6 @@ Namespace Converters
                 Return PermissionLevel.Deny
             End If
 
-            ' 尝试直接解析枚举名称
             Dim [enum] As PermissionLevel
             If [Enum].TryParse(stringValue, [enum]) Then
                 Return [enum]

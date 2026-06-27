@@ -132,8 +132,29 @@
   <data name="TabAbout" xml:space="preserve">
     <value>关于</value>
   </data>
+  <data name="TabVsInstances" xml:space="preserve">
+    <value>VS 实例</value>
+  </data>
+  <data name="TabWpfTargets" xml:space="preserve">
+    <value>WPF 程序</value>
+  </data>
+  <data name="TabServiceSettings" xml:space="preserve">
+    <value>服务设置</value>
+  </data>
   <data name="ButtonRefresh" xml:space="preserve">
     <value>刷新</value>
+  </data>
+  <data name="ButtonRefreshWpfTargets" xml:space="preserve">
+    <value>刷新目标</value>
+  </data>
+  <data name="HeaderWpfWindow" xml:space="preserve">
+    <value>窗口标题</value>
+  </data>
+  <data name="HeaderWpfPath" xml:space="preserve">
+    <value>进程路径</value>
+  </data>
+  <data name="HeaderWpfPid" xml:space="preserve">
+    <value>PID</value>
   </data>
   <data name="ButtonStartService" xml:space="preserve">
     <value>启动服务</value>
@@ -582,9 +603,6 @@
   </data>
   <data name="LogMissingRequiredParameter" xml:space="preserve">
     <value>缺少必需参数: {0}</value>
-  </data>
-  <data name="LogToolDataContextNotSet" xml:space="preserve">
-    <value>工具数据上下文未设置，无法执行工具</value>
   </data>
   <data name="LogPermissionCheckException" xml:space="preserve">
     <value>权限检查</value>
@@ -1095,5 +1113,11 @@
   </data>
   <data name="PermissionType_File" xml:space="preserve">
     <value>文件权限</value>
+  </data>
+  <data name="LogNoVsInstance" xml:space="preserve">
+    <value>未选择 Visual Studio 实例，请在服务管理中选择实例</value>
+  </data>
+  <data name="LogNoWpfTarget" xml:space="preserve">
+    <value>未连接 WPF 被控端，请在服务管理连接</value>
   </data>
 </root>

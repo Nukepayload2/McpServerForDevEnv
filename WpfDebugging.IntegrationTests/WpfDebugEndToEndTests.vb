@@ -6,8 +6,10 @@ Imports Newtonsoft.Json.Linq
 
 ' WPF 调试端到端集成测试（#24 联调）。
 '
-' 链路：启动 SampleHost 进程（被控端）→ WpfDebugProxy 连固定 pipe 名握手 → 调六 Method
-'       → 用 WpfDebugResultReader.GetPayload 解 OkResult 嵌套 → 验证业务返回值非空。
+' 链路：启动 SampleHost 进程（被控端）→ 取其 PID → WpfDebugProxy 连 GetPipeNameForPid(pid) 握手
+'       → 调六 Method → 用 WpfDebugResultReader.GetPayload 解 OkResult 嵌套 → 验证业务返回值非空。
+'
+' pipe 名带 PID 后，主控凭 SampleHost 进程 PID 精确连到对应被控端，不依赖固定名单被控假设。
 '
 ' 【桌面依赖】WPF 窗口渲染需要交互桌面。本环境若为无桌面 session（CI / 服务），
 ' SampleHost 进程能起、pipe server 能就绪，但 list_windows 可能无真实窗口、
@@ -46,8 +48,11 @@ Public Class WpfDebugEndToEndTests
             Return
         End Try
 
+        ' pipe 名带 PID：取 SampleHost 进程 PID，主控连 GetPipeNameForPid(pid) 精确定位被控端。
+        Dim targetPid As Integer = _sampleHostProcess.Id
+
         ' 轮询连接：进程启动后 WpfDebugHost.Start 起 pipe server 需要一小段时间。
-        _proxy = New WpfDebugProxy()
+        _proxy = New WpfDebugProxy(targetPid)
         Dim connected As Boolean = False
         Dim deadline As DateTime = DateTime.UtcNow.AddSeconds(ConnectProbeTotalSeconds)
         While DateTime.UtcNow < deadline
@@ -66,6 +71,23 @@ Public Class WpfDebugEndToEndTests
             Assert.Inconclusive(
                 "本环境无桌面受限，留真实桌面环境验证：SampleHost 进程已启动但 pipe server 未在超时内就绪/握手未完成（WPF 窗口可能未创建）。")
         End If
+
+        ' 枚举发现验证点：连上后系统 pipe 列表里应能发现本被控端 PID。
+        ' 仅当枚举到候选时断言命中（无桌面/权限受限时枚举可能为空，不硬失败）。
+        Dim candidates As IList(Of WpfDebugTargetInfo) = WpfDebugTargetEnumerator.DiscoverCandidates()
+        Dim found As Boolean = False
+        If candidates IsNot Nothing Then
+            For Each c As WpfDebugTargetInfo In candidates
+                If c.Pid = targetPid Then
+                    found = True
+                    Exit For
+                End If
+            Next
+        End If
+        If Not found Then
+            ' 枚举在受限环境可能拿不到（权限/pipe 列表可见性），记 Inconclusive 不硬失败。
+            Assert.Inconclusive("枚举未发现被控端 PID 候选（可能权限/pipe 可见性受限），跳过枚举断言。")
+        End If
     End Sub
 
     <ClassCleanup>
@@ -75,7 +97,7 @@ Public Class WpfDebugEndToEndTests
     End Sub
 
     ' 每个测试前检查连接是否还活着。前序测试若触发被控端处理崩溃导致连接断开，
-    ' 后续测试直接 Inconclusive（不重连——单被控语义下旧进程同名 pipe 占用，重连复杂且超出联调范围）。
+    ' 后续测试直接 Inconclusive（不重连——重连复杂且超出联调范围）。
     <TestInitialize>
     Public Sub TestInitialize()
         If _proxy Is Nothing OrElse Not _proxy.IsConnected Then

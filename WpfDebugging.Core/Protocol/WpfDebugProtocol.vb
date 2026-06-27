@@ -14,11 +14,28 @@ Public NotInheritable Class WpfDebugProtocol
     End Sub
 
     ''' <summary>
-    ''' 被控端 named pipe server 监听的固定管道名。
+    ''' 被控端 named pipe server 监听的管道名前缀。
     ''' 名字里带协议主版本号，避免和别的版本/别的用途串扰。
-    ''' 单被控端语义下同一时刻只允许一个被控端占用这个名字，第二个想起的会撞名。
+    ''' 实际 pipe 名为 <see cref="GetPipeNameForPid"/> 拼出：<c>前缀.PID</c>，
+    ''' 这样主控可用 <c>Directory.GetFiles("\\.\pipe\")</c> 按前缀枚举出所有候选被控端，
+    ''' 支持同一机器上多个 WPF 被控进程同时挂调试模块（每个 PID 占自己的 pipe）。
     ''' </summary>
-    Public Const PipeName As String = "mcpserverfordevenv.wpfdebug.v1"
+    Public Const PipeNamePrefix As String = "mcpserverfordevenv.wpfdebug.v1"
+
+    ''' <summary>
+    ''' 旧版固定 pipe 名（单被控端语义遗留）。
+    ''' 保留为 <see cref="PipeNamePrefix"/> 的别名，仅为兼容现存引用（如注释、单测断言）。
+    ''' 新代码应直接用 <see cref="PipeNamePrefix"/> 或 <see cref="GetPipeNameForPid"/>。
+    ''' </summary>
+    Public Const PipeName As String = PipeNamePrefix
+
+    ''' <summary>
+    ''' 按被控进程 PID 拼出其监听的 pipe 名：<c>PipeNamePrefix &amp; "." &amp; pid</c>。
+    ''' 被控端用自身 PID 调本方法得监听名；主控枚举出候选 PID 后用本方法拼出连接名。
+    ''' </summary>
+    Public Shared Function GetPipeNameForPid(pid As Integer) As String
+        Return PipeNamePrefix & "." & pid
+    End Function
 
     ''' <summary>
     ''' IPC 协议版本字符串，握手时被控端回报，主控据此判断兼容性。

@@ -34,22 +34,18 @@ Public Class GetErrorListTool
 
     Protected Overrides Async Function ExecuteInternalAsync(arguments As Dictionary(Of String, Object)) As Task(Of Object)
         Try
-            ' 检查权限
             If Not CheckPermission() Then
                 Throw New McpException("权限被拒绝", McpErrorCode.InvalidParams)
             End If
 
-            ' 获取过滤级别参数
             Dim severity = GetOptionalArgument(Of String)(arguments, "severity", "All")
 
             LogOperation("获取错误列表", "开始", $"过滤级别: {severity}")
 
-            ' 使用异步方法
             Dim result = Await _vsTools.GetErrorListAsync(severity)
 
             LogOperation("获取错误列表", "完成", $"错误数: {result.Errors.Count}, 警告数: {result.Warnings.Count}")
 
-            ' 转换为强类型响应
             Return New ErrorListResponse With {
                 .Errors = If(result.Errors?.ToArray(), New CompilationError() {}),
                 .Warnings = If(result.Warnings?.ToArray(), New CompilationError() {}),

@@ -144,7 +144,6 @@ Public Module UtilityModule
     Private _debounceTimers As New Dictionary(Of String, DispatcherTimer)()
 
     Public Function DebounceAction(dispatcher As Dispatcher, delay As Integer, key As String, action As Action) As Task
-        ' 停止之前的计时器（如果存在）
         If _debounceTimers.ContainsKey(key) Then
             _debounceTimers(key).Stop()
             _debounceTimers.Remove(key)

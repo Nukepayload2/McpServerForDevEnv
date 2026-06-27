@@ -34,7 +34,6 @@ Public Class SymbolLocation
     Public Property LibraryGuid As Guid
     Public Property ProjectGuid As Guid
 
-    ' 只读属性
     Public ReadOnly Property FileName As String
         Get
             If String.IsNullOrWhiteSpace(FilePath) Then

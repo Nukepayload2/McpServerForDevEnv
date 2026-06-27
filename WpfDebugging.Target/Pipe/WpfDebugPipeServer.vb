@@ -5,12 +5,12 @@ Imports System.Threading.Tasks
 Imports McpServerForDevEnv.WpfDebugging
 Imports Newtonsoft.Json.Linq
 
-' named pipe server：被控端在宿主进程内监听固定 pipe 名，接受主控连接，
+' named pipe server：被控端在宿主进程内监听以 PID 拼出的 pipe 名，接受主控连接，
 ' 收 WpfDebugRequest → 按 Method 分派 → 回 WpfDebugResponse。
 '
 ' 关键约束：
-' 1. 固定 pipe 名（WpfDebugProtocol.PipeName），单被控端。用 maxNumberOfServerInstances=1，
-'    第二个被控端尝试占用同名 pipe 时构造即抛 IOException，按单被控语义直接报错。
+' 1. pipe 名带 PID（WpfDebugProtocol.GetPipeNameForPid(自身pid)），同机多 WPF 被控进程互不撞名。
+'    maxNumberOfServerInstances=1：同一 PID 重复启动（理论不会）会撞名抛 IOException。
 ' 2. 全程异步（WaitForConnectionAsync / MessageFramer.ReadAsync / InvokeAsync），IPC 线程不碰 WPF 对象，
 '    能力执行经 WpfDispatcher 切 UI 线程。绝不同步阻塞 UI 线程。
 ' 3. 单连接串行处理（maxNumberOfServerInstances=1 且本类一次只服务一个连接）。
@@ -31,14 +31,15 @@ Public Class WpfDebugPipeServer
     Private _disposed As Boolean
 
     ''' <summary>
-    ''' 用固定 pipe 名（<see cref="WpfDebugProtocol.PipeName"/>）构造。
+    ''' 用当前进程 PID 拼出的 pipe 名（<see cref="WpfDebugProtocol.GetPipeNameForPid"/>）构造。
+    ''' 同机多 WPF 被控进程各自占自己 PID 的 pipe，互不撞名。
     ''' </summary>
     Public Sub New(dispatcher As WpfDispatcher, target As IWpfDebugTarget)
-        Me.New(dispatcher, target, WpfDebugProtocol.PipeName)
+        Me.New(dispatcher, target, WpfDebugProtocol.GetPipeNameForPid(Process.GetCurrentProcess().Id))
     End Sub
 
     ''' <summary>
-    ''' 指定 pipe 名构造（测试或定制用；生产路径用固定名）。
+    ''' 指定 pipe 名构造（测试或定制用；生产路径用 PID 名）。
     ''' </summary>
     Public Sub New(dispatcher As WpfDispatcher, target As IWpfDebugTarget, pipeName As String)
         If dispatcher Is Nothing Then Throw New ArgumentNullException(NameOf(dispatcher))
@@ -57,7 +58,7 @@ Public Class WpfDebugPipeServer
     End Property
 
     ''' <summary>
-    ''' 创建底层 NamedPipeServerStream。maxNumberOfServerInstances=1：第二个被控端占用同名 pipe 时即抛异常。
+    ''' 创建底层 NamedPipeServerStream。maxNumberOfServerInstances=1：同 PID 重复实例占用同名 pipe 时即抛异常。
     ''' </summary>
     Protected Overridable Function CreateServerStream(pipeName As String) As NamedPipeServerStream
         ' PipeDirection.InOut、双工；maxNumberOfServerInstances=1 强制单实例；
@@ -71,13 +72,13 @@ Public Class WpfDebugPipeServer
     End Function
 
     ''' <summary>
-    ''' 启动监听循环（后台任务）。同名 pipe 已被占用时抛 IOException（单被控语义：直接报错，不排队、不换名）。
+    ''' 启动监听循环（后台任务）。同名 pipe 已被占用时抛 IOException（同 PID 重复实例：直接报错，不排队、不换名）。
     ''' </summary>
     Public Sub Start()
         If _disposed Then Throw New ObjectDisposedException(NameOf(WpfDebugPipeServer))
         If _server IsNot Nothing Then Return ' 幂等
 
-        ' 撞名在这里暴露：第二个实例创建同名 pipe（maxNumberOfServerInstances=1）会抛 IOException。
+        ' 撞名在这里暴露：同 PID 重复实例创建同名 pipe（maxNumberOfServerInstances=1）会抛 IOException。
         _server = CreateServerStream(_pipeName)
         _cts = New CancellationTokenSource()
         _listenTask = Task.Run(AddressOf ListenLoop)
@@ -181,7 +182,7 @@ Public Class WpfDebugPipeServer
     Protected Const ReadIdleTimeoutMs As Integer = 60000
 
     ''' <summary>
-    ''' 构造握手信息。进程信息从非 UI 来源取（pid 是进程级），主窗口标题切 UI 线程读。
+    ''' 构造握手信息。进程信息从非 UI 来源取（pid / 可执行路径是进程级），主窗口标题切 UI 线程读。
     ''' </summary>
     Protected Overridable Async Function BuildHandshakeInfoAsync(token As CancellationToken) As Task(Of HandshakeInfo)
         Dim title As String = Nothing
@@ -194,10 +195,20 @@ Public Class WpfDebugPipeServer
         Catch
         End Try
 
+        ' 可执行路径：Process.MainModule.FileName 在 net472 / net8.0 均可取，但权限/位数差异可能抛，
+        ' 兜底给空字符串（主控据此区分"未提供"与"显式空"，processPath 字段恒序列化）。
+        Dim processPath As String = String.Empty
+        Try
+            processPath = Process.GetCurrentProcess().MainModule?.FileName
+        Catch
+        End Try
+        If processPath Is Nothing Then processPath = String.Empty
+
         Return New HandshakeInfo With {
             .ProtocolVersion = WpfDebugProtocol.ProtocolVersion,
             .Pid = Process.GetCurrentProcess().Id,
-            .MainWindowTitle = title
+            .MainWindowTitle = title,
+            .ProcessPath = processPath
         }
     End Function
 
