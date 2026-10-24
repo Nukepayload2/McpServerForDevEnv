@@ -32,78 +32,145 @@ Public NotInheritable Class ElementInteractor
     ' ===== click =====
 
     ''' <summary>
-    ''' 点击元素。优先走 AutomationPeer.Invoke（WPF 标准「程序化点击」），拿不到 peer 或
-    ''' 不支持 Invoke 时退化到构造鼠标事件做 RaiseEvent（先聚焦，再按 Preview/Down/Preview/Up
-    ''' 顺序路由左键事件序列，触发 ButtonBase.Click）。
+    ''' 点击元素的判定动作，按 UI Automation 模式能力选择。
     ''' </summary>
-    ''' <param name="element">目标元素（必须是 UIElement）。</param>
+    Public Enum ClickAction
+        ''' <summary>无可用模式（拒绝点击）。</summary>
+        None
+        ''' <summary>IInvokeProvider.Invoke（Button / Hyperlink / MenuItem 等）。</summary>
+        Invoke
+        ''' <summary>ISelectionItemProvider.Select（TreeViewItem / ListBoxItem / DataGridRow 等）。</summary>
+        SelectItem
+        ''' <summary>IToggleProvider.Toggle（CheckBox / ToggleButton）。</summary>
+        Toggle
+        ''' <summary>IExpandCollapseProvider.Expand（ComboBox / Expander / 折叠的 TreeViewItem）。</summary>
+        Expand
+    End Enum
+
+    ''' <summary>
+    ''' 点击元素：走 UI Automation 的 Provider 模式。
+    '''
+    ''' <para>目标是可点元素本身或其最近的可用祖先（如 TreeViewItem 里的 TextBlock 归属该行），
+    ''' 与用鼠标点文字选中整行一致。</para>
+    ''' </summary>
     Public Shared Sub Click(element As Global.System.Windows.UIElement)
         If element Is Nothing Then Throw New ArgumentNullException(NameOf(element))
 
-        ' 1) AutomationPeer 路径：取已有 peer 或新建，能 Invoke 就走（Button/CheckBox/RadioButton 等标准控件都支持）。
-        Dim peer As AutomationPeer = TryGetOrCreatePeer(element)
-        If peer IsNot Nothing Then
-            Dim invokePattern As Global.System.Windows.Automation.Provider.IInvokeProvider =
-                TryCast(peer.GetPattern(Global.System.Windows.Automation.Peers.PatternInterface.Invoke),
-                        Global.System.Windows.Automation.Provider.IInvokeProvider)
-            If invokePattern IsNot Nothing Then
-                invokePattern.Invoke()
-                Return
-            End If
-        End If
+        Dim node As Global.System.Windows.DependencyObject = element
+        Dim tried As New List(Of String)
 
-        ' 2) 退化：聚焦 + 构造左键鼠标事件序列做 RaiseEvent（Preview/Down/Preview/Up），
-        '    模拟真实单击事件顺序，触发 ButtonBase.Click。
-        RaiseMouseClick(element)
+        While node IsNot Nothing
+            Dim uiElement As Global.System.Windows.UIElement = TryCast(node, Global.System.Windows.UIElement)
+            If uiElement IsNot Nothing AndAlso uiElement.IsEnabled Then
+                Dim peer As AutomationPeer = TryCreatePeer(uiElement)
+                If peer IsNot Nothing Then
+                    Dim action As ClickAction = ResolveClickAction(peer)
+                    If action <> ClickAction.None Then
+                        ' 真实点击会先把焦点给目标，这里保持一致，让 GotFocus/Focus 相关逻辑也跑一遍
+                        Try
+                            uiElement.Focus()
+                        Catch
+                            ' 不可聚焦的元素忽略
+                        End Try
+
+                        ExecuteClickAction(peer, action)
+                        Return
+                    Else
+                        tried.Add(DescribeElement(uiElement))
+                    End If
+                End If
+            End If
+
+            node = GetVisualOrLogicalParent(node)
+        End While
+
+        Dim detail As String = If(tried.Count = 0,
+            "该元素及其祖先都没有 AutomationPeer。",
+            "已尝试但不支持任何可点击模式：" & String.Join(" ← ", tried))
+        Throw New InvalidOperationException(
+            $"无法点击 {DescribeElement(element)}：{detail}。" &
+            "可点击模式包括 Invoke / SelectionItem / Toggle / ExpandCollapse。")
     End Sub
 
-    ' 取元素已有的 peer（来自其父 peer 的 GetChildren），没有则用 CreatePeerForElement 新建。
-    Private Shared Function TryGetOrCreatePeer(element As Global.System.Windows.UIElement) As AutomationPeer
+    ''' <summary>按 peer 支持的模式挑动作，顺序即语义优先级（选中优先于展开）。</summary>
+    Public Shared Function ResolveClickAction(peer As AutomationPeer) As ClickAction
+        If peer Is Nothing Then Return ClickAction.None
+
+        If TryCast(peer.GetPattern(PatternInterface.Invoke), IInvokeProvider) IsNot Nothing Then
+            Return ClickAction.Invoke
+        End If
+        If TryCast(peer.GetPattern(PatternInterface.SelectionItem), ISelectionItemProvider) IsNot Nothing Then
+            Return ClickAction.SelectItem
+        End If
+        If TryCast(peer.GetPattern(PatternInterface.Toggle), IToggleProvider) IsNot Nothing Then
+            Return ClickAction.Toggle
+        End If
+        If TryCast(peer.GetPattern(PatternInterface.ExpandCollapse), IExpandCollapseProvider) IsNot Nothing Then
+            Return ClickAction.Expand
+        End If
+
+        Return ClickAction.None
+    End Function
+
+    Private Shared Sub ExecuteClickAction(peer As AutomationPeer, action As ClickAction)
+        Select Case action
+            Case ClickAction.Invoke
+                DirectCast(peer.GetPattern(PatternInterface.Invoke), IInvokeProvider).Invoke()
+            Case ClickAction.SelectItem
+                DirectCast(peer.GetPattern(PatternInterface.SelectionItem), ISelectionItemProvider).Select()
+            Case ClickAction.Toggle
+                DirectCast(peer.GetPattern(PatternInterface.Toggle), IToggleProvider).Toggle()
+            Case ClickAction.Expand
+                Dim expand As IExpandCollapseProvider =
+                    DirectCast(peer.GetPattern(PatternInterface.ExpandCollapse), IExpandCollapseProvider)
+                ' 已展开的项再 Expand 是空操作，用户点一下也只会收起/展开其中之一；
+                ' 这里只在收起时展开，避免把「点一下」变成「又展开又收起」
+                If expand.ExpandCollapseState = Global.System.Windows.Automation.ExpandCollapseState.Collapsed Then
+                    expand.Expand()
+                End If
+            Case Else
+                Throw New InvalidOperationException("内部错误：ExecuteClickAction 收到 None。")
+        End Select
+    End Sub
+
+    ''' <summary>取已有 peer；没有则尝试让元素自己创建（OnCreateAutomationPeer）。</summary>
+    Private Shared Function TryCreatePeer(element As Global.System.Windows.UIElement) As AutomationPeer
         Try
             Dim existing As AutomationPeer = UIElementAutomationPeer.FromElement(element)
             If existing IsNot Nothing Then Return existing
-            Return New UIElementAutomationPeer(element)
+            Return UIElementAutomationPeer.CreatePeerForElement(element)
         Catch
-            ' 某些控件不允许建 peer（如未布局完成的元素），退化到 RaiseEvent。
+            ' 某些元素（未完成布局、非模板化）建 peer 会抛，视作不可点
             Return Nothing
         End Try
     End Function
 
-    ' 退化路径：构造鼠标点击事件序列并路由。
-    Private Shared Sub RaiseMouseClick(element As Global.System.Windows.UIElement)
-        ' 先聚焦，让 GotFocus/GotKeyboardFocus 等附属事件按真实点击顺序触发。
-        Try
-            element.Focus()
-        Catch
-        End Try
-
-        Dim device As MouseDevice = Mouse.PrimaryDevice
-        ' Mouse.PrimaryDevice 在无输入上下文时可能为 Nothing，此路径下退而求其次：只发 Click 路由事件。
-        If device Is Nothing Then
-            element.RaiseEvent(New Global.System.Windows.RoutedEventArgs(Global.System.Windows.Controls.Primitives.ButtonBase.ClickEvent, element))
-            Return
+    ''' <summary>沿可视树向上；跨出可视树后改用逻辑父级（覆盖 ContentPresenter 之类）。</summary>
+    Private Shared Function GetVisualOrLogicalParent(node As Global.System.Windows.DependencyObject) As Global.System.Windows.DependencyObject
+        Dim visual As Global.System.Windows.Media.Visual = TryCast(node, Global.System.Windows.Media.Visual)
+        If visual IsNot Nothing Then
+            Dim parent As Global.System.Windows.DependencyObject =
+                Global.System.Windows.Media.VisualTreeHelper.GetParent(visual)
+            If parent IsNot Nothing Then Return parent
         End If
 
-        Dim timestamp As Integer = Environment.TickCount
+        Dim fe As Global.System.Windows.FrameworkElement = TryCast(node, Global.System.Windows.FrameworkElement)
+        If fe IsNot Nothing Then Return fe.Parent
 
-        ' MouseButtonEventArgs(MouseDevice, timestamp, changedButton)：左键。
-        ' Button 的 Click 由 ButtonBase 在 OnMouseLeftButtonUp 里触发，所以完整发 Preview/Down/Preview/Up
-        ' 才能让 Button 抬起时点一下。隧道事件（Preview*）先于冒泡事件（*）发，模拟真实点击顺序。
-        ' MouseLeftButton*Event 是 UIElement 暴露的路由事件（不是 Mouse 类的静态成员）。
-        element.RaiseEvent(New MouseButtonEventArgs(device, timestamp, MouseButton.Left) With {
-            .RoutedEvent = Global.System.Windows.UIElement.PreviewMouseLeftButtonDownEvent,
-            .Source = element})
-        element.RaiseEvent(New MouseButtonEventArgs(device, timestamp, MouseButton.Left) With {
-            .RoutedEvent = Global.System.Windows.UIElement.MouseLeftButtonDownEvent,
-            .Source = element})
-        element.RaiseEvent(New MouseButtonEventArgs(device, timestamp, MouseButton.Left) With {
-            .RoutedEvent = Global.System.Windows.UIElement.PreviewMouseLeftButtonUpEvent,
-            .Source = element})
-        element.RaiseEvent(New MouseButtonEventArgs(device, timestamp, MouseButton.Left) With {
-            .RoutedEvent = Global.System.Windows.UIElement.MouseLeftButtonUpEvent,
-            .Source = element})
-    End Sub
+        Return Nothing
+    End Function
 
+    Private Shared Function DescribeElement(element As Object) As String
+        If element Is Nothing Then Return "（null）"
+        Dim fe As Global.System.Windows.FrameworkElement = TryCast(element, Global.System.Windows.FrameworkElement)
+        If fe IsNot Nothing AndAlso Not String.IsNullOrEmpty(fe.Name) Then
+            Return $"{fe.GetType().Name}#{fe.Name}"
+        End If
+        If TypeOf element Is Global.System.Windows.Media.Visual Then
+            Return DirectCast(element, Global.System.Windows.Media.Visual).GetType().Name
+        End If
+        Return element.GetType().Name
+    End Function
     ' ===== fill =====
 
     ''' <summary>
@@ -195,7 +262,7 @@ Public NotInheritable Class ElementInteractor
 
             ' 2) 当作数字索引。
             Dim idx As Integer
-            If Integer.TryParse(value, Globalization.NumberStyles.Integer, Globalization.CultureInfo.InvariantCulture, idx) _
+            If Integer.TryParse(value, Globalization.NumberStyles.Integer, Globalization.CultureInfo.CurrentUICulture, idx) _
                AndAlso idx >= 0 AndAlso idx < cb.Items.Count Then
                 cb.SelectedIndex = idx
                 Return True
@@ -234,7 +301,7 @@ Public NotInheritable Class ElementInteractor
             If propType Is GetType(String) Then Return value
             Dim converter As TypeConverter = TypeDescriptor.GetConverter(propType)
             If converter IsNot Nothing AndAlso converter.CanConvertFrom(GetType(String)) Then
-                Return converter.ConvertFromString(Nothing, Globalization.CultureInfo.InvariantCulture, value)
+                Return converter.ConvertFromString(Nothing, Globalization.CultureInfo.CurrentUICulture, value)
             End If
             Return Nothing
         Catch
@@ -276,7 +343,7 @@ Public NotInheritable Class ElementInteractor
 
     Private Shared Function ParseDouble(value As String, fallback As Double) As Double
         Dim d As Double
-        If Double.TryParse(value, Globalization.NumberStyles.Float, Globalization.CultureInfo.InvariantCulture, d) Then
+        If Double.TryParse(value, Globalization.NumberStyles.Float, Globalization.CultureInfo.CurrentUICulture, d) Then
             Return d
         End If
         Return fallback

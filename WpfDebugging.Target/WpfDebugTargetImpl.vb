@@ -133,27 +133,227 @@ Public Class WpfDebugTargetImpl
     End Function
 
     Public Function GetProperty(uid As String, propertyName As String) As String Implements IWpfDebugTarget.GetProperty
-        Throw New NotImplementedException("get_property 由后续阶段实现。")
+        Dim target As Global.System.Windows.DependencyObject = ResolveUidOrThrow(uid, "get_property")
+        Return PropertyAccessor.GetPropertyValue(target, propertyName)
     End Function
 
     Public Sub SetProperty(uid As String, propertyName As String, value As String) Implements IWpfDebugTarget.SetProperty
-        Throw New NotImplementedException("set_property 由后续阶段实现。")
+        Dim target As Global.System.Windows.DependencyObject = ResolveUidOrThrow(uid, "set_property")
+        PropertyAccessor.SetPropertyValue(target, propertyName, value)
     End Sub
 
     Public Function GetLogicalTree(windowId As String, maxDepth As Integer?) As SnapshotNode Implements IWpfDebugTarget.GetLogicalTree
-        Throw New NotImplementedException("get_logical_tree 由后续阶段实现。")
+        Dim window As Global.System.Windows.Window = ResolveWindow(windowId)
+        Dim root As Global.System.Windows.DependencyObject = If(
+            TryCast(window.Content, Global.System.Windows.DependencyObject),
+            DirectCast(window, Global.System.Windows.DependencyObject))
+        Return WalkLogical(root, 0, maxDepth)
+    End Function
+
+    ''' <summary>递归遍历逻辑树（与可视树的差别：逻辑树含未模板化/未渲染的子元素）。</summary>
+    Private Function WalkLogical(node As Global.System.Windows.DependencyObject,
+                                 depth As Integer,
+                                 maxDepth As Integer?) As SnapshotNode
+        Dim result As New SnapshotNode With {
+            .Uid = _uidRegistry.GetOrCreateUid(node),
+            .TypeName = node.GetType().Name
+        }
+
+        Dim fe As Global.System.Windows.FrameworkElement = TryCast(node, Global.System.Windows.FrameworkElement)
+        If fe IsNot Nothing AndAlso Not String.IsNullOrEmpty(fe.Name) Then
+            result.Name = fe.Name
+        End If
+
+        If maxDepth.HasValue AndAlso depth >= maxDepth.Value Then Return result
+
+        For Each child As Object In Global.System.Windows.LogicalTreeHelper.GetChildren(node)
+            Dim childDo As Global.System.Windows.DependencyObject = TryCast(child, Global.System.Windows.DependencyObject)
+            If childDo IsNot Nothing Then
+                If result.Children Is Nothing Then result.Children = New List(Of SnapshotNode)()
+                result.Children.Add(WalkLogical(childDo, depth + 1, maxDepth))
+            End If
+        Next
+
+        Return result
     End Function
 
     Public Function ListBindings(uid As String) As IList(Of String) Implements IWpfDebugTarget.ListBindings
-        Throw New NotImplementedException("list_bindings 由后续阶段实现。")
+        Dim target As Global.System.Windows.DependencyObject = ResolveUidOrThrow(uid, "list_bindings")
+
+        Dim results As New List(Of String)()
+        Dim seen As New HashSet(Of String)()
+
+        ' 逐个 DP 查 BindingBase：WPF 没有「枚举当前所有绑定」的 API，
+        ' 只能按类型上声明的 DP 字段去问 BindingOperations。
+        Dim type As Type = target.GetType()
+        While type IsNot Nothing
+            For Each f As Reflection.FieldInfo In type.GetFields(
+                    Reflection.BindingFlags.Public Or Reflection.BindingFlags.Static Or Reflection.BindingFlags.DeclaredOnly)
+
+                If Not GetType(Global.System.Windows.DependencyProperty).IsAssignableFrom(f.FieldType) Then Continue For
+                If Not f.Name.EndsWith("Property", StringComparison.Ordinal) Then Continue For
+
+                Dim dp As Global.System.Windows.DependencyProperty =
+                    TryCast(f.GetValue(Nothing), Global.System.Windows.DependencyProperty)
+                If dp Is Nothing Then Continue For
+                If Not seen.Add(dp.Name) Then Continue For
+
+                Dim base As Global.System.Windows.Data.BindingBase =
+                    Global.System.Windows.Data.BindingOperations.GetBindingBase(target, dp)
+                If base Is Nothing Then Continue For
+
+                Dim binding As Global.System.Windows.Data.Binding = TryCast(base, Global.System.Windows.Data.Binding)
+                If binding IsNot Nothing Then
+                    results.Add($"{dp.Name}: Binding Path={binding.Path?.Path} Mode={binding.Mode} Source={DescribeSource(binding)}")
+                Else
+                    results.Add($"{dp.Name}: {base.GetType().Name}")
+                End If
+            Next
+            type = type.BaseType
+        End While
+
+        If results.Count = 0 Then results.Add("（该元素当前没有绑定）")
+        Return results
+    End Function
+
+    Private Shared Function DescribeSource(binding As Global.System.Windows.Data.Binding) As String
+        If binding.Source IsNot Nothing Then Return binding.Source.GetType().Name
+        If Not String.IsNullOrEmpty(binding.ElementName) Then Return "ElementName=" & binding.ElementName
+        If binding.RelativeSource IsNot Nothing Then Return "RelativeSource=" & binding.RelativeSource.Mode
+        Return "DataContext"
     End Function
 
     Public Sub Highlight(uid As String) Implements IWpfDebugTarget.Highlight
-        Throw New NotImplementedException("highlight 由后续阶段实现。")
+        Dim target As Global.System.Windows.DependencyObject = ResolveUidOrThrow(uid, "highlight")
+        Dim element As Global.System.Windows.FrameworkElement =
+            TryCast(target, Global.System.Windows.FrameworkElement)
+        If element Is Nothing Then
+            Throw New InvalidOperationException(
+                $"uid={uid}（{target.GetType().Name}）不是 FrameworkElement，无法高亮。")
+        End If
+
+        Dim layer As Global.System.Windows.Documents.AdornerLayer =
+            Global.System.Windows.Documents.AdornerLayer.GetAdornerLayer(element)
+        If layer Is Nothing Then
+            Throw New InvalidOperationException(
+                $"uid={uid}（{element.GetType().Name}）的可视祖先里没有 AdornerDecorator，无法叠加高亮层。")
+        End If
+
+        Dim adorner As New HighlightAdorner(element, Global.System.Windows.Media.Colors.Red, 2.0)
+        layer.Add(adorner)
+
+        ' 3 秒后自动移除：调试高亮不该长期留在界面上干扰观察
+        Dim timer As New Global.System.Windows.Threading.DispatcherTimer With {
+            .Interval = TimeSpan.FromSeconds(3)
+        }
+        AddHandler timer.Tick,
+            Sub(sender As Object, args As EventArgs)
+                timer.Stop()
+                Try
+                    layer.Remove(adorner)
+                Catch
+                    ' 元素可能在计时器到期前已从树上移除，忽略
+                End Try
+            End Sub
+        timer.Start()
     End Sub
 
+    ' 事件流：WPF 没有全局事件总线，这里按需在宿主主窗口上挂一组有代表性的路由事件，
+    ' 首次调用 list_events 时开始采集（之前的不会补录），只保留最近 MaxRecordedEvents 条。
+    Private ReadOnly _recordedEvents As New List(Of String)()
+    Private _eventCaptureAttached As Boolean
+    Private _eventCapturePending As Boolean
+    Private Const MaxRecordedEvents As Integer = 200
+
     Public Function ListEvents() As IList(Of String) Implements IWpfDebugTarget.ListEvents
-        Throw New NotImplementedException("list_events 由后续阶段实现。")
+        EnsureEventCapture()
+        Return New List(Of String)(_recordedEvents)
+    End Function
+
+    ''' <summary>
+    ''' 开始采集事件。由 <see cref="WpfDebugHost.Start"/> 在宿主启动时调用，
+    ''' 这样「界面上发生过什么」不会被第一次 list_events 之前的操作漏掉。
+    ''' </summary>
+    Public Sub BeginEventCapture()
+        EnsureEventCapture()
+    End Sub
+
+    ''' <summary>挂上事件处理器；主窗口尚未创建时排一次空闲回调重试。</summary>
+    Private Sub EnsureEventCapture()
+        If _eventCaptureAttached Then Return
+
+        Dim app As Global.System.Windows.Application = Global.System.Windows.Application.Current
+        If app Is Nothing Then Return
+
+        If app.MainWindow Is Nothing Then
+            ' 宿主在 OnStartup 里启动调试模块时主窗口还没建出来，等空闲再试
+            If Not _eventCapturePending Then
+                _eventCapturePending = True
+                app.Dispatcher.BeginInvoke(
+                    New Action(AddressOf RetryEventCapture),
+                    Global.System.Windows.Threading.DispatcherPriority.ApplicationIdle)
+            End If
+            Return
+        End If
+
+        _eventCaptureAttached = True
+        Dim root As Global.System.Windows.UIElement = app.MainWindow
+
+        Attach(root, Global.System.Windows.UIElement.PreviewMouseDownEvent,
+               New Global.System.Windows.Input.MouseButtonEventHandler(
+                   Sub(s, e) RecordEvent("PreviewMouseDown", e.OriginalSource)))
+        Attach(root, Global.System.Windows.UIElement.PreviewMouseUpEvent,
+               New Global.System.Windows.Input.MouseButtonEventHandler(
+                   Sub(s, e) RecordEvent("PreviewMouseUp", e.OriginalSource)))
+        Attach(root, Global.System.Windows.UIElement.PreviewKeyDownEvent,
+               New Global.System.Windows.Input.KeyEventHandler(
+                   Sub(s, e) RecordEvent("PreviewKeyDown(" & e.Key.ToString() & ")", e.OriginalSource)))
+        Attach(root, Global.System.Windows.UIElement.GotFocusEvent,
+               New Global.System.Windows.RoutedEventHandler(
+                   Sub(s, e) RecordEvent("GotFocus", e.OriginalSource)))
+    End Sub
+
+    ''' <summary>空闲重试入口：清掉 pending 标记后再试一次。</summary>
+    Private Sub RetryEventCapture()
+        _eventCapturePending = False
+        EnsureEventCapture()
+    End Sub
+
+    Private Shared Sub Attach(element As Global.System.Windows.UIElement,
+                              routedEvent As Global.System.Windows.RoutedEvent,
+                              handler As [Delegate])
+        ' handledEventsToo = True：业务代码标记 Handled 的事件同样记录，用于排查点击无响应
+        element.AddHandler(routedEvent, handler, True)
+    End Sub
+
+    Private Sub RecordEvent(name As String, source As Object)
+        Dim element As Global.System.Windows.FrameworkElement =
+            TryCast(source, Global.System.Windows.FrameworkElement)
+        Dim who As String = "unknown"
+        If element IsNot Nothing Then
+            Dim label As String = element.GetType().Name
+            If Not String.IsNullOrEmpty(element.Name) Then label &= "#" & element.Name
+            who = label
+        End If
+
+        _recordedEvents.Add(String.Format(
+            System.Globalization.CultureInfo.InvariantCulture,
+            "{0:HH:mm:ss.fff} {1} @ {2}", DateTime.Now, name, who))
+
+        ' 环形淘汰，避免长时间挂调试时无限增长
+        If _recordedEvents.Count > MaxRecordedEvents Then
+            _recordedEvents.RemoveRange(0, _recordedEvents.Count - MaxRecordedEvents)
+        End If
+    End Sub
+
+    ''' <summary>按 uid 解析元素，失败时抛带修复指引的异常（click/fill/property 等方法共用）。</summary>
+    Private Function ResolveUidOrThrow(uid As String, methodName As String) As Global.System.Windows.DependencyObject
+        Dim resolved As Global.System.Windows.DependencyObject = _uidRegistry.Resolve(uid)
+        If resolved Is Nothing Then
+            Throw New InvalidOperationException(
+                $"uid={uid} 已失效（对象被 GC 或不在当前可视树）。请重新调用 take_snapshot 获取新的 uid 再试 {methodName}。")
+        End If
+        Return resolved
     End Function
 
     ' ===== list_windows / take_snapshot 辅助 =====

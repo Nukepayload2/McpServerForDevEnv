@@ -1,4 +1,4 @@
-Imports System
+﻿Imports System
 
 ' 被控端宿主入口。宿主 WPF 程序在 Application.Startup 里调 WpfDebugHost.Start(config) 一次，
 ' 在 Application.Exit 里调返回实例的 Stop()（或 Dispose）。
@@ -34,6 +34,8 @@ Public NotInheritable Class WpfDebugHost
         If config Is Nothing Then config = New WpfDebugHostConfig()
         Dim host As New WpfDebugHost(config)
         host._server.Start()
+        ' 事件采集随宿主启动，避免第一次 list_events 之前的界面操作被漏掉
+        host._target.BeginEventCapture()
         Return host
     End Function
 
